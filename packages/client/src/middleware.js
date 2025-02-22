@@ -4,20 +4,21 @@ import { completeOnboarding } from "./lib/complete-onboarding";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-// Route matchers
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api(.*)",
-  "/404(.*)",
-]);
-
+const isRootRoute = createRouteMatcher(["/"]);
 const isErrorRoute = createRouteMatcher(["/404"]);
 
-// Middleware instances
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/:locale",
+  "/:locale/(sign-in|sign-up)(.*)",
+  "/(sign-in|sign-up)(.*)",
+  "/api(.*)",
+  "/404(.*)",
+  "/test(.*)",
+]);
+
 const intlMiddleware = createMiddleware(routing);
-const authMiddleware = clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   const clerkAuth = await auth();
   const { userId, redirectToSignIn, getToken } = clerkAuth;
 
@@ -46,24 +47,9 @@ const authMiddleware = clerkMiddleware(async (auth, req) => {
     // }
   }
 
-  return NextResponse.next();
+  return intlMiddleware(req);
 });
 
-// Combined middleware
-export default function middleware(req) {
-  // Run internationalization first
-  const intlResponse = intlMiddleware(req);
-  if (intlResponse) return intlResponse;
-
-  // Then run auth
-  return authMiddleware(req);
-}
-
 export const config = {
-  matcher: [
-    "/((?!.*\\..*|_next).*)",
-    "/",
-    "/(api|trpc)(.*)",
-    "/(de|en|es)/:path*",
-  ],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
