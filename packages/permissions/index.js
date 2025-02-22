@@ -6,12 +6,6 @@ export const ROLES = {
 // Uses Attribute-Based Access Control (ABAC)
 const PERMISSIONS = {
   [ROLES.admin]: {
-    sequence: {
-      view: true,
-      create: true,
-      update: true,
-      delete: true,
-    },
     user: {
       view: true,
       create: true,
@@ -20,18 +14,6 @@ const PERMISSIONS = {
     },
   },
   [ROLES.user]: {
-    sequenceBatch: {
-      view: (me, sequence) => sequence.createdBy === me.clerkUserId,
-      create: true,
-      update: (me, sequence) => sequence.createdBy === me.clerkUserId,
-      delete: (me, sequence) => sequence.createdBy === me.clerkUserId,
-    },
-    sequence: {
-      view: (me, sequence) => sequence.createdBy === me.clerkUserId,
-      create: true,
-      update: (me, sequence) => sequence.createdBy === me.clerkUserId,
-      delete: (me, sequence) => sequence.createdBy === me.clerkUserId,
-    },
     user: {
       view: (me, user) => user.createdBy === me.clerkUserId,
       create: false,

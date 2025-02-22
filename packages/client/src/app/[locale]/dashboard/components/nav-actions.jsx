@@ -13,14 +13,12 @@ import Link from "next/link";
 
 function AddSequenceButton() {
   return (
-    <Link href="/dashboard/sequence/add" passHref>
-      <Button className="w-full flex items-center gap-2">
-        <Plus />
-        <span className="group-data-[collapsible=icon]:hidden">
-          Add Sequence
-        </span>
-      </Button>
-    </Link>
+    // <Link href="/dashboard/sequence/add" passHref>
+    <Button className="w-full flex items-center gap-2">
+      <Plus />
+      <span className="group-data-[collapsible=icon]:hidden">Add Sequence</span>
+    </Button>
+    // </Link>
   );
 }
 

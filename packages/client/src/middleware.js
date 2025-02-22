@@ -1,20 +1,23 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { completeOnboarding } from "./lib/complete-onboarding";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
 
-const isRootRoute = createRouteMatcher(["/"]);
-const isErrorRoute = createRouteMatcher(["/404"]);
-
+// Route matchers
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api(.*)",
   "/404(.*)",
-  "/test(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+const isErrorRoute = createRouteMatcher(["/404"]);
+
+// Middleware instances
+const intlMiddleware = createMiddleware(routing);
+const authMiddleware = clerkMiddleware(async (auth, req) => {
   const clerkAuth = await auth();
   const { userId, redirectToSignIn, getToken } = clerkAuth;
 
@@ -46,6 +49,21 @@ export default clerkMiddleware(async (auth, req) => {
   return NextResponse.next();
 });
 
+// Combined middleware
+export default function middleware(req) {
+  // Run internationalization first
+  const intlResponse = intlMiddleware(req);
+  if (intlResponse) return intlResponse;
+
+  // Then run auth
+  return authMiddleware(req);
+}
+
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    "/((?!.*\\..*|_next).*)",
+    "/",
+    "/(api|trpc)(.*)",
+    "/(de|en|es)/:path*",
+  ],
 };

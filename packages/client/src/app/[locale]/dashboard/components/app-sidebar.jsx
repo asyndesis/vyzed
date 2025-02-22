@@ -1,4 +1,3 @@
-import { NavSequenceBatchess } from "./nav-sequence-batches";
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
@@ -46,7 +45,7 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavActions />
-        <NavSequenceBatchess />
+
         <NavProjects projects={SIDEBAR_DATA.projects} />
       </SidebarContent>
       <SidebarFooter>
