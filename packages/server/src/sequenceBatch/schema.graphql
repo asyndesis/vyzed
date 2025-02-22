@@ -1,0 +1,29 @@
+type SequenceBatch {
+  id: ObjectID!
+  name: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String
+  updatedBy: String
+  sequences: [Sequence!]!
+}
+
+input CreateSequenceBatchInput {
+  name: String!
+  species: String
+}
+
+input CreateSequenceInput {
+  name: String!
+  description: String
+  sequenceBatchId: ObjectID
+}
+
+type Query {
+  sequenceBatches: [SequenceBatch!]
+  sequenceBatch(id: ObjectID!): SequenceBatch
+}
+
+type Mutation {
+  createSequenceBatch(input: CreateSequenceBatchInput!): SequenceBatch!
+}

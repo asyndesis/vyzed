@@ -1,0 +1,49 @@
+# Type Definitions
+type User {
+  id: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  imageUrl: String
+  roles: [String!]!
+  clerkUserId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: String
+  updatedBy: String
+}
+
+# Input Types
+input CreateUserInput {
+  email: String!
+  firstName: String
+  lastName: String
+  imageUrl: String
+  roles: [String!]
+  clerkUserId: String!
+}
+
+input UpdateUserInput {
+  email: String
+  firstName: String
+  lastName: String
+  imageUrl: String
+  roles: [String!]
+}
+
+# Queries
+type Query {
+  me: User
+  userById(id: ObjectID!): User
+  userByClerkUserId(clerkUserId: String!): User
+  checkClerkUserIdExists(clerkUserId: String!): Boolean!
+  users: [User!]!
+}
+
+# Mutations
+type Mutation {
+  createMyUser(input: CreateUserInput!): User!
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ObjectID!, input: UpdateUserInput!): User!
+  deleteUser(id: ObjectID!): Boolean!
+}

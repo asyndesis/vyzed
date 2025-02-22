@@ -1,0 +1,38 @@
+app = "vyzed"
+primary_region = "mad"
+
+[build]
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[services]]
+  # Frontend service (Next.js)
+  internal_port = 3000
+  processes = ["app"]
+  protocol = "tcp"
+  [services.ports]
+    handlers = ["http", "tls"]
+    port = 80
+    [services.ports.tls_options]
+      alpn = ["http/1.1", "h2"]
+
+[[services]]
+  # Backend service (Express API)
+  internal_port = 4000
+  processes = ["app"]
+  protocol = "tcp"
+  [services.ports]
+    handlers = ["http", "tls"]
+    port = 8080
+    [services.ports.tls_options]
+      alpn = ["http/1.1", "h2"]
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "512mb"

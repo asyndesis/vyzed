@@ -1,0 +1,29 @@
+{
+  "name": "vyzed",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "client:dev": "npm run -w @vyzed/client dev",
+    "client:start": "npm run -w @vyzed/client start",
+    "client:build": "npm run -w @vyzed/client build",
+    "server:dev": "npm run -w @vyzed/server dev",
+    "server:start": "npm run -w @vyzed/server start",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prisma": "npm --prefix ./packages/prisma run",
+    "prisma:build": "npm run -w @vyzed/prisma build",
+    "prisma:migrate:dev": "npm --prefix ./packages/prisma run migrate:dev",
+    "prisma:migrate:deploy": "npm --prefix ./packages/prisma run migrate:deploy",
+    "prisma:generate": "npm --prefix ./packages/prisma run generate",
+    "prisma:push": "npm --prefix ./packages/prisma run push",
+    "prisma:studio": "npm --prefix ./packages/prisma run studio"
+  },
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.8",
+    "eslint": "^9.21.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.5.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
