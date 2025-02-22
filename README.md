@@ -6,7 +6,7 @@ Will add more info here as we go
 
 Create a `.env` file in the root of each package.
 
-**packages/database/.env**
+**packages/prisma/.env**
 
 ```bash
 # mongoDB connection string

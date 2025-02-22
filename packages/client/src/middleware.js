@@ -1,12 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { completeOnboarding } from "./lib/complete-onboarding";
-// import { completeOnboarding } from "@/services/completeOnboarding";
 
 const isRootRoute = createRouteMatcher(["/"]);
 const isErrorRoute = createRouteMatcher(["/404"]);
 
 const isPublicRoute = createRouteMatcher([
+  "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api(.*)",
@@ -25,6 +25,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (userId) {
     // Make sure user exists in our system, if not, let's onboard them
     const token = await getToken();
+
     try {
       await completeOnboarding({
         clerkUserId: userId,
@@ -37,10 +38,9 @@ export default clerkMiddleware(async (auth, req) => {
       }
     }
 
-    // If just landing in the app, take them to dashboard
-    if (isRootRoute(req)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
+    // if (isRootRoute(req)) {
+    //   return NextResponse.redirect(new URL("/dashboard", req.url));
+    // }
   }
 
   return NextResponse.next();
