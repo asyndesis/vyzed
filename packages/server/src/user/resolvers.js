@@ -14,20 +14,20 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    userByClerkUserId: async (parent, args) => {
-      const { clerkUserId } = args;
+    userByAuthId: async (parent, args) => {
+      const { authId } = args;
       try {
-        const user = await prisma.user.findUnique({ where: { clerkUserId } });
+        const user = await prisma.user.findUnique({ where: { authId } });
         return user;
       } catch (err) {
         throw new Error(err.message);
       }
     },
     // Use to be safe for users logging in the first time
-    checkClerkUserIdExists: async (parent, args) => {
-      const { clerkUserId } = args;
+    checkUserExistsByAuthId: async (parent, args) => {
+      const { authId } = args;
       try {
-        const user = await prisma.user.findUnique({ where: { clerkUserId } });
+        const user = await prisma.user.findUnique({ where: { authId } });
         return !!user;
       } catch (err) {
         throw new Error(err.message);
@@ -62,10 +62,9 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    createMyUser: async (parent, args, context) => {
+    createMyUser: async (parent, args, { user }) => {
       const { input } = args; // Use 'input' as per your generated types
-      const { auth } = context;
-      const { userId: clerkUserId } = auth || {};
+      const { authId } = user;
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: input.email },
@@ -78,8 +77,8 @@ export const userResolvers = {
         const newUser = await prisma.user.create({
           data: {
             ...input,
-            createdBy: clerkUserId,
-            updatedBy: clerkUserId,
+            createdBy: authId,
+            updatedBy: authId,
             roles: ["user"],
           },
         });
@@ -88,16 +87,15 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    updateUser: async (parent, args, context) => {
+    updateUser: async (parent, args, { user }) => {
       const { id, input } = args; // Use 'id' and 'input' from args
-      const { auth } = context;
-      const { userId: clerkUserId } = auth || {};
+      const { authId } = user || {};
       try {
         const updatedUser = await prisma.user.update({
           where: { id },
           data: {
             ...input,
-            updatedBy: clerkUserId,
+            updatedBy: authId,
           },
         });
         return updatedUser;

@@ -3,8 +3,8 @@ import { gql } from "@apollo/client";
 import { getClient } from "@/lib/apollo-client";
 
 const getUserQuery = gql`
-  query checkClerkUserIdExists($clerkUserId: String!) {
-    checkClerkUserIdExists(clerkUserId: $clerkUserId)
+  query checkUserExistsByAuthId($authId: String!) {
+    checkUserExistsByAuthId(authId: $authId)
   }
 `;
 
@@ -17,11 +17,11 @@ const createUserMutation = gql`
 `;
 
 /* Someday we'll have a page that handles this  so user can fill in extra info after signup */
-export const completeOnboarding = async ({ clerkUserId, token }) => {
+export const completeOnboarding = async ({ authId, token }) => {
   const { data } = await getClient().query({
     query: getUserQuery,
     variables: {
-      clerkUserId,
+      authId,
     },
     context: {
       headers: {
@@ -31,11 +31,11 @@ export const completeOnboarding = async ({ clerkUserId, token }) => {
   });
 
   // If the user already exists in the database, skip onboarding
-  if (data?.checkClerkUserIdExists) return;
+  if (data?.checkUserExistsByAuthId) return;
 
   // Fetch user information from Clerk
   const client = await clerkClient();
-  const clerkUser = await client.users.getUser(clerkUserId);
+  const clerkUser = await client.users.getUser(authId);
 
   if (!clerkUser) {
     throw new Error("No user found in Clerk for the provided ID.");
@@ -51,7 +51,7 @@ export const completeOnboarding = async ({ clerkUserId, token }) => {
     mutation: createUserMutation,
     variables: {
       input: {
-        clerkUserId: clerkUser.id,
+        authId: clerkUser.id,
         email,
         firstName: clerkUser.firstName,
         lastName: clerkUser.lastName,

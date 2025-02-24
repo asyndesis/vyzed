@@ -15,10 +15,10 @@ const PERMISSIONS = {
   },
   [ROLES.user]: {
     user: {
-      view: (me, user) => user.createdBy === me.clerkUserId,
+      view: (me, user) => user.createdBy === me.authId,
       create: false,
-      update: (me, user) => user.createdBy === me.clerkUserId,
-      delete: (me, user) => user.createdBy === me.clerkUserId,
+      update: (me, user) => user.createdBy === me.authId,
+      delete: (me, user) => user.createdBy === me.authId,
     },
   },
 };

@@ -58,10 +58,10 @@ app.use(
     context: async ({ req }) => {
       // Check if they are authed.  If so, let's attach the user to the context
       // and we can use that data inside of our permissions
-      const clerkUserId = req.auth.userId;
-      if (clerkUserId) {
-        const dbUser = await prisma.user.findUnique({ where: { clerkUserId } });
-        return { user: { ...dbUser, clerkUserId } };
+      const authId = req.auth.userId;
+      if (authId) {
+        const dbUser = await prisma.user.findUnique({ where: { authId } });
+        return { user: { ...dbUser, authId } };
       }
     },
   })

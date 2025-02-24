@@ -23,5 +23,15 @@
       "jsx": true
     }
   },
-  "ignorePatterns": ["**/*.ts", "**/*.tsx", "**/*.d.ts"]
+  "ignorePatterns": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["@", "./src"] // This tells ESLint to resolve @ to ./src
+        ],
+        "extensions": [".js", ".jsx"] // Only JavaScript extensions needed
+      }
+    }
+  }
 }

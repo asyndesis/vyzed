@@ -6,39 +6,20 @@ generator client {
 }
 
 datasource db {
-    provider = "mongodb"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
 model User {
-    id          String    @id @default(auto()) @map("_id") @db.ObjectId
-    email       String    @unique
-    firstName   String?
-    lastName    String?
-    imageUrl    String?
-    roles       String[]  @default([])
-    clerkUserId String    @unique
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    createdBy   String?
-    updatedBy   String?
-    Profile     Profile[]
-}
-
-enum ProfileCategory {
-    TEACHER
-    THERAPIST
-}
-
-model Profile {
-    id          String          @id @default(auto()) @map("_id") @db.ObjectId
-    title       String
-    description String?
-    category    ProfileCategory
-    userId      String          @db.ObjectId
-    user        User            @relation(fields: [userId], references: [id])
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-
-    @@index([userId])
+    id        String   @id @default(cuid())
+    email     String   @unique
+    firstName String?
+    lastName  String?
+    imageUrl  String?
+    roles     String[] @default([])
+    authId    String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy String?
+    updatedBy String?
 }

@@ -5,7 +5,7 @@ export const userPermissions = {
   Query: {
     me: isAuthed,
     userById: and(isAuthed, isAdmin),
-    userByClerkUserId: and(isAuthed, isAdmin),
+    userByAuthId: and(isAuthed, isAdmin),
     users: and(isAuthed, isAdmin),
   },
   Mutation: {

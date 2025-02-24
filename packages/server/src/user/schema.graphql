@@ -6,7 +6,7 @@ type User {
   lastName: String
   imageUrl: String
   roles: [String!]!
-  clerkUserId: String!
+  authId: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   createdBy: String
@@ -20,7 +20,7 @@ input CreateUserInput {
   lastName: String
   imageUrl: String
   roles: [String!]
-  clerkUserId: String!
+  authId: String!
 }
 
 input UpdateUserInput {
@@ -35,8 +35,8 @@ input UpdateUserInput {
 type Query {
   me: User
   userById(id: ObjectID!): User
-  userByClerkUserId(clerkUserId: String!): User
-  checkClerkUserIdExists(clerkUserId: String!): Boolean!
+  userByAuthId(authId: String!): User
+  checkUserExistsByAuthId(authId: String!): Boolean!
   users: [User!]!
 }
 

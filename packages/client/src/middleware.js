@@ -32,7 +32,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     try {
       await completeOnboarding({
-        clerkUserId: userId,
+        authId: userId,
         token,
       });
     } catch (e) {
