@@ -21,7 +21,6 @@
     "express": "^4.21.2",
     "graphql-middleware": "^6.1.35",
     "graphql-scalars": "^1.24.1",
-    "graphql-shield": "^7.6.5",
-    "tsx": "^4.19.3"
+    "graphql-shield": "^7.6.5"
   }
 }

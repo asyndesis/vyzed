@@ -11,15 +11,47 @@ datasource db {
 }
 
 model User {
-    id        String   @id @default(cuid())
-    email     String   @unique
+    id        String    @id @default(cuid())
+    email     String    @unique
     firstName String?
     lastName  String?
     imageUrl  String?
-    roles     String[] @default([])
-    authId    String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    roles     String[]  @default([])
+    authId    String    @unique
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
     createdBy String?
     updatedBy String?
+    profiles  Profile[]
+}
+
+model Profile {
+    id        String         @id @default(cuid())
+    userId    String
+    user      User           @relation(fields: [userId], references: [id])
+    skills    ProfileSkill[] // Skills associated with this profile
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+}
+
+model ProfileSkill {
+    id          String   @id @default(cuid())
+    profileId   String
+    profile     Profile  @relation(fields: [profileId], references: [id])
+    skillId     String
+    skill       Skill    @relation(fields: [skillId], references: [id])
+    proficiency Int
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+    id           String         @id @default(cuid())
+    name         String
+    parentId     String?
+    parent       Skill?         @relation("SkillHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+    children     Skill[]        @relation("SkillHierarchy")
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    ProfileSkill ProfileSkill[]
 }

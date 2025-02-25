@@ -9,19 +9,23 @@
     "server:dev": "npm run -w @vyzed/server dev",
     "server:start": "npm run -w @vyzed/server start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prisma": "npm --prefix ./packages/prisma run",
+    "prisma": "npm run -w @vyzed/prisma",
     "prisma:build": "npm run -w @vyzed/prisma build",
-    "prisma:migrate:dev": "npm --prefix ./packages/prisma run migrate:dev",
-    "prisma:migrate:deploy": "npm --prefix ./packages/prisma run migrate:deploy",
-    "prisma:generate": "npm --prefix ./packages/prisma run generate",
-    "prisma:push": "npm --prefix ./packages/prisma run push",
-    "prisma:studio": "npm --prefix ./packages/prisma run studio"
+    "prisma:migrate:dev": "npm run -w @vyzed/prisma migrate:dev",
+    "prisma:migrate:deploy": "npm run -w @vyzed/prisma migrate:deploy",
+    "prisma:generate": "npm run -w @vyzed/prisma generate",
+    "prisma:push": "npm run -w @vyzed/prisma push",
+    "prisma:studio": "npm run -w @vyzed/prisma studio",
+    "prisma:seed": "npm run -w @vyzed/prisma seed"
+  },
+  "dependencies": {
+    "tsx": "^4.19.3"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.7.8",
     "eslint": "^8.57.0",
-    "eslint-plugin-import": "^2.31.0",
-    "prettier": "^3.5.2"
+    "prettier": "^3.5.2",
+    "eslint-plugin-import": "^2.31.0"
   },
   "workspaces": [
     "packages/*"

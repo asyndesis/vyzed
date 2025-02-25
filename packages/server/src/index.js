@@ -46,7 +46,7 @@ const schemaWithMiddleware = applyMiddleware(schema, permissions);
 const server = new ApolloServer({
   schema: schemaWithMiddleware,
   plugins: [],
-  // introspection: process.env.NODE_ENV === "development",
+  introspection: process.env.NODE_ENV === "development",
 });
 
 await server.start();
