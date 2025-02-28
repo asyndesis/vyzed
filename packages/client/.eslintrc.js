@@ -20,6 +20,10 @@ module.exports = {
   },
   settings: {
     "import/resolver": {
+      node: {
+        moduleDirectory: ["node_modules"],
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
       "eslint-import-resolver-custom-alias": {
         alias: {
           "@": path.resolve(__dirname, "src"),
@@ -29,6 +33,7 @@ module.exports = {
     },
     "import/parsers": {
       "@babel/eslint-parser": [".js", ".jsx"],
+      "@typescript-eslint/parser": [".ts", ".tsx"],
     },
   },
 };
