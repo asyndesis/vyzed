@@ -18,13 +18,10 @@
     "prisma:studio": "npm run -w @vyzed/prisma studio",
     "prisma:seed": "npm run -w @vyzed/prisma seed"
   },
-  "dependencies": {
-    "tsx": "^4.19.3"
-  },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.7.8",
-    "eslint": "^8.57.0",
     "prettier": "^3.5.2",
+    "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.31.0"
   },
   "workspaces": [
