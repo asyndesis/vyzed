@@ -11,6 +11,15 @@ const createPrismaClient = () =>
         url: process.env.DATABASE_URL,
       },
     },
+    __internal: {
+      engine: {
+        connectionLimit: 5,
+        retry: {
+          maxRetries: 3,
+          initialDelay: 500,
+        },
+      },
+    },
   });
 
 const globalForPrisma = globalThis;

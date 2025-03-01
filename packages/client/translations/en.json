@@ -1,5 +1,20 @@
 {
   "HomePage": {
-    "title": "Hello world!"
+    "profilesTitle": "User Profiles"
+  },
+  "ProfileList": {
+    "filters": "Filters",
+    "nameSearch": "Search by name",
+    "searchPlaceholder": "Enter name...",
+    "skillFilter": "Filter by skill",
+    "allSkills": "All skills",
+    "minProficiency": "Minimum proficiency",
+    "showingResults": "Showing {count} profiles",
+    "noResults": "No profiles match your filters"
+  },
+  "ProfileCard": {
+    "profileCreated": "Profile created",
+    "skills": "Skills",
+    "noSkills": "No skills added yet"
   }
 }

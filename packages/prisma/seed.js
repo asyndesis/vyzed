@@ -1,32 +1,62 @@
 import { prisma } from "./index";
 
+// Pre-generate CUIDs for all skills
 const SKILLS = {
-  Language: ["Spanish", "English", "German"],
-  Programming: ["JavaScript", "Python", "Java"],
-  Therapy: [
-    "Cognitive Behavioral Therapy (CBT)",
-    "Psychoanalysis",
-    "Family Therapy",
-    "Art Therapy",
-    "Mindfulness-Based Therapy",
-  ],
+  // Parent: Language
+  clqwertyui1: {
+    name: "Language",
+    children: {
+      clqwertyui2: { name: "Spanish" },
+      clqwertyui3: { name: "English" },
+      clqwertyui4: { name: "German" },
+    },
+  },
+  // Parent: Programming
+  clqwertyui5: {
+    name: "Programming",
+    children: {
+      clqwertyui6: { name: "JavaScript" },
+      clqwertyui7: { name: "Python" },
+      clqwertyui8: { name: "Java" },
+    },
+  },
+  // Parent: Therapy
+  clqwertyui9: {
+    name: "Therapy",
+    children: {
+      clqwertyu10: { name: "Cognitive Behavioral Therapy (CBT)" },
+      clqwertyu11: { name: "Psychoanalysis" },
+      clqwertyu12: { name: "Family Therapy" },
+      clqwertyu13: { name: "Art Therapy" },
+      clqwertyu14: { name: "Mindfulness-Based Therapy" },
+    },
+  },
 };
 
 async function main() {
-  for (const [parentSkill, childSkills] of Object.entries(SKILLS)) {
-    const parent = await prisma.skill.upsert({
-      where: { name: parentSkill },
-      update: {},
-      create: { name: parentSkill },
+  // Create or update parent skills with pre-generated CUIDs
+  for (const [parentId, parentData] of Object.entries(SKILLS)) {
+    await prisma.skill.upsert({
+      where: { id: parentId },
+      update: { name: parentData.name },
+      create: {
+        id: parentId,
+        name: parentData.name,
+      },
     });
 
-    for (const childSkill of childSkills) {
+    // Create or update child skills with pre-generated CUIDs
+    for (const [childId, childData] of Object.entries(parentData.children)) {
       await prisma.skill.upsert({
-        where: { name: childSkill },
-        update: {},
+        where: { id: childId },
+        update: {
+          name: childData.name,
+          parentId: parentId,
+        },
         create: {
-          name: childSkill,
-          parentId: parent.id,
+          id: childId,
+          name: childData.name,
+          parentId: parentId,
         },
       });
     }

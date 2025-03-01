@@ -2,12 +2,12 @@ const path = require("path");
 
 module.exports = {
   extends: ["next"],
-  parser: "@babel/eslint-parser",
-  parserOptions: {
-    requireConfigFile: false,
-    ecmaVersion: "latest",
-    sourceType: "module",
-  },
+  // parser: "@babel/eslint-parser",
+  // parserOptions: {
+  //   requireConfigFile: false,
+  //   ecmaVersion: "latest",
+  //   sourceType: "module",
+  // },
   rules: {
     "no-unused-vars": "warn",
     "import/no-unresolved": "error",
@@ -16,7 +16,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es6: true,
+    es2024: true,
   },
   settings: {
     "import/resolver": {

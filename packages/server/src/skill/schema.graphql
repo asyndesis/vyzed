@@ -1,0 +1,37 @@
+# Type Definitions
+type Skill {
+  id: ID!
+  name: String!
+  parentId: String
+  parent: Skill
+  children: [Skill!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  profileSkills: [ProfileSkill!]!
+}
+
+# Input Types
+input CreateSkillInput {
+  name: String!
+  parentId: String
+}
+
+input UpdateSkillInput {
+  name: String
+  parentId: String
+}
+
+# Queries
+type Query {
+  skillById(id: ObjectID!): Skill
+  skillsByParentId(parentId: String): [Skill!]!
+  rootSkills: [Skill!]!
+  allSkills: [Skill!]!
+}
+
+# Mutations
+type Mutation {
+  createSkill(input: CreateSkillInput!): Skill!
+  updateSkill(id: ObjectID!, input: UpdateSkillInput!): Skill!
+  deleteSkill(id: ObjectID!): Boolean!
+}
