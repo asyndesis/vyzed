@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
 import {
   Card,
@@ -12,19 +11,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { serverQuery } from "@/lib/apollo-client";
 
 // GraphQL query to fetch all profiles with their skills
-const GET_PROFILES = gql`
-  query GetProfiles {
-    profiles {
+const GET_TEACHERS = gql`
+  query GetTeachers {
+    getTeachers {
       id
-      userId
-      user {
-        firstName
-        lastName
-        imageUrl
-      }
-      profileSkills {
+      firstName
+      lastName
+      imageUrl
+      userSkills {
         id
         proficiency
         skill {
@@ -65,38 +62,38 @@ const renderProficiency = (skillItem) => {
 
 // Create a ProfileList component that fetches and displays profiles
 async function ProfileList() {
-  // Fetch profiles data server-side
-  const { data } = await getClient().query({
-    query: GET_PROFILES,
+  // Fetch teachers data server-side
+  const { data } = await serverQuery({
+    query: GET_TEACHERS,
   });
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {data.profiles.map((profile) => (
-        <Card key={profile.id} className="overflow-hidden">
+      {data.getTeachers.map((teacher) => (
+        <Card key={teacher.id} className="overflow-hidden">
           <CardHeader className="flex flex-row items-center gap-4 pb-2">
             <Avatar className="h-12 w-12">
               <AvatarImage
-                src={profile.user.imageUrl}
-                alt={`${profile.user.firstName} ${profile.user.lastName}`}
+                src={teacher.imageUrl}
+                alt={`${teacher.firstName} ${teacher.lastName}`}
               />
               <AvatarFallback>
-                {profile.user.firstName[0]}
-                {profile.user.lastName[0]}
+                {teacher.firstName[0]}
+                {teacher.lastName[0]}
               </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle>
-                {profile.user.firstName} {profile.user.lastName}
+                {teacher.firstName} {teacher.lastName}
               </CardTitle>
               <CardDescription>
-                Joined {new Date(profile.createdAt).toLocaleDateString()}
+                Joined {new Date(teacher.createdAt).toLocaleDateString()}
               </CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2 mt-2">
-              {profile.profileSkills.map((skillItem) => (
+              {teacher.userSkills.map((skillItem) => (
                 <Badge
                   key={skillItem.id}
                   variant="secondary"

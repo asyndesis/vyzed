@@ -12,13 +12,25 @@ const PERMISSIONS = {
       update: true,
       delete: true,
     },
+    userSkill: {
+      view: true,
+      create: true,
+      update: true,
+      delete: true,
+    },
   },
   [ROLES.user]: {
     user: {
-      view: (me, user) => user.createdBy === me.authId,
+      view: (me, user) => user.createdBy === me.id,
       create: false,
-      update: (me, user) => user.createdBy === me.authId,
-      delete: (me, user) => user.createdBy === me.authId,
+      update: (me, user) => user.createdBy === me.id,
+      delete: (me, user) => user.createdBy === me.id,
+    },
+    userSkill: {
+      view: (me, userSkill) => userSkill.createdBy === me.id,
+      create: (me, userSkill) => userSkill.createdBy === me.id,
+      update: (me, userSkill) => userSkill.createdBy === me.id,
+      delete: (me, userSkill) => userSkill.createdBy === me.id,
     },
   },
 };

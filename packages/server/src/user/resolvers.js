@@ -1,15 +1,19 @@
 import { prisma } from "@vyzed/prisma";
 
 export const userResolvers = {
+  User: {
+    userSkills: async (parent) => {
+      return prisma.userSkill.findMany({ where: { userId: parent.id } });
+    },
+  },
   Query: {
     me: async (parent, args, context) => {
       return context?.user;
     },
     userById: async (parent, args) => {
-      const { id } = args; // args should have 'id'
+      const { id } = args;
       try {
-        const user = await prisma.user.findUnique({ where: { id } });
-        return user;
+        return await prisma.user.findUnique({ where: { id } });
       } catch (err) {
         throw new Error(err.message);
       }
@@ -17,13 +21,11 @@ export const userResolvers = {
     userByAuthId: async (parent, args) => {
       const { authId } = args;
       try {
-        const user = await prisma.user.findUnique({ where: { authId } });
-        return user;
+        return await prisma.user.findUnique({ where: { authId } });
       } catch (err) {
         throw new Error(err.message);
       }
     },
-    // Use to be safe for users logging in the first time
     checkUserExistsByAuthId: async (parent, args) => {
       const { authId } = args;
       try {
@@ -35,16 +37,35 @@ export const userResolvers = {
     },
     users: async () => {
       try {
-        const users = await prisma.user.findMany();
-        return users;
+        return await prisma.user.findMany();
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    },
+    getTeachers: async () => {
+      try {
+        return await prisma.user.findMany({
+          where: {
+            roles: {
+              has: "teacher",
+            },
+          },
+          include: {
+            userSkills: {
+              include: {
+                skill: true,
+              },
+            },
+          },
+        });
       } catch (err) {
         throw new Error(err.message);
       }
     },
   },
   Mutation: {
-    createUser: async (parent, args) => {
-      const { input } = args; // Use 'input' as per your generated types
+    createUser: async (parent, args, { user }) => {
+      const { input } = args;
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: input.email },
@@ -55,7 +76,11 @@ export const userResolvers = {
         }
 
         const newUser = await prisma.user.create({
-          data: input,
+          data: {
+            ...input,
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
         });
         return newUser;
       } catch (err) {

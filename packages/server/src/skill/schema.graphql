@@ -5,9 +5,11 @@ type Skill {
   parentId: String
   parent: Skill
   children: [Skill!]!
+  userSkills: [UserSkill!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  profileSkills: [ProfileSkill!]!
+  createdBy: String
+  updatedBy: String
 }
 
 # Input Types

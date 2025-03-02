@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  extends: ["next"],
+  extends: ["next", "eslint:recommended"],
   // parser: "@babel/eslint-parser",
   // parserOptions: {
   //   requireConfigFile: false,

@@ -51,9 +51,9 @@ const handleError = (error) => {
   // You can customize this further, e.g., show a toast notification
 };
 
-export const serverQuery = async (query, props) => {
+export const serverQuery = async (props) => {
   try {
-    const result = await getClient().query({ query, ...props });
+    const result = await getClient().query(props);
     return result;
   } catch (error) {
     handleError(error);
@@ -62,9 +62,9 @@ export const serverQuery = async (query, props) => {
 };
 
 // Abstraction for mutation
-export const serverMutate = async (query, props) => {
+export const serverMutate = async (props) => {
   try {
-    const result = await getClient().mutate({ query, ...props });
+    const result = await getClient().mutate(props);
     return result;
   } catch (error) {
     handleError(error);

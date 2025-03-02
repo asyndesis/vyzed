@@ -7,6 +7,7 @@ export const userPermissions = {
     userById: and(isAuthed, isAdmin),
     userByAuthId: and(isAuthed, isAdmin),
     users: and(isAuthed, isAdmin),
+    getTeachers: isAuthed,
   },
   Mutation: {
     createUser: and(isAuthed, isAdmin),

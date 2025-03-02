@@ -9,8 +9,8 @@ export const skillResolvers = {
     children: async (parent) => {
       return prisma.skill.findMany({ where: { parentId: parent.id } });
     },
-    profileSkills: async (parent) => {
-      return prisma.profileSkill.findMany({ where: { skillId: parent.id } });
+    userSkills: async (parent) => {
+      return prisma.userSkill.findMany({ where: { skillId: parent.id } });
     },
   },
   Query: {
@@ -48,20 +48,29 @@ export const skillResolvers = {
     },
   },
   Mutation: {
-    createSkill: async (parent, args) => {
+    createSkill: async (parent, args, { user }) => {
       const { input } = args;
       try {
-        return await prisma.skill.create({ data: input });
+        return await prisma.skill.create({
+          data: {
+            ...input,
+            createdBy: user.id,
+            updatedBy: user.id,
+          },
+        });
       } catch (err) {
         throw new Error(err.message);
       }
     },
-    updateSkill: async (parent, args) => {
+    updateSkill: async (parent, args, { user }) => {
       const { id, input } = args;
       try {
         return await prisma.skill.update({
           where: { id },
-          data: input,
+          data: {
+            ...input,
+            updatedBy: user.id,
+          },
         });
       } catch (err) {
         throw new Error(err.message);
