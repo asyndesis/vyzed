@@ -11,15 +11,6 @@ const SKILLS = {
       clqwertyui4: { name: "German" },
     },
   },
-  // Parent: Programming
-  clqwertyui5: {
-    name: "Programming",
-    children: {
-      clqwertyui6: { name: "JavaScript" },
-      clqwertyui7: { name: "Python" },
-      clqwertyui8: { name: "Java" },
-    },
-  },
   // Parent: Therapy
   clqwertyui9: {
     name: "Therapy",

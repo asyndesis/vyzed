@@ -45,7 +45,6 @@ export function AppSidebar({ ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <NavActions />
-
         <NavProjects projects={SIDEBAR_DATA.projects} />
       </SidebarContent>
       <SidebarFooter>

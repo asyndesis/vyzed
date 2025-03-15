@@ -8,3 +8,7 @@ export const isAuthed = rule()(async (parent, args, context) => {
 export const isAdmin = rule()(async (parent, args, context) => {
   return context.user?.roles?.includes(ROLES.admin);
 });
+
+export const isPublic = rule()(async () => {
+  return true; // Always allow access
+});

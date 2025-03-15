@@ -6,7 +6,6 @@ import {
 } from "@apollo/experimental-nextjs-app-support";
 import { auth } from "@clerk/nextjs/server";
 import { setContext } from "@apollo/client/link/context";
-import { onError } from "@apollo/client/link/error";
 
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
   return new ApolloClient({
@@ -30,44 +29,6 @@ const getLink = () => {
       headers,
     };
   });
-  const redirectLink = onError(({ graphQLErrors, networkError }) => {
-    // Error monitoring etc.
-    if (graphQLErrors)
-      graphQLErrors.forEach(({ message, locations, path }) =>
-        console.error(
-          `[GraphQL error]: Message: ${message} , Location: ${locations} , Path: ${path} `
-        )
-      );
-    if (networkError) {
-      console.error(`[Network error]: ${networkError} `);
-    }
-  });
-  return authLink.concat(redirectLink).concat(httpLink);
-};
 
-// Shared error handler
-const handleError = (error) => {
-  console.error("GraphQL Error:", error);
-  // You can customize this further, e.g., show a toast notification
-};
-
-export const serverQuery = async (props) => {
-  try {
-    const result = await getClient().query(props);
-    return result;
-  } catch (error) {
-    handleError(error);
-    return {};
-  }
-};
-
-// Abstraction for mutation
-export const serverMutate = async (props) => {
-  try {
-    const result = await getClient().mutate(props);
-    return result;
-  } catch (error) {
-    handleError(error);
-    return {};
-  }
+  return authLink.concat(httpLink);
 };

@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { serverQuery } from "@/lib/apollo-client";
+import { getClient } from "@/lib/apollo-client";
 
 // GraphQL query to fetch all profiles with their skills
 const GET_TEACHERS = gql`
@@ -63,7 +63,7 @@ const renderProficiency = (skillItem) => {
 // Create a ProfileList component that fetches and displays profiles
 async function ProfileList() {
   // Fetch teachers data server-side
-  const { data } = await serverQuery({
+  const { data } = await getClient().query({
     query: GET_TEACHERS,
   });
 
