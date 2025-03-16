@@ -10,11 +10,9 @@ const isErrorRoute = createRouteMatcher(["/404"]);
 const isPublicRoute = createRouteMatcher([
   "/",
   "/:locale",
-  "/:locale/(sign-in|sign-up)(.*)",
-  "/(sign-in|sign-up)(.*)",
+  "/:locale/(sign-in|sign-up|dashboard)(.*)",
   "/api(.*)",
   "/404(.*)",
-  "/test(.*)",
 ]);
 
 const intlMiddleware = createMiddleware(routing);
