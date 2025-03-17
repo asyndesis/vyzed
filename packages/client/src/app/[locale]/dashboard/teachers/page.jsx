@@ -59,7 +59,7 @@ async function ProfileList() {
               />
               <AvatarFallback>
                 {teacher.user.firstName[0]}
-                {teacher.user.lastInitial[0]}
+                {teacher.user.lastInitial}
               </AvatarFallback>
             </Avatar>
             <div>

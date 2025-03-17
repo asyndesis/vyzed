@@ -15,7 +15,12 @@ export const userResolvers = {
       });
     },
     lastInitial: async (parent) => {
-      return parent.lastName ? parent.lastName.charAt(0) + "." : "";
+      return parent.lastName ? parent.lastName.charAt(0) : "";
+    },
+  },
+  PrivateUser: {
+    lastInitial: async (parent) => {
+      return parent.lastName ? parent.lastName.charAt(0) : "";
     },
   },
   Query: {

@@ -10,7 +10,7 @@ export const renderProficiency = (proficiency) => {
 
   switch (proficiencyLevel) {
     case 0:
-      return "Newbie (A0)";
+      return "Newbie";
     case 1:
       return "Beginner (A1)";
     case 2:
