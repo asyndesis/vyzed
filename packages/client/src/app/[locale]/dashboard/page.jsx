@@ -4,6 +4,11 @@ import { Separator } from "@/components/ui/separator";
 import { StudentProfileSection } from "./components/student-profile-section";
 import { TeacherProfileSection } from "./components/teacher-profile-section";
 
+export const metadata = {
+  title: "Dashboard",
+  description: "Manage your learning and teaching profiles",
+};
+
 // GraphQL query to fetch user profile data
 const GET_USER_PROFILES = gql`
   query GetUserProfiles {

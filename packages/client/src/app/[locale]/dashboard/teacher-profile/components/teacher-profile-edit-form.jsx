@@ -1,14 +1,10 @@
 "use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { renderProficiency, getProficiencyBadge, cn } from "@/lib/utils";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,7 +15,6 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
-import { Badge } from "@/components/ui/badge";
 import {
   Trash2,
   Plus,
@@ -36,9 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
@@ -50,6 +43,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { renderProficiency } from "@/lib/utils";
 
 // Single GraphQL mutation for updating the entire profile
 const UPDATE_TEACHER_PROFILE = gql`
@@ -101,7 +95,6 @@ const profileSchema = z.object({
 });
 
 export function TeacherProfileEditForm({ profile }) {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
@@ -260,9 +253,8 @@ export function TeacherProfileEditForm({ profile }) {
             defaultValue="profile"
             value={activeTab}
             onValueChange={setActiveTab}
-            className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList>
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Profile Information
@@ -403,7 +395,7 @@ export function TeacherProfileEditForm({ profile }) {
                             <SelectContent>
                               {[1, 2, 3, 4, 5].map((level) => (
                                 <SelectItem key={level} value={String(level)}>
-                                  {renderProficiency({ proficiency: level })}
+                                  {renderProficiency(level)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -447,20 +439,8 @@ export function TeacherProfileEditForm({ profile }) {
                             <CardContent className="p-4 flex items-center justify-between">
                               <div className="flex items-center gap-3">
                                 <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                                <div>
-                                  <div className="font-medium">
-                                    {skillItem.skillName}
-                                  </div>
-                                  <Badge
-                                    className={cn(
-                                      "mt-1 text-xs font-normal",
-                                      getProficiencyBadge(skillItem.proficiency)
-                                    )}
-                                  >
-                                    {renderProficiency({
-                                      proficiency: skillItem.proficiency,
-                                    })}
-                                  </Badge>
+                                <div className="font-medium">
+                                  {skillItem.skillName}
                                 </div>
                               </div>
 
@@ -480,9 +460,7 @@ export function TeacherProfileEditForm({ profile }) {
                                         key={level}
                                         value={String(level)}
                                       >
-                                        {renderProficiency({
-                                          proficiency: level,
-                                        })}
+                                        {renderProficiency(level)}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
@@ -520,22 +498,14 @@ export function TeacherProfileEditForm({ profile }) {
 
           {/* Consistent footer with save and done buttons */}
           <div className="flex justify-between pt-4 mt-6 border-t">
-            <Button asChild variant="outline">
-              <Link href="/dashboard">Cancel</Link>
+            <Button type="submit" disabled={isSubmitting} className="gap-2">
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Save Profile
             </Button>
-            <div className="flex gap-2">
-              <Button type="submit" disabled={isSubmitting} className="gap-2">
-                {isSubmitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4" />
-                )}
-                Save Profile
-              </Button>
-              <Button asChild variant="default">
-                <Link href="/dashboard">Done</Link>
-              </Button>
-            </div>
           </div>
         </form>
       </Form>

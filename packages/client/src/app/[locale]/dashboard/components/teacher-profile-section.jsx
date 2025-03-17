@@ -22,10 +22,10 @@ import {
   Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { renderProficiency, getProficiencyBadge, cn } from "@/lib/utils";
 import { DeleteProfileDialog } from "./delete-profile-dialog";
 import { createTeacherProfile, deleteTeacherProfile } from "../actions";
 import { useTransition } from "react";
+import UserSkillBadge from "@/components/user-skill-badge";
 
 export function TeacherProfileSection({ user, hasTeacherProfile }) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -117,7 +117,7 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
 
       {hasTeacherProfile ? (
         <div className="space-y-4 h-full">
-          <Card className="overflow-hidden transition-all hover:shadow-md flex flex-col">
+          <Card className="overflow-hidden transition-all flex flex-col">
             <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
             <CardHeader className="pb-2 pt-4">
               <div className="flex justify-between items-start">
@@ -140,28 +140,16 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
               {user.teacherProfile.skills.length > 0 ? (
                 <div className="space-y-3">
                   <p className="text-xs font-medium text-emerald-700/70 dark:text-emerald-400/70 uppercase tracking-wider">
-                    Top Skills
+                    Skills
                   </p>
-                  <ul className="space-y-2">
-                    {user.teacherProfile.skills.slice(0, 3).map((skill) => (
-                      <li
-                        key={skill.id}
-                        className="flex items-center justify-between text-sm p-2 rounded-md bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30"
-                      >
-                        <span className="font-medium truncate mr-2">
-                          {skill.skill.name}
-                        </span>
-                        <Badge
-                          className={cn(
-                            "text-xs flex-shrink-0",
-                            getProficiencyBadge(skill.proficiency)
-                          )}
-                        >
-                          {renderProficiency(skill)}
-                        </Badge>
-                      </li>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {user.teacherProfile.skills.map((userSkill) => (
+                      <UserSkillBadge
+                        key={userSkill.id}
+                        userSkill={userSkill}
+                      />
                     ))}
-                  </ul>
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-24 bg-emerald-50/30 dark:bg-emerald-900/10 rounded-md border border-emerald-100 dark:border-emerald-800/30">

@@ -7,11 +7,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClient } from "@/lib/apollo-client";
-import { renderProficiency } from "@/lib/utils";
+import UserSkillBadge from "@/components/user-skill-badge";
+
+export const metadata = {
+  title: "Teachers",
+  description: "Find a teacher for your child",
+};
 
 // GraphQL query to fetch all profiles with their skills
 const GET_TEACHERS = gql`
@@ -68,16 +72,7 @@ async function ProfileList() {
           <CardContent>
             <div className="flex flex-wrap gap-2 mt-2">
               {teacher.skills.map((skillItem) => (
-                <Badge
-                  key={skillItem.id}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                >
-                  {skillItem.skill.name}
-                  <span className="ml-1 text-xs opacity-70">
-                    {renderProficiency(skillItem)}
-                  </span>
-                </Badge>
+                <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
               ))}
             </div>
           </CardContent>

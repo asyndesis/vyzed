@@ -99,7 +99,7 @@ export function StudentProfileSection({ user, hasStudentProfile }) {
       </div>
 
       {hasStudentProfile ? (
-        <Card className="overflow-hidden transition-all hover:shadow-md flex flex-col">
+        <Card className="overflow-hidden transition-all flex flex-col">
           <div className="h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500" />
           <CardHeader className="pb-2 pt-4">
             <CardTitle className="text-lg sm:text-xl">

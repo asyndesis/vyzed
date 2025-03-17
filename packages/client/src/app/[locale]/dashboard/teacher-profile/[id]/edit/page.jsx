@@ -1,9 +1,7 @@
-"use client";
-
-import { useQuery, gql } from "@apollo/client";
+import { getClient } from "@/lib/apollo-client"; // You'll need to create this
+import { gql } from "@apollo/client";
 import { TeacherProfileEditForm } from "../../components/teacher-profile-edit-form";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useParams, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 
 // GraphQL query for teacher profile
 const GET_TEACHER_PROFILE = gql`
@@ -21,41 +19,24 @@ const GET_TEACHER_PROFILE = gql`
       }
       user {
         firstName
-        lastName
+        lastInitial
       }
     }
   }
 `;
 
-export default function EditTeacherProfilePage() {
-  const params = useParams();
+export default async function EditTeacherProfilePage({ params }) {
   const profileId = params.id;
 
-  // Use Apollo client-side query
-  const { data, loading, error } = useQuery(GET_TEACHER_PROFILE, {
+  // Server-side data fetching
+  const { data, error } = await getClient().query({
+    query: GET_TEACHER_PROFILE,
     variables: { id: profileId },
-    fetchPolicy: "cache-and-network", // Use cache but also check network for updates
   });
-
-  // Handle loading state
-  if (loading && !data) {
-    return (
-      <div className="container p-2">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Teaching Profile
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage the skills you can teach to others
-          </p>
-        </div>
-        <FormSkeleton />
-      </div>
-    );
-  }
 
   // Handle error state
   if (error) {
+    console.error("Error fetching teacher profile:", error);
     return (
       <div className="container p-2">
         <div className="p-6 border border-red-200 rounded-lg bg-red-50 dark:bg-red-900/10 dark:border-red-800/30">
@@ -85,40 +66,6 @@ export default function EditTeacherProfilePage() {
       </div>
 
       <TeacherProfileEditForm profile={data.teacherProfileById} />
-    </div>
-  );
-}
-
-function FormSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-9 w-24" />
-      </div>
-
-      <div className="space-y-2">
-        {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-16 w-full" />
-        ))}
-      </div>
-
-      <div className="h-px bg-border" />
-
-      <div className="space-y-4">
-        <Skeleton className="h-5 w-32" />
-        <div className="grid gap-4">
-          <Skeleton className="h-10 w-full" />
-          <div className="grid grid-cols-2 gap-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end">
-        <Skeleton className="h-10 w-28" />
-      </div>
     </div>
   );
 }
