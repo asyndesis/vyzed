@@ -8,11 +8,14 @@ export const userResolvers = {
         include: { skills: { include: { skill: true } } },
       });
     },
-    teacherProfiles: async (parent) => {
-      return prisma.teacherProfile.findMany({
+    teacherProfile: async (parent) => {
+      return prisma.teacherProfile.findUnique({
         where: { userId: parent.id },
         include: { skills: { include: { skill: true } } },
       });
+    },
+    lastInitial: async (parent) => {
+      return parent.lastName ? parent.lastName.charAt(0) + "." : "";
     },
   },
   Query: {

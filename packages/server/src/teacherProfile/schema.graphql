@@ -1,8 +1,7 @@
 type TeacherProfile {
   id: PostgresID!
   userId: String!
-  user: User!
-  name: String
+  user: PrivateUser!
   bio: String
   skills: [TeacherSkill!]!
   createdAt: DateTime!
@@ -13,12 +12,10 @@ type TeacherProfile {
 
 input CreateTeacherProfileInput {
   userId: String!
-  name: String
   bio: String
 }
 
 input UpdateTeacherProfileInput {
-  name: String
   bio: String
   skills: [TeacherSkillInput!]
 }
@@ -26,7 +23,7 @@ input UpdateTeacherProfileInput {
 extend type Query {
   teacherProfiles: [TeacherProfile!]!
   teacherProfileById(id: PostgresID!): TeacherProfile
-  teacherProfilesByUserId(userId: String!): [TeacherProfile!]!
+  teacherProfileByUserId(userId: String!): TeacherProfile
 }
 
 extend type Mutation {

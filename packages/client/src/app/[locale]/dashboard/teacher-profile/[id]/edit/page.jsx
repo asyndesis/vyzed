@@ -10,7 +10,6 @@ const GET_TEACHER_PROFILE = gql`
   query GetTeacherProfile($id: PostgresID!) {
     teacherProfileById(id: $id) {
       id
-      name
       bio
       skills {
         id

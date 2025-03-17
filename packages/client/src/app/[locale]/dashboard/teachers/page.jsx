@@ -21,7 +21,7 @@ const GET_TEACHERS = gql`
       user {
         id
         firstName
-        lastName
+        lastInitial
         imageUrl
       }
       skills {
@@ -51,16 +51,16 @@ async function ProfileList() {
             <Avatar className="h-12 w-12">
               <AvatarImage
                 src={teacher.user.imageUrl}
-                alt={`${teacher.user.firstName} ${teacher.user.lastName}`}
+                alt={`${teacher.user.firstName} ${teacher.user.lastInitial}`}
               />
               <AvatarFallback>
                 {teacher.user.firstName[0]}
-                {teacher.user.lastName[0]}
+                {teacher.user.lastInitial[0]}
               </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle>
-                {teacher.user.firstName} {teacher.user.lastName}
+                {teacher.user.firstName} {teacher.user.lastInitial}
               </CardTitle>
               <CardDescription>Teacher Profile</CardDescription>
             </div>

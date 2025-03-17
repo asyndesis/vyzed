@@ -32,30 +32,34 @@ model StudentProfile {
     user      User           @relation(fields: [userId], references: [id])
     name      String?
     bio       String?
-    skills    StudentSkill[]
+    skills    StudentSkill[] @relation("StudentProfileToSkills")
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
     createdBy String?
     updatedBy String?
+
+    @@map("student_profiles")
 }
 
 model TeacherProfile {
     id        String         @id @default(cuid())
-    userId    String
+    userId    String         @unique
     user      User           @relation(fields: [userId], references: [id])
     name      String?
     bio       String?
-    skills    TeacherSkill[]
+    skills    TeacherSkill[] @relation("TeacherProfileToSkills")
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
     createdBy String?
     updatedBy String?
+
+    @@map("teacher_profiles")
 }
 
 model StudentSkill {
     id               String         @id @default(cuid())
     studentProfileId String
-    studentProfile   StudentProfile @relation(fields: [studentProfileId], references: [id])
+    studentProfile   StudentProfile @relation("StudentProfileToSkills", fields: [studentProfileId], references: [id], onDelete: Cascade)
     skillId          String
     proficiency      Int
     skill            Skill          @relation(fields: [skillId], references: [id])
@@ -63,12 +67,14 @@ model StudentSkill {
     updatedAt        DateTime       @updatedAt
     createdBy        String?
     updatedBy        String?
+
+    @@map("student_skills")
 }
 
 model TeacherSkill {
     id               String         @id @default(cuid())
     teacherProfileId String
-    teacherProfile   TeacherProfile @relation(fields: [teacherProfileId], references: [id])
+    teacherProfile   TeacherProfile @relation("TeacherProfileToSkills", fields: [teacherProfileId], references: [id], onDelete: Cascade)
     skillId          String
     proficiency      Int
     skill            Skill          @relation(fields: [skillId], references: [id])
@@ -76,6 +82,8 @@ model TeacherSkill {
     updatedAt        DateTime       @updatedAt
     createdBy        String?
     updatedBy        String?
+
+    @@map("teacher_skills")
 }
 
 model Skill {

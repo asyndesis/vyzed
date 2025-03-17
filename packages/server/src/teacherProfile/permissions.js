@@ -15,10 +15,6 @@ export const teacherProfilePermissions = {
       isAuthed,
       or(isAdmin, canViewResource("teacherProfile"))
     ),
-    teacherProfilesByUserId: and(
-      isAuthed,
-      or(isAdmin, canViewResource("teacherProfile"))
-    ),
     teacherProfiles: isPublic,
   },
   Mutation: {

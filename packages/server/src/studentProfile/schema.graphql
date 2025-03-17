@@ -1,8 +1,7 @@
 type StudentProfile {
   id: PostgresID!
   userId: String!
-  user: User!
-  name: String
+  user: PrivateUser!
   bio: String
   skills: [StudentSkill!]!
   createdAt: DateTime!
@@ -13,12 +12,10 @@ type StudentProfile {
 
 input CreateStudentProfileInput {
   userId: String!
-  name: String
   bio: String
 }
 
 input UpdateStudentProfileInput {
-  name: String
   bio: String
   skills: [StudentSkillInput!]
 }

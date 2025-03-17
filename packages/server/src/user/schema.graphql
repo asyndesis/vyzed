@@ -4,15 +4,23 @@ type User {
   email: String!
   firstName: String
   lastName: String
+  lastInitial: String
   imageUrl: String
   roles: [String!]!
   authId: String!
   studentProfile: StudentProfile
-  teacherProfiles: [TeacherProfile!]!
+  teacherProfile: TeacherProfile
   createdAt: DateTime!
   updatedAt: DateTime!
   createdBy: PostgresID
   updatedBy: PostgresID
+}
+
+type PrivateUser {
+  id: PostgresID!
+  firstName: String
+  lastInitial: String
+  imageUrl: String
 }
 
 # Input Types

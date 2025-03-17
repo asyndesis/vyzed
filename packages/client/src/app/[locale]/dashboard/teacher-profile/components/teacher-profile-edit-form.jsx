@@ -59,7 +59,6 @@ const UPDATE_TEACHER_PROFILE = gql`
   ) {
     updateTeacherProfile(id: $id, input: $input) {
       id
-      name
       bio
       skills {
         id
@@ -87,9 +86,8 @@ const GET_SKILLS = gql`
   }
 `;
 
-// Combined form schema
+// Combined form schema - remove name field
 const profileSchema = z.object({
-  name: z.string().optional(),
   bio: z.string().optional(),
   skills: z.array(
     z.object({
@@ -125,11 +123,10 @@ export function TeacherProfileEditForm({ profile }) {
   // Query for skills
   const { data: skillsData, loading: skillsLoading } = useQuery(GET_SKILLS);
 
-  // Initialize form with all profile data
+  // Initialize form with all profile data - remove name field
   const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: profile.name || "",
       bio: profile.bio || "",
       skills: initialSkills,
     },
@@ -154,7 +151,7 @@ export function TeacherProfileEditForm({ profile }) {
     );
   };
 
-  // Handle form submission
+  // Handle form submission - remove name field
   async function onSubmit(values) {
     try {
       setIsSubmitting(true);
@@ -168,12 +165,11 @@ export function TeacherProfileEditForm({ profile }) {
           proficiency: skill.proficiency,
         }));
 
-      // Update profile with all data
+      // Update profile with all data - remove name field
       const result = await updateProfile({
         variables: {
           id: profile.id,
           input: {
-            name: values.name,
             bio: values.bio,
             skills: skillsInput,
           },
@@ -182,7 +178,7 @@ export function TeacherProfileEditForm({ profile }) {
 
       toast.success("Profile updated successfully");
 
-      // Update form with new data from response
+      // Update form with new data from response - remove name field
       if (result.data?.updateTeacherProfile) {
         const updatedProfile = result.data.updateTeacherProfile;
         const updatedSkills = updatedProfile.skills.map((skill) => ({
@@ -195,7 +191,6 @@ export function TeacherProfileEditForm({ profile }) {
         }));
 
         form.reset({
-          name: updatedProfile.name || "",
           bio: updatedProfile.bio || "",
           skills: updatedSkills,
         });
@@ -278,32 +273,11 @@ export function TeacherProfileEditForm({ profile }) {
               </TabsTrigger>
             </TabsList>
 
-            {/* Profile Information Tab */}
+            {/* Profile Information Tab - remove name field */}
             <TabsContent value="profile" className="mt-6">
               <div className="space-y-4">
                 <Card>
                   <CardContent className="pt-6 space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Profile Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder={`${profile.user?.firstName || ""} ${profile.user?.lastName || ""}'s Teaching Profile`}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            A name for your teaching profile that students will
-                            see
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
                     <FormField
                       control={form.control}
                       name="bio"

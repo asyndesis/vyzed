@@ -21,6 +21,12 @@ export const BreadCrumbs = ({ overrides = {}, isLoading = false }) => {
     .map((segment, index) => {
       const defaultHref = "/" + pathSegments.slice(0, index + 1).join("/");
       const override = overrides[segment];
+
+      // If override is explicitly set to { hidden: true }, skip this segment
+      if (override?.hidden === true) {
+        return null;
+      }
+
       const label = override?.label || startCase(segment);
       const href = override?.href || defaultHref;
       return { label, href };

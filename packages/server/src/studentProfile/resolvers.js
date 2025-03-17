@@ -5,8 +5,9 @@ export const studentProfileResolvers = {
     user: async (parent) => {
       const user = await prisma.user.findUnique({
         where: { id: parent.userId },
-        select: { firstName: true, id: true },
+        select: { firstName: true, lastName: true, id: true },
       });
+
       return user;
     },
     skills: async (parent) => {
@@ -43,12 +44,11 @@ export const studentProfileResolvers = {
   },
   Mutation: {
     createStudentProfile: async (_, { input }, { prisma, user }) => {
-      const { userId, name, bio } = input;
+      const { userId, bio } = input;
 
       return prisma.studentProfile.create({
         data: {
           userId,
-          name,
           bio,
           createdBy: user?.id,
           updatedBy: user?.id,
@@ -64,7 +64,7 @@ export const studentProfileResolvers = {
       });
     },
     updateStudentProfile: async (_, { id, input }, { user }) => {
-      const { name, bio, skills } = input;
+      const { bio, skills } = input;
 
       // Start a transaction to handle all updates atomically
       return await prisma.$transaction(async (tx) => {
@@ -72,7 +72,6 @@ export const studentProfileResolvers = {
         await tx.studentProfile.update({
           where: { id },
           data: {
-            name,
             bio,
             updatedBy: user?.id,
           },

@@ -5,8 +5,9 @@ export const teacherProfileResolvers = {
     user: async (parent) => {
       const user = await prisma.user.findUnique({
         where: { id: parent.userId },
-        select: { firstName: true, id: true },
+        select: { firstName: true, lastName: true, id: true },
       });
+
       return user;
     },
     skills: async (parent) => {
@@ -25,14 +26,6 @@ export const teacherProfileResolvers = {
         throw new Error(err.message);
       }
     },
-    teacherProfilesByUserId: async (parent, args) => {
-      const { userId } = args;
-      try {
-        return await prisma.teacherProfile.findMany({ where: { userId } });
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
     teacherProfiles: async () => {
       try {
         return await prisma.teacherProfile.findMany();
@@ -43,12 +36,11 @@ export const teacherProfileResolvers = {
   },
   Mutation: {
     createTeacherProfile: async (_, { input }, { user }) => {
-      const { userId, name, bio } = input;
+      const { userId, bio } = input;
 
       return prisma.teacherProfile.create({
         data: {
           userId,
-          name,
           bio,
           createdBy: user?.id,
           updatedBy: user?.id,
@@ -64,7 +56,7 @@ export const teacherProfileResolvers = {
       });
     },
     updateTeacherProfile: async (_, { id, input }, { user }) => {
-      const { name, bio, skills } = input;
+      const { bio, skills } = input;
 
       // Start a transaction to handle all updates atomically
       return await prisma.$transaction(async (tx) => {
@@ -72,7 +64,6 @@ export const teacherProfileResolvers = {
         await tx.teacherProfile.update({
           where: { id },
           data: {
-            name,
             bio,
             updatedBy: user?.id,
           },
