@@ -1,4 +1,3 @@
-import { getTranslations } from "next-intl/server";
 import { gql } from "@apollo/client";
 import {
   Card,
@@ -12,53 +11,30 @@ import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClient } from "@/lib/apollo-client";
+import { renderProficiency } from "@/lib/utils";
 
 // GraphQL query to fetch all profiles with their skills
 const GET_TEACHERS = gql`
-  query GetTeachers {
-    getTeachers {
-      id
-      firstName
-      lastName
-      imageUrl
-      userSkills {
+  query TeacherProfiles {
+    teacherProfiles {
+      userId
+      user {
         id
-        proficiency
+        firstName
+        lastName
+        imageUrl
+      }
+      skills {
+        id
         skill {
           id
           name
         }
+        proficiency
       }
-      createdAt
     }
   }
 `;
-
-// Helper function to render proficiency based on skill type and level
-const renderProficiency = (skillItem) => {
-  const proficiencyLevel = parseInt(skillItem.proficiency);
-
-  switch (proficiencyLevel) {
-    case 0:
-      return "Newb";
-    case 1:
-      return "A1";
-    case 2:
-      return "A2";
-    case 3:
-      return "B1";
-    case 4:
-      return "B2";
-    case 5:
-      return "C1";
-    case 6:
-      return "C2";
-    case 7:
-      return "Native";
-    default:
-      return "";
-  }
-};
 
 // Create a ProfileList component that fetches and displays profiles
 async function ProfileList() {
@@ -68,32 +44,30 @@ async function ProfileList() {
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {data.getTeachers.map((teacher) => (
-        <Card key={teacher.id} className="overflow-hidden">
+    <div className="grid grid-cols-1 gap-6">
+      {data.teacherProfiles.map((teacher) => (
+        <Card key={teacher.userId} className="overflow-hidden">
           <CardHeader className="flex flex-row items-center gap-4 pb-2">
             <Avatar className="h-12 w-12">
               <AvatarImage
-                src={teacher.imageUrl}
-                alt={`${teacher.firstName} ${teacher.lastName}`}
+                src={teacher.user.imageUrl}
+                alt={`${teacher.user.firstName} ${teacher.user.lastName}`}
               />
               <AvatarFallback>
-                {teacher.firstName[0]}
-                {teacher.lastName[0]}
+                {teacher.user.firstName[0]}
+                {teacher.user.lastName[0]}
               </AvatarFallback>
             </Avatar>
             <div>
               <CardTitle>
-                {teacher.firstName} {teacher.lastName}
+                {teacher.user.firstName} {teacher.user.lastName}
               </CardTitle>
-              <CardDescription>
-                Joined {new Date(teacher.createdAt).toLocaleDateString()}
-              </CardDescription>
+              <CardDescription>Teacher Profile</CardDescription>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2 mt-2">
-              {teacher.userSkills.map((skillItem) => (
+              {teacher.skills.map((skillItem) => (
                 <Badge
                   key={skillItem.id}
                   variant="secondary"
@@ -116,7 +90,7 @@ async function ProfileList() {
 // Create a loading skeleton component
 function ProfileSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6">
       {[...Array(6)].map((_, i) => (
         <Card key={i} className="overflow-hidden">
           <CardHeader className="flex flex-row items-center gap-4 pb-2">
@@ -140,13 +114,8 @@ function ProfileSkeleton() {
 }
 
 export default async function TeachersPage() {
-  const t = await getTranslations("TeachersPage");
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">
-        {t("teachersTitle", "Teachers")}
-      </h1>
+    <div className="container p-2">
       <Suspense fallback={<ProfileSkeleton />}>
         <ProfileList />
       </Suspense>

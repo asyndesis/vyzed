@@ -56,13 +56,22 @@ app.use(
   bodyParser.json(),
   expressMiddleware(server, {
     context: async ({ req }) => {
-      // Check if they are authed.  If so, let's attach the user to the context
-      // and we can use that data inside of our permissions
+      // Create context with prisma client
+      const context = {
+        prisma,
+        user: null,
+      };
+
+      // Check if they are authed. If so, attach the user to the context
       const authId = req.auth.userId;
       if (authId) {
         const dbUser = await prisma.user.findUnique({ where: { authId } });
-        return { user: { ...dbUser, authId } };
+        if (dbUser) {
+          context.user = { ...dbUser, authId };
+        }
       }
+
+      return context;
     },
   })
 );

@@ -2,8 +2,17 @@ import { prisma } from "@vyzed/prisma";
 
 export const userResolvers = {
   User: {
-    userSkills: async (parent) => {
-      return prisma.userSkill.findMany({ where: { userId: parent.id } });
+    studentProfile: async (parent) => {
+      return prisma.studentProfile.findUnique({
+        where: { userId: parent.id },
+        include: { skills: { include: { skill: true } } },
+      });
+    },
+    teacherProfiles: async (parent) => {
+      return prisma.teacherProfile.findMany({
+        where: { userId: parent.id },
+        include: { skills: { include: { skill: true } } },
+      });
     },
   },
   Query: {
@@ -38,26 +47,6 @@ export const userResolvers = {
     users: async () => {
       try {
         return await prisma.user.findMany();
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
-    getTeachers: async () => {
-      try {
-        return await prisma.user.findMany({
-          where: {
-            roles: {
-              has: "teacher",
-            },
-          },
-          include: {
-            userSkills: {
-              include: {
-                skill: true,
-              },
-            },
-          },
-        });
       } catch (err) {
         throw new Error(err.message);
       }

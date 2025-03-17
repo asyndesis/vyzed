@@ -1,17 +1,18 @@
 # Type Definitions
 type User {
-  id: ID!
+  id: PostgresID!
   email: String!
   firstName: String
   lastName: String
   imageUrl: String
   roles: [String!]!
   authId: String!
-  userSkills: [UserSkill!]!
+  studentProfile: StudentProfile
+  teacherProfiles: [TeacherProfile!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  createdBy: String
-  updatedBy: String
+  createdBy: PostgresID
+  updatedBy: PostgresID
 }
 
 # Input Types
@@ -35,7 +36,7 @@ input UpdateUserInput {
 # Queries
 type Query {
   me: User
-  userById(id: ObjectID!): User
+  userById(id: PostgresID!): User
   userByAuthId(authId: String!): User
   checkUserExistsByAuthId(authId: String!): Boolean!
   users: [User!]!
@@ -46,6 +47,6 @@ type Query {
 type Mutation {
   createMyUser(input: CreateUserInput!): User!
   createUser(input: CreateUserInput!): User!
-  updateUser(id: ObjectID!, input: UpdateUserInput!): User!
-  deleteUser(id: ObjectID!): Boolean!
+  updateUser(id: PostgresID!, input: UpdateUserInput!): User!
+  deleteUser(id: PostgresID!): Boolean!
 }

@@ -1,0 +1,39 @@
+type TeacherProfile {
+  id: PostgresID!
+  userId: String!
+  user: User!
+  name: String
+  bio: String
+  skills: [TeacherSkill!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+input CreateTeacherProfileInput {
+  userId: String!
+  name: String
+  bio: String
+}
+
+input UpdateTeacherProfileInput {
+  name: String
+  bio: String
+  skills: [TeacherSkillInput!]
+}
+
+extend type Query {
+  teacherProfiles: [TeacherProfile!]!
+  teacherProfileById(id: PostgresID!): TeacherProfile
+  teacherProfilesByUserId(userId: String!): [TeacherProfile!]!
+}
+
+extend type Mutation {
+  createTeacherProfile(input: CreateTeacherProfileInput!): TeacherProfile!
+  updateTeacherProfile(
+    id: PostgresID!
+    input: UpdateTeacherProfileInput!
+  ): TeacherProfile!
+  deleteTeacherProfile(id: PostgresID!): Boolean!
+}

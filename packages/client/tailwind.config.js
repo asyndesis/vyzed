@@ -1,5 +1,4 @@
-import tailwindAnimate from "tailwindcss-animate";
-const { fontFamily } = require("tailwindcss/defaultTheme");
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
@@ -7,12 +6,13 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans], //
-        mono: ["var(--font-geist-mono)", ...fontFamily.mono], // <--------- 👈
+        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        mono: ["var(--font-geist-mono)", ...fontFamily.mono],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -95,5 +95,5 @@ export default {
       },
     },
   },
-  plugins: [tailwindAnimate, require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate")],
 };

@@ -1,51 +1,51 @@
-import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
-import { TeamSwitcher } from "./team-switcher";
+import { NavMain } from "./nav-main";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavActions } from "./nav-actions";
+import { HomeIcon, SettingsIcon, UsersIcon } from "lucide-react";
 
 export function AppSidebar({ ...props }) {
-  const SIDEBAR_DATA = {
-    teams: [
-      {
-        name: "Hotdog Science",
-        logo: "GalleryVerticalEnd",
-        plan: "Enterprise",
-      },
-    ],
-    projects: [
-      {
-        name: "Project 1",
-        url: "#",
-        icon: "Frame",
-      },
-      {
-        name: "Project 2",
-        url: "#",
-        icon: "PieChart",
-      },
-      {
-        name: "Project 3",
-        url: "#",
-        icon: "Map",
-      },
-    ],
-  };
+  const navigationItems = [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: HomeIcon,
+      isActive: true,
+    },
+    {
+      title: "Teachers",
+      url: "/dashboard/teachers",
+      icon: UsersIcon,
+    },
+    {
+      title: "Settings",
+      url: "/dashboard/settings",
+      icon: SettingsIcon,
+      items: [
+        {
+          title: "Profile Settings",
+          url: "/dashboard/settings/profile",
+        },
+        {
+          title: "Account Settings",
+          url: "/dashboard/settings/account",
+        },
+        {
+          title: "Notification Settings",
+          url: "/dashboard/settings/notifications",
+        },
+      ],
+    },
+  ];
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={SIDEBAR_DATA.teams} />
-      </SidebarHeader>
       <SidebarContent>
-        <NavActions />
-        <NavProjects projects={SIDEBAR_DATA.projects} />
+        <NavMain items={navigationItems} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

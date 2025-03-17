@@ -1,0 +1,2 @@
+# Custom scalar for PostgreSQL IDs
+scalar PostgresID

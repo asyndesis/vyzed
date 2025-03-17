@@ -1,0 +1,18 @@
+type TeacherSkill {
+  id: PostgresID!
+  teacherProfileId: PostgresID!
+  teacherProfile: TeacherProfile!
+  skillId: PostgresID!
+  skill: Skill!
+  proficiency: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+input TeacherSkillInput {
+  id: PostgresID
+  skillId: PostgresID!
+  proficiency: Int!
+}

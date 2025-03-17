@@ -16,5 +16,9 @@
     "profileCreated": "Profile created",
     "skills": "Skills",
     "noSkills": "No skills added yet"
+  },
+  "TeacherProfiles": {
+    "title": "Teacher Profiles",
+    "noProfiles": "No teacher profiles found"
   }
 }

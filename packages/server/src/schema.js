@@ -29,10 +29,17 @@ const getGraphqlFilesOneLevelDeep = (dir) => {
   return files;
 };
 
-// Get all .graphql files one level deep
+// First, read the base schema that contains our custom scalar definitions
+const baseSchemaPath = path.join(__dirname, "schema.graphql");
+const baseSchema = readFileSync(baseSchemaPath, "utf-8");
+
+// Get all other .graphql files one level deep
 const schemaFiles = getGraphqlFilesOneLevelDeep(__dirname);
 
 // Read the contents of each .graphql file
-const typeDefs = schemaFiles.map((file) => readFileSync(file, "utf-8"));
+const typeDefs = [
+  baseSchema,
+  ...schemaFiles.map((file) => readFileSync(file, "utf-8")),
+];
 
 export { typeDefs };

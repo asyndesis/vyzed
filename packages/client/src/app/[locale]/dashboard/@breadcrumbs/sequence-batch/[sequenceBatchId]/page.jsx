@@ -4,7 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import { useParams } from "next/navigation";
 
 const sequenceBatchQuery = gql`
-  query sequenceBatch($id: ObjectID!) {
+  query sequenceBatch($id: PostgresID!) {
     sequenceBatch(id: $id) {
       id
       name

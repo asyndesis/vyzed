@@ -3,30 +3,38 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { gql, useQuery } from "@apollo/client";
 import { useParams } from "next/navigation";
 
-const sequenceQuery = gql`
-  query sequence($id: ObjectID!) {
-    sequence(id: $id) {
+const teacherProfileQuery = gql`
+  query TeacherProfile($id: PostgresID!) {
+    teacherProfileById(id: $id) {
       id
-      name
+      user {
+        firstName
+        lastName
+      }
     }
   }
 `;
 
 export default function Page() {
-  const { sequenceId } = useParams();
+  const { id } = useParams();
 
-  const { data, loading } = useQuery(sequenceQuery, {
+  const { data, loading } = useQuery(teacherProfileQuery, {
     variables: {
-      id: sequenceId,
+      id,
     },
   });
+
+  const profile = data?.teacherProfileById;
+  const teacherName = profile?.user
+    ? `${profile.user.firstName} ${profile.user.lastName}'s Profile`
+    : "Teacher Profile";
 
   return (
     <BreadCrumbs
       isLoading={loading}
       overrides={{
-        sequence: { href: "/dashboard" },
-        [sequenceId]: { label: data?.sequence?.name || "Error" },
+        "teacher-profile": { href: "/dashboard", label: "Teacher Profiles" },
+        [id]: { label: teacherName },
       }}
     />
   );

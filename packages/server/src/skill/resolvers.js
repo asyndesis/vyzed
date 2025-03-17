@@ -9,8 +9,11 @@ export const skillResolvers = {
     children: async (parent) => {
       return prisma.skill.findMany({ where: { parentId: parent.id } });
     },
-    userSkills: async (parent) => {
-      return prisma.userSkill.findMany({ where: { skillId: parent.id } });
+    teacherSkills: async (parent) => {
+      return prisma.teacherSkill.findMany({ where: { skillId: parent.id } });
+    },
+    studentSkills: async (parent) => {
+      return prisma.studentSkill.findMany({ where: { skillId: parent.id } });
     },
   },
   Query: {

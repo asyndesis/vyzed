@@ -11,45 +11,85 @@ datasource db {
 }
 
 model User {
-    id         String      @id @default(cuid())
-    email      String      @unique
-    firstName  String?
-    lastName   String?
-    imageUrl   String?
-    roles      String[]    @default([])
-    authId     String      @unique
-    userSkills UserSkill[]
-    createdAt  DateTime    @default(now())
-    updatedAt  DateTime    @updatedAt
-    createdBy  String?
-    updatedBy  String?
+    id              String           @id @default(cuid())
+    email           String           @unique
+    firstName       String?
+    lastName        String?
+    imageUrl        String?
+    roles           String[]         @default([])
+    authId          String           @unique
+    studentProfile  StudentProfile?
+    teacherProfiles TeacherProfile[]
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
+    createdBy       String?
+    updatedBy       String?
 }
 
-model UserSkill {
-    id          String    @id @default(cuid())
-    userId      String
-    user        User      @relation(fields: [userId], references: [id])
-    skillId     String
-    skillRole   SkillRole @default(student)
-    proficiency Int
-    skill       Skill     @relation(fields: [skillId], references: [id])
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    createdBy   String?
-    updatedBy   String?
+model StudentProfile {
+    id        String         @id @default(cuid())
+    userId    String         @unique
+    user      User           @relation(fields: [userId], references: [id])
+    name      String?
+    bio       String?
+    skills    StudentSkill[]
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+    createdBy String?
+    updatedBy String?
+}
+
+model TeacherProfile {
+    id        String         @id @default(cuid())
+    userId    String
+    user      User           @relation(fields: [userId], references: [id])
+    name      String?
+    bio       String?
+    skills    TeacherSkill[]
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+    createdBy String?
+    updatedBy String?
+}
+
+model StudentSkill {
+    id               String         @id @default(cuid())
+    studentProfileId String
+    studentProfile   StudentProfile @relation(fields: [studentProfileId], references: [id])
+    skillId          String
+    proficiency      Int
+    skill            Skill          @relation(fields: [skillId], references: [id])
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    createdBy        String?
+    updatedBy        String?
+}
+
+model TeacherSkill {
+    id               String         @id @default(cuid())
+    teacherProfileId String
+    teacherProfile   TeacherProfile @relation(fields: [teacherProfileId], references: [id])
+    skillId          String
+    proficiency      Int
+    skill            Skill          @relation(fields: [skillId], references: [id])
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    createdBy        String?
+    updatedBy        String?
 }
 
 model Skill {
-    id         String      @id @default(cuid())
-    name       String
-    parentId   String?
-    parent     Skill?      @relation("SkillHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-    children   Skill[]     @relation("SkillHierarchy")
-    userSkills UserSkill[]
-    createdAt  DateTime    @default(now())
-    updatedAt  DateTime    @updatedAt
-    createdBy  String?
-    updatedBy  String?
+    id            String         @id @default(cuid())
+    name          String
+    parentId      String?
+    parent        Skill?         @relation("SkillHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+    children      Skill[]        @relation("SkillHierarchy")
+    teacherSkills TeacherSkill[]
+    studentSkills StudentSkill[]
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    createdBy     String?
+    updatedBy     String?
 }
 
 enum SkillRole {

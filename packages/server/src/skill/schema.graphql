@@ -1,32 +1,33 @@
 # Type Definitions
 type Skill {
-  id: ID!
+  id: PostgresID!
   name: String!
-  parentId: String
+  parentId: PostgresID
   parent: Skill
   children: [Skill!]!
-  userSkills: [UserSkill!]!
+  teacherSkills: [TeacherSkill!]!
+  studentSkills: [StudentSkill!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  createdBy: String
-  updatedBy: String
+  createdBy: PostgresID
+  updatedBy: PostgresID
 }
 
 # Input Types
 input CreateSkillInput {
   name: String!
-  parentId: String
+  parentId: PostgresID
 }
 
 input UpdateSkillInput {
   name: String
-  parentId: String
+  parentId: PostgresID
 }
 
 # Queries
 type Query {
-  skillById(id: ObjectID!): Skill
-  skillsByParentId(parentId: String): [Skill!]!
+  skillById(id: PostgresID!): Skill
+  skillsByParentId(parentId: PostgresID): [Skill!]!
   rootSkills: [Skill!]!
   allSkills: [Skill!]!
 }
@@ -34,6 +35,6 @@ type Query {
 # Mutations
 type Mutation {
   createSkill(input: CreateSkillInput!): Skill!
-  updateSkill(id: ObjectID!, input: UpdateSkillInput!): Skill!
-  deleteSkill(id: ObjectID!): Boolean!
+  updateSkill(id: PostgresID!, input: UpdateSkillInput!): Skill!
+  deleteSkill(id: PostgresID!): Boolean!
 }

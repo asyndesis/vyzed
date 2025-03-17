@@ -10,7 +10,7 @@ const isErrorRoute = createRouteMatcher(["/404"]);
 const isPublicRoute = createRouteMatcher([
   "/",
   "/:locale",
-  "/:locale/(sign-in|sign-up|dashboard)(.*)",
+  "/:locale/(sign-in|sign-up)(.*)",
   "/api(.*)",
   "/404(.*)",
 ]);

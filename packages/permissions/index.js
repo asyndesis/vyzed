@@ -12,7 +12,13 @@ const PERMISSIONS = {
       update: true,
       delete: true,
     },
-    userSkill: {
+    studentProfile: {
+      view: true,
+      create: true,
+      update: true,
+      delete: true,
+    },
+    teacherProfile: {
       view: true,
       create: true,
       update: true,
@@ -26,11 +32,17 @@ const PERMISSIONS = {
       update: (me, user) => user.createdBy === me.id,
       delete: (me, user) => user.createdBy === me.id,
     },
-    userSkill: {
-      view: (me, userSkill) => userSkill.createdBy === me.id,
-      create: (me, userSkill) => userSkill.createdBy === me.id,
-      update: (me, userSkill) => userSkill.createdBy === me.id,
-      delete: (me, userSkill) => userSkill.createdBy === me.id,
+    studentProfile: {
+      view: true,
+      create: (me, studentProfile) => studentProfile.userId === me.id,
+      update: (me, studentProfile) => studentProfile.userId === me.id,
+      delete: (me, studentProfile) => studentProfile.userId === me.id,
+    },
+    teacherProfile: {
+      view: true,
+      create: (me, teacherProfile) => teacherProfile.userId === me.id,
+      update: (me, teacherProfile) => teacherProfile.userId === me.id,
+      delete: (me, teacherProfile) => teacherProfile.userId === me.id,
     },
   },
 };

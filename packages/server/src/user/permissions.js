@@ -1,5 +1,5 @@
 import { and } from "graphql-shield";
-import { isAdmin, isAuthed, isPublic } from "../rules";
+import { isAdmin, isAuthed } from "../rules";
 
 export const userPermissions = {
   Query: {
@@ -7,7 +7,6 @@ export const userPermissions = {
     userById: and(isAuthed, isAdmin),
     userByAuthId: and(isAuthed, isAdmin),
     users: and(isAuthed, isAdmin),
-    getTeachers: isPublic,
   },
   Mutation: {
     createUser: and(isAuthed, isAdmin),

@@ -1,0 +1,39 @@
+type StudentProfile {
+  id: PostgresID!
+  userId: String!
+  user: User!
+  name: String
+  bio: String
+  skills: [StudentSkill!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+input CreateStudentProfileInput {
+  userId: String!
+  name: String
+  bio: String
+}
+
+input UpdateStudentProfileInput {
+  name: String
+  bio: String
+  skills: [StudentSkillInput!]
+}
+
+type Query {
+  studentProfiles: [StudentProfile!]!
+  studentProfileById(id: PostgresID!): StudentProfile
+  studentProfileByUserId(userId: String!): StudentProfile
+}
+
+type Mutation {
+  createStudentProfile(input: CreateStudentProfileInput!): StudentProfile!
+  updateStudentProfile(
+    id: PostgresID!
+    input: UpdateStudentProfileInput!
+  ): StudentProfile!
+  deleteStudentProfile(id: PostgresID!): Boolean!
+}
