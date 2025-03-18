@@ -56,19 +56,28 @@ app.use(
   bodyParser.json(),
   expressMiddleware(server, {
     context: async ({ req }) => {
-      // Create context with prisma client
+      // Initialize context with prisma client
       const context = {
         prisma,
         user: null,
+        auth: null,
       };
 
       // Check if they are authed. If so, attach the user to the context
-      const authId = req.auth.userId;
-      if (authId) {
-        const dbUser = await prisma.user.findUnique({ where: { authId } });
-        if (dbUser) {
-          context.user = { ...dbUser, authId };
-        }
+      const clerkUserId = req.auth?.userId;
+      if (!clerkUserId) return context;
+
+      // Could store whole auth object here, but lets be conscise
+      context.auth = { userId: clerkUserId };
+
+      // Fetch user from database
+      const dbUser = await prisma.user.findUnique({
+        where: { authId: clerkUserId },
+      });
+
+      // If we have a dbUser, add it to the context
+      if (dbUser) {
+        context.user = { ...dbUser, authId: clerkUserId };
       }
 
       return context;

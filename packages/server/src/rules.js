@@ -1,6 +1,10 @@
 import { rule } from "graphql-shield";
 import { ROLES, hasPermission } from "@vyzed/permissions";
 
+export const isClerkAuthed = rule()(async (parent, args, context) => {
+  return !!context?.auth?.userId; // Check if user is authenticated
+});
+
 export const isAuthed = rule()(async (parent, args, context) => {
   return !!context?.user?.authId; // Check if user is authenticated
 });

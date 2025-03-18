@@ -5,14 +5,12 @@ import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
 const isRootRoute = createRouteMatcher(["/"]);
-const isErrorRoute = createRouteMatcher(["/404"]);
 
 const isPublicRoute = createRouteMatcher([
   "/",
   "/:locale",
   "/:locale/(sign-in|sign-up)(.*)",
   "/api(.*)",
-  "/404(.*)",
 ]);
 
 const intlMiddleware = createMiddleware(routing);
@@ -34,10 +32,8 @@ export default clerkMiddleware(async (auth, req) => {
         token,
       });
     } catch (e) {
-      console.error(e);
-      if (!isErrorRoute(req)) {
-        return NextResponse.redirect(new URL("/404", req.url));
-      }
+      console.error("Onboarding error:", e);
+      return NextResponse.next();
     }
 
     // if (isRootRoute(req)) {

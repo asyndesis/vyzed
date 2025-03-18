@@ -26,7 +26,7 @@ import { DeleteProfileDialog } from "./delete-profile-dialog";
 import { createTeacherProfile, deleteTeacherProfile } from "../actions";
 import { useTransition } from "react";
 import UserSkillBadge from "@/components/user-skill-badge";
-
+import { convert } from "html-to-text";
 export function TeacherProfileSection({ user, hasTeacherProfile }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
@@ -130,10 +130,8 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
               </div>
               <CardDescription>
                 {user.teacherProfile.bio
-                  ? user.teacherProfile.bio.length > 100
-                    ? user.teacherProfile.bio.substring(0, 100) + "..."
-                    : user.teacherProfile.bio
-                  : "Share your knowledge and expertise"}
+                  ? convert(user.teacherProfile.bio)
+                  : ""}
               </CardDescription>
             </CardHeader>
             <CardContent className="pb-3 pt-0">

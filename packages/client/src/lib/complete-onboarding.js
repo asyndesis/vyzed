@@ -18,20 +18,26 @@ const createUserMutation = gql`
 
 /* Someday we'll have a page that handles this  so user can fill in extra info after signup */
 export const completeOnboarding = async ({ authId, token }) => {
-  const { data } = await getClient().query({
-    query: getUserQuery,
-    variables: {
-      authId,
-    },
-    context: {
-      headers: {
-        authorization: `Bearer ${token}`,
+  let userData;
+  try {
+    const response = await getClient().query({
+      query: getUserQuery,
+      variables: {
+        authId,
       },
-    },
-  });
+      context: {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    });
+    userData = response.data.checkUserExistsByAuthId;
+  } catch (error) {
+    console.log("hey");
+  }
 
   // If the user already exists in the database, skip onboarding
-  if (data?.checkUserExistsByAuthId) return;
+  if (userData) return;
 
   // Fetch user information from Clerk
   const client = await clerkClient();

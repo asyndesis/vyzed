@@ -84,9 +84,10 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    createMyUser: async (parent, args, { user }) => {
-      const { input } = args; // Use 'input' as per your generated types
-      const { authId } = user;
+    createMyUser: async (parent, args, { auth }) => {
+      const { input } = args;
+      // They don't have a user yet, so we rely on clerk auth
+      const { userId: authId } = auth;
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: input.email },

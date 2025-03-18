@@ -13,6 +13,7 @@
     "prisma:build": "npm run -w @vyzed/prisma build",
     "prisma:migrate:dev": "npm run -w @vyzed/prisma migrate:dev",
     "prisma:migrate:deploy": "npm run -w @vyzed/prisma migrate:deploy",
+    "prisma:migrate:reset": "npm run -w @vyzed/prisma migrate:reset",
     "prisma:generate": "npm run -w @vyzed/prisma generate",
     "prisma:push": "npm run -w @vyzed/prisma push",
     "prisma:studio": "npm run -w @vyzed/prisma studio",

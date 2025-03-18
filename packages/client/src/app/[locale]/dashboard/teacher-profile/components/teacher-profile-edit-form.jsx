@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { renderProficiency } from "@/lib/utils";
+import Tiptap from "@/components/tip-tap";
 
 const SKILL_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
@@ -358,11 +359,7 @@ export function TeacherProfileEditForm({ profile }) {
                   <FormItem>
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Tell students about your teaching experience and approach..."
-                        className="min-h-[300px]"
-                        {...field}
-                      />
+                      <Tiptap {...field} />
                     </FormControl>
                     <FormDescription>
                       Describe your teaching style, experience, and what

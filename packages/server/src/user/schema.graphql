@@ -48,7 +48,6 @@ type Query {
   userByAuthId(authId: String!): User
   checkUserExistsByAuthId(authId: String!): Boolean!
   users: [User!]!
-  getTeachers: [User!]!
 }
 
 # Mutations

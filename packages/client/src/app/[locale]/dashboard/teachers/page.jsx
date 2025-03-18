@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClient } from "@/lib/apollo-client";
 import UserSkillBadge from "@/components/user-skill-badge";
+import { convert } from "html-to-text";
 
 export const metadata = {
   title: "Teachers",
@@ -22,6 +23,7 @@ const GET_TEACHERS = gql`
   query TeacherProfiles {
     teacherProfiles {
       userId
+      bio
       user {
         id
         firstName
@@ -49,35 +51,45 @@ async function ProfileList() {
 
   return (
     <div className="grid grid-cols-1 gap-6">
-      {data.teacherProfiles.map((teacher) => (
-        <Card key={teacher.userId} className="overflow-hidden">
-          <CardHeader className="flex flex-row items-center gap-4 pb-2">
-            <Avatar className="h-12 w-12">
-              <AvatarImage
-                src={teacher.user.imageUrl}
-                alt={`${teacher.user.firstName} ${teacher.user.lastInitial}`}
-              />
-              <AvatarFallback>
-                {teacher.user.firstName[0]}
-                {teacher.user.lastInitial}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle>
-                {teacher.user.firstName} {teacher.user.lastInitial}
-              </CardTitle>
-              <CardDescription>Teacher Profile</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {teacher.skills.map((skillItem) => (
-                <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {data.teacherProfiles.map((teacher) => {
+        const sanitizedBio = teacher.bio ? convert(teacher.bio) : "";
+
+        return (
+          <Card key={teacher.userId} className="overflow-hidden">
+            <CardHeader className="flex flex-row items-center gap-4 pb-2">
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  src={teacher.user.imageUrl}
+                  alt={`${teacher.user.firstName} ${teacher.user.lastInitial}`}
+                />
+                <AvatarFallback>
+                  {teacher.user.firstName[0]}
+                  {teacher.user.lastInitial}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle>
+                  {teacher.user.firstName} {teacher.user.lastInitial}
+                </CardTitle>
+                <CardDescription>Teacher Profile</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {sanitizedBio && (
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none mb-4"
+                  dangerouslySetInnerHTML={{ __html: sanitizedBio }}
+                />
+              )}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {teacher.skills.map((skillItem) => (
+                  <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
@@ -96,6 +108,7 @@ function ProfileSkeleton() {
             </div>
           </CardHeader>
           <CardContent>
+            <Skeleton className="h-24 w-full mb-4" />
             <div className="flex flex-wrap gap-2 mt-2">
               <Skeleton className="h-6 w-16 rounded-full" />
               <Skeleton className="h-6 w-20 rounded-full" />

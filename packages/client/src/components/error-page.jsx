@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
+import { SignOutButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 export function ErrorPage({
   statusCode = 500,
@@ -38,6 +40,9 @@ export function ErrorPage({
             >
               {actionText}
             </Link>
+            <SignOutButton>
+              <Button variant="outline">Log out</Button>
+            </SignOutButton>
           </div>
         </div>
       </div>

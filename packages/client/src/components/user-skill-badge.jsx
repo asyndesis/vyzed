@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { renderProficiency } from "@/lib/utils";
 
 const UserSkillBadge = ({ userSkill }) => {
-  console.log(userSkill);
   return (
     <Badge
       key={userSkill.id}
@@ -11,7 +10,7 @@ const UserSkillBadge = ({ userSkill }) => {
     >
       {userSkill.skill.name}
       <span className="ml-1 text-xs opacity-70">
-        {renderProficiency(userSkill.proficiency)}
+        {renderProficiency({ level: userSkill.proficiency })}
       </span>
     </Badge>
   );
