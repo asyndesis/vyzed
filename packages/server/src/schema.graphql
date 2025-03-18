@@ -1,2 +1,3 @@
 # Custom scalar for PostgreSQL IDs
 scalar PostgresID
+scalar DateTime

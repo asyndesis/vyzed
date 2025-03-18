@@ -58,9 +58,8 @@ export default async function DashboardPage() {
         <p className="text-sm sm:text-base text-muted-foreground">
           Manage your learning and teaching profiles
         </p>
-        <Separator className="mt-4" />
       </header>
-
+      <Separator />
       {/* Profiles Grid - Improved spacing and responsiveness */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         {/* Student Profile Section */}

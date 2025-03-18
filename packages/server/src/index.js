@@ -45,7 +45,25 @@ const schema = makeExecutableSchema({
 const schemaWithMiddleware = applyMiddleware(schema, permissions);
 const server = new ApolloServer({
   schema: schemaWithMiddleware,
-  plugins: [],
+  plugins: [
+    {
+      async requestDidStart() {
+        return {
+          async didEncounterErrors({ errors, request }) {
+            console.error("GraphQL Error:", {
+              query: request.query,
+              variables: request.variables,
+              errors: errors.map((err) => ({
+                message: err.message,
+                path: err.path,
+                stack: err.originalError?.stack,
+              })),
+            });
+          },
+        };
+      },
+    },
+  ],
   introspection: process.env.NODE_ENV === "development",
 });
 

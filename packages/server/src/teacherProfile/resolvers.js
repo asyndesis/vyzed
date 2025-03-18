@@ -5,7 +5,13 @@ export const teacherProfileResolvers = {
     user: async (parent) => {
       const user = await prisma.user.findUnique({
         where: { id: parent.userId },
-        select: { firstName: true, lastName: true, id: true },
+        select: {
+          firstName: true,
+          lastName: true,
+          id: true,
+          imageUrl: true,
+          createdAt: true,
+        },
       });
 
       return user;

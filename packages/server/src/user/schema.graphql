@@ -21,6 +21,7 @@ type PrivateUser {
   firstName: String
   lastInitial: String
   imageUrl: String
+  createdAt: DateTime!
 }
 
 # Input Types

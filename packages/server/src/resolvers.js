@@ -3,11 +3,12 @@ import { skillResolvers } from "./skill/resolvers";
 import { studentProfileResolvers } from "./studentProfile/resolvers";
 import { teacherProfileResolvers } from "./teacherProfile/resolvers";
 import { customScalars } from "./scalars";
+import { DateTimeResolver } from "graphql-scalars";
 
 export const resolvers = {
   // Add custom scalars
   PostgresID: customScalars.PostgresID,
-
+  DateTime: DateTimeResolver,
   ...userResolvers,
   ...skillResolvers,
   ...studentProfileResolvers,
