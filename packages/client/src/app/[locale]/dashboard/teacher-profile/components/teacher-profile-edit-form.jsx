@@ -64,6 +64,7 @@ const UPDATE_TEACHER_PROFILE = gql`
         skill {
           id
           name
+          framework
         }
       }
     }
@@ -76,9 +77,11 @@ const GET_SKILLS = gql`
     rootSkills {
       id
       name
+      framework
       children {
         id
         name
+        framework
       }
     }
   }
@@ -112,6 +115,7 @@ export function TeacherProfileEditForm({ profile }) {
         skillId: skill.skill.id,
         proficiency: skill.proficiency,
         skillName: skill.skill.name,
+        framework: skill.skill.framework,
         isDeleted: false,
         isNew: false,
       })) || [],
@@ -214,6 +218,27 @@ export function TeacherProfileEditForm({ profile }) {
     );
   };
 
+  // Create a helper function to find the framework for a skill
+  const getSkillFramework = (skillId) => {
+    // Check if skillsData exists and has rootSkills
+    if (!skillsData?.rootSkills) return null;
+
+    // Look through all skill categories
+    for (const category of skillsData.rootSkills) {
+      // Check if the category has children
+      if (category.children) {
+        // Look for our skill in this category's children
+        const skill = category.children.find((s) => s.id === skillId);
+        if (skill) {
+          return skill.framework;
+        }
+      }
+    }
+
+    // If not found
+    return null;
+  };
+
   // Handle form submission
   async function onSubmit(values) {
     try {
@@ -249,6 +274,7 @@ export function TeacherProfileEditForm({ profile }) {
           skillId: skill.skill.id,
           proficiency: skill.proficiency,
           skillName: skill.skill.name,
+          framework: skill.skill.framework,
           isDeleted: false,
           isNew: false,
         }));
@@ -286,6 +312,7 @@ export function TeacherProfileEditForm({ profile }) {
       skillId,
       proficiency,
       skillName: selectedSkill.name,
+      framework: selectedSkill.framework,
       isNew: true,
       isDeleted: false,
     };
@@ -469,9 +496,15 @@ export function TeacherProfileEditForm({ profile }) {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {SKILL_LEVELS.map((level) => (
-                              <SelectItem key={level} value={String(level)}>
-                                {renderProficiency(level)}
+                            {SKILL_LEVELS.map((proficiency) => (
+                              <SelectItem
+                                key={proficiency}
+                                value={String(proficiency)}
+                              >
+                                {renderProficiency({
+                                  proficiency,
+                                  framework: getSkillFramework(newSkillId),
+                                })}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -532,12 +565,17 @@ export function TeacherProfileEditForm({ profile }) {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {SKILL_LEVELS.map((level) => (
+                                  {SKILL_LEVELS.map((proficiency) => (
                                     <SelectItem
-                                      key={level}
-                                      value={String(level)}
+                                      key={proficiency}
+                                      value={String(proficiency)}
                                     >
-                                      {renderProficiency(level)}
+                                      {renderProficiency({
+                                        proficiency,
+                                        framework: getSkillFramework(
+                                          skillItem.skillId
+                                        ),
+                                      })}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>

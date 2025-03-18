@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useTheme } from "next-themes";
+
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -108,9 +108,9 @@ const EditorSkeleton = () => (
 
 const Tiptap = ({ value, onChange }) => {
   const [open, setOpen] = useState(false);
-  const { theme } = useTheme();
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {

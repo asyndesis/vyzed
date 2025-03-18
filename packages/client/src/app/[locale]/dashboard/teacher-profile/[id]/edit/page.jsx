@@ -3,6 +3,11 @@ import { gql } from "@apollo/client";
 import { TeacherProfileEditForm } from "../../components/teacher-profile-edit-form";
 import { notFound } from "next/navigation";
 
+export const metadata = {
+  title: "Teacher Profile",
+  description: "Manage your learning and teaching profiles",
+};
+
 // GraphQL query for teacher profile
 const GET_TEACHER_PROFILE = gql`
   query GetTeacherProfile($id: PostgresID!) {
@@ -26,7 +31,7 @@ const GET_TEACHER_PROFILE = gql`
 `;
 
 export default async function EditTeacherProfilePage({ params }) {
-  const profileId = params.id;
+  const { id: profileId } = await params;
 
   // Server-side data fetching
   const { data, error } = await getClient().query({

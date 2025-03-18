@@ -10,7 +10,10 @@ const UserSkillBadge = ({ userSkill }) => {
     >
       {userSkill.skill.name}
       <span className="ml-1 text-xs opacity-70">
-        {renderProficiency({ level: userSkill.proficiency })}
+        {renderProficiency({
+          proficiency: userSkill.proficiency,
+          framework: userSkill.skill.framework,
+        })}
       </span>
     </Badge>
   );

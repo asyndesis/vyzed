@@ -30,6 +30,7 @@ const GET_USER_PROFILES = gql`
           skill {
             id
             name
+            framework
           }
         }
       }

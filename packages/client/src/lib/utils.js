@@ -4,28 +4,47 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
-// Helper function to render proficiency based on skill type and level
-export const renderProficiency = (proficiency) => {
+
+export const renderProficiency = ({ proficiency, framework }) => {
+  if (proficiency === null || proficiency === undefined) {
+    return "";
+  }
+
   const proficiencyLevel = parseInt(proficiency);
 
-  switch (proficiencyLevel) {
-    case 0:
-      return "Newbie";
-    case 1:
-      return "Beginner (A1)";
-    case 2:
-      return "Elementary (A2)";
-    case 3:
-      return "Intermediate (B1)";
-    case 4:
-      return "Upper Intermediate (B2)";
-    case 5:
-      return "Advanced (C1)";
-    case 6:
-      return "Proficient (C2)";
-    case 7:
-      return "Native";
-    default:
-      return "";
+  // Base labels without CEFR annotations
+  const baseLabels = {
+    0: "Newbie",
+    1: "Beginner",
+    2: "Elementary",
+    3: "Intermediate",
+    4: "Upper Intermediate",
+    5: "Advanced",
+    6: "Proficient",
+    7: "Native",
+  };
+
+  // CEFR annotations
+  const cefrAnnotations = {
+    1: "A1",
+    2: "A2",
+    3: "B1",
+    4: "B2",
+    5: "C1",
+    6: "C2",
+  };
+
+  // Get the base label
+  const baseLabel = baseLabels[proficiencyLevel] || "";
+
+  // If no base label or not a valid level, return empty string
+  if (!baseLabel) return "";
+
+  // If framework is CEFR and we have a corresponding annotation, add it
+  if (framework === "CEFR" && cefrAnnotations[proficiencyLevel]) {
+    return `${baseLabel} (${cefrAnnotations[proficiencyLevel]})`;
   }
+
+  // Otherwise just return the base label
+  return baseLabel;
 };
