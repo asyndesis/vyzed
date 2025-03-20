@@ -23,7 +23,6 @@ const GET_TEACHER = gql`
     teacherProfileById(id: $id) {
       id
       userId
-      bio
       user {
         id
         firstName

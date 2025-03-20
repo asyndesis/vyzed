@@ -24,6 +24,12 @@ const PERMISSIONS = {
       update: true,
       delete: true,
     },
+    userProfile: {
+      view: true,
+      create: true,
+      update: true,
+      delete: true,
+    },
   },
   [ROLES.user]: {
     user: {
@@ -43,6 +49,12 @@ const PERMISSIONS = {
       create: (me, teacherProfile) => teacherProfile.userId === me.id,
       update: (me, teacherProfile) => teacherProfile.userId === me.id,
       delete: (me, teacherProfile) => teacherProfile.userId === me.id,
+    },
+    userProfile: {
+      view: true,
+      create: (me, userProfile) => userProfile.userId === me.id,
+      update: (me, userProfile) => userProfile.userId === me.id,
+      delete: (me, userProfile) => userProfile.userId === me.id,
     },
   },
 };

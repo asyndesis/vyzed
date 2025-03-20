@@ -13,7 +13,6 @@ const GET_TEACHER_PROFILE = gql`
   query GetTeacherProfile($id: PostgresID!) {
     teacherProfileById(id: $id) {
       id
-      bio
       skills {
         id
         proficiency
@@ -21,10 +20,6 @@ const GET_TEACHER_PROFILE = gql`
           id
           name
         }
-      }
-      user {
-        firstName
-        lastInitial
       }
     }
   }
@@ -64,7 +59,7 @@ export default async function EditTeacherProfilePage({ params }) {
   return (
     <div className="container p-2">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Teaching Profile</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Teacher Profile</h1>
         <p className="text-muted-foreground mt-2">
           Manage the skills you can teach to others
         </p>

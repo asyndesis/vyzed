@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 import { Separator } from "@/components/ui/separator";
 import { StudentProfileSection } from "./components/student-profile-section";
 import { TeacherProfileSection } from "./components/teacher-profile-section";
+import { UserProfileSection } from "./components/user-profile-section";
 
 export const metadata = {
   title: "Dashboard",
@@ -15,15 +16,18 @@ const GET_USER_PROFILES = gql`
     me {
       id
       firstName
+      lastName
       lastInitial
       email
-      studentProfile {
+      userProfile {
         id
         bio
       }
+      studentProfile {
+        id
+      }
       teacherProfile {
         id
-        bio
         skills {
           id
           proficiency
@@ -47,6 +51,7 @@ export default async function DashboardPage() {
   const user = data?.me;
   const hasStudentProfile = !!user?.studentProfile;
   const hasTeacherProfile = !!user?.teacherProfile;
+  const hasUserProfile = !!user?.userProfile;
 
   return (
     <div className="container p-2 space-y-8">
@@ -60,19 +65,28 @@ export default async function DashboardPage() {
         </p>
       </header>
       <Separator />
-      {/* Profiles Grid - Improved spacing and responsiveness */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-        {/* Student Profile Section */}
-        <StudentProfileSection
-          user={user}
-          hasStudentProfile={hasStudentProfile}
-        />
 
-        {/* Teacher Profile Section */}
-        <TeacherProfileSection
-          user={user}
-          hasTeacherProfile={hasTeacherProfile}
-        />
+      {/* Main Layout - Using flex instead of grid for better control */}
+      <div className="flex flex-col xl:flex-row gap-6">
+        {/* User Profile - Takes more space */}
+        <div className="xl:w-1/2">
+          <UserProfileSection user={user} hasUserProfile={hasUserProfile} />
+        </div>
+
+        {/* Role Profiles - Takes less space, stacked vertically */}
+        <div className="xl:w-1/2 space-y-6">
+          {/* Student Profile Section */}
+          <StudentProfileSection
+            user={user}
+            hasStudentProfile={hasStudentProfile}
+          />
+
+          {/* Teacher Profile Section */}
+          <TeacherProfileSection
+            user={user}
+            hasTeacherProfile={hasTeacherProfile}
+          />
+        </div>
       </div>
     </div>
   );

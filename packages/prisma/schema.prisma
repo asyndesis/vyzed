@@ -11,49 +11,53 @@ datasource db {
 }
 
 model User {
-    id              String           @id @default(cuid())
-    email           String           @unique
+    id              String          @id @default(cuid())
+    email           String          @unique
     firstName       String?
     lastName        String?
     imageUrl        String?
-    roles           String[]         @default([])
-    authId          String           @unique
+    roles           String[]        @default([])
+    authId          String          @unique
+    userProfile     UserProfile?
     studentProfile  StudentProfile?
-    teacherProfiles TeacherProfile[]
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
+    teacherProfiles TeacherProfile?
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
     createdBy       String?
     updatedBy       String?
+}
+
+model UserProfile {
+    id        String   @id @default(cuid())
+    userId    String   @unique
+    user      User     @relation(fields: [userId], references: [id])
+    bio       String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy String?
+    updatedBy String?
 }
 
 model StudentProfile {
     id        String         @id @default(cuid())
     userId    String         @unique
     user      User           @relation(fields: [userId], references: [id])
-    name      String?
-    bio       String?
     skills    StudentSkill[] @relation("StudentProfileToSkills")
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
     createdBy String?
     updatedBy String?
-
-    @@map("student_profiles")
 }
 
 model TeacherProfile {
     id        String         @id @default(cuid())
     userId    String         @unique
     user      User           @relation(fields: [userId], references: [id])
-    name      String?
-    bio       String?
     skills    TeacherSkill[] @relation("TeacherProfileToSkills")
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
     createdBy String?
     updatedBy String?
-
-    @@map("teacher_profiles")
 }
 
 model StudentSkill {
@@ -67,8 +71,6 @@ model StudentSkill {
     updatedAt        DateTime       @updatedAt
     createdBy        String?
     updatedBy        String?
-
-    @@map("student_skills")
 }
 
 model TeacherSkill {
@@ -83,8 +85,6 @@ model TeacherSkill {
     updatedAt DateTime @updatedAt
     createdBy String?
     updatedBy String?
-
-    @@map("teacher_skills")
 }
 
 model Skill {

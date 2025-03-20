@@ -14,11 +14,33 @@ export const userResolvers = {
         include: { skills: { include: { skill: true } } },
       });
     },
+    userProfile: async (parent) => {
+      return prisma.userProfile.findUnique({
+        where: { userId: parent.id },
+      });
+    },
     lastInitial: async (parent) => {
       return parent.lastName ? parent.lastName.charAt(0) : "";
     },
   },
-  PrivateUser: {
+  PublicUser: {
+    studentProfile: async (parent) => {
+      return prisma.studentProfile.findUnique({
+        where: { userId: parent.id },
+        include: { skills: { include: { skill: true } } },
+      });
+    },
+    teacherProfile: async (parent) => {
+      return prisma.teacherProfile.findUnique({
+        where: { userId: parent.id },
+        include: { skills: { include: { skill: true } } },
+      });
+    },
+    userProfile: async (parent) => {
+      return prisma.userProfile.findUnique({
+        where: { userId: parent.id },
+      });
+    },
     lastInitial: async (parent) => {
       return parent.lastName ? parent.lastName.charAt(0) : "";
     },
@@ -53,6 +75,13 @@ export const userResolvers = {
       }
     },
     users: async () => {
+      try {
+        return await prisma.user.findMany();
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    },
+    publicUsers: async (_, __, { prisma }) => {
       try {
         return await prisma.user.findMany();
       } catch (err) {

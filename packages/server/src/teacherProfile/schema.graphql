@@ -1,8 +1,6 @@
 type TeacherProfile {
   id: PostgresID!
   userId: PostgresID!
-  user: PrivateUser!
-  bio: String
   skills: [TeacherSkill!]!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -12,16 +10,13 @@ type TeacherProfile {
 
 input CreateTeacherProfileInput {
   userId: PostgresID!
-  bio: String
 }
 
 input UpdateTeacherProfileInput {
-  bio: String
   skills: [TeacherSkillInput!]
 }
 
 extend type Query {
-  teacherProfiles: [TeacherProfile!]!
   teacherProfileById(id: PostgresID!): TeacherProfile
   teacherProfileByUserId(userId: PostgresID!): TeacherProfile
 }

@@ -2,7 +2,6 @@ import { and, or } from "graphql-shield";
 import {
   isAdmin,
   isAuthed,
-  isPublic,
   canViewResource,
   canCreateResource,
   canUpdateResource,
@@ -15,7 +14,6 @@ export const teacherProfilePermissions = {
       isAuthed,
       or(isAdmin, canViewResource("teacherProfile"))
     ),
-    teacherProfiles: isPublic,
   },
   Mutation: {
     createTeacherProfile: and(

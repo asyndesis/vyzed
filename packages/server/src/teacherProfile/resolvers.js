@@ -2,20 +2,6 @@ import { prisma } from "@vyzed/prisma";
 
 export const teacherProfileResolvers = {
   TeacherProfile: {
-    user: async (parent) => {
-      const user = await prisma.user.findUnique({
-        where: { id: parent.userId },
-        select: {
-          firstName: true,
-          lastName: true,
-          id: true,
-          imageUrl: true,
-          createdAt: true,
-        },
-      });
-
-      return user;
-    },
     skills: async (parent) => {
       return prisma.teacherSkill.findMany({
         where: { teacherProfileId: parent.id },
@@ -32,22 +18,15 @@ export const teacherProfileResolvers = {
         throw new Error(err.message);
       }
     },
-    teacherProfiles: async () => {
-      try {
-        return await prisma.teacherProfile.findMany();
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
   },
   Mutation: {
     createTeacherProfile: async (_, { input }, { user }) => {
-      const { userId, bio } = input;
+      const { userId } = input;
 
       return prisma.teacherProfile.create({
         data: {
           userId,
-          bio,
+
           createdBy: user?.id,
           updatedBy: user?.id,
         },
@@ -62,7 +41,7 @@ export const teacherProfileResolvers = {
       });
     },
     updateTeacherProfile: async (_, { id, input }, { user }) => {
-      const { bio, skills } = input;
+      const { skills } = input;
 
       // Start a transaction to handle all updates atomically
       return await prisma.$transaction(async (tx) => {
@@ -70,7 +49,6 @@ export const teacherProfileResolvers = {
         await tx.teacherProfile.update({
           where: { id },
           data: {
-            bio,
             updatedBy: user?.id,
           },
         });

@@ -1,0 +1,33 @@
+type UserProfile {
+  id: PostgresID!
+  userId: PostgresID!
+  bio: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+input CreateUserProfileInput {
+  userId: PostgresID!
+  bio: String
+}
+
+input UpdateUserProfileInput {
+  bio: String
+}
+
+type Query {
+  userProfiles: [UserProfile!]!
+  userProfileById(id: PostgresID!): UserProfile
+  userProfileByUserId(userId: PostgresID!): UserProfile
+}
+
+type Mutation {
+  createUserProfile(input: CreateUserProfileInput!): UserProfile!
+  updateUserProfile(
+    id: PostgresID!
+    input: UpdateUserProfileInput!
+  ): UserProfile!
+  deleteUserProfile(id: PostgresID!): Boolean!
+}

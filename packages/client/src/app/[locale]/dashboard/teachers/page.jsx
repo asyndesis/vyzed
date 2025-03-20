@@ -19,77 +19,95 @@ export const metadata = {
   description: "Find a teacher for your child",
 };
 
-// GraphQL query to fetch all profiles with their skills
+// Updated GraphQL query to include userProfile.bio
 const GET_TEACHERS = gql`
-  query TeacherProfiles {
-    teacherProfiles {
+  query GetPublicUsers {
+    publicUsers {
       id
-      userId
-      bio
-      user {
+      firstName
+      lastInitial
+      imageUrl
+      userProfile {
         id
-        firstName
-        lastInitial
-        imageUrl
+        bio
       }
-      skills {
+      teacherProfile {
         id
-        skill {
+        skills {
           id
-          name
+          skill {
+            id
+            name
+          }
+          proficiency
         }
-        proficiency
       }
     }
   }
 `;
 
-// Create a ProfileList component that fetches and displays profiles
+// Updated ProfileList component to display bio text
 async function ProfileList() {
   // Fetch teachers data server-side
   const { data } = await getClient().query({
     query: GET_TEACHERS,
   });
 
+  // Filter users to only include those with teacher profiles
+  const teachers = data.publicUsers.filter((user) => user.teacherProfile);
+
   return (
     <div className="grid grid-cols-1 gap-6">
-      {data.teacherProfiles.map((teacher) => {
-        const sanitizedBio = teacher.bio ? convert(teacher.bio) : "";
+      {teachers.map((user) => {
+        const teacherProfile = user.teacherProfile;
+
+        // Convert HTML bio to plain text for display
+        const bioText = user.userProfile?.bio
+          ? convert(user.userProfile.bio, {
+              wordwrap: 130,
+              limits: {
+                maxInputLength: 250,
+              },
+            })
+          : "";
+
+        // Truncate bio text if it's too long
+        const truncatedBio =
+          bioText.length > 150 ? bioText.substring(0, 150) + "..." : bioText;
 
         return (
           <Link
-            href={`/dashboard/teachers/${teacher.id}`}
-            key={teacher.userId}
+            href={`/dashboard/teachers/${teacherProfile.id}`}
+            key={user.id}
             className="block transition-all hover:shadow-md"
           >
             <Card className="overflow-hidden">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
                 <Avatar className="h-12 w-12">
                   <AvatarImage
-                    src={teacher.user.imageUrl}
-                    alt={`${teacher.user.firstName} ${teacher.user.lastInitial}`}
+                    src={user.imageUrl}
+                    alt={`${user.firstName} ${user.lastInitial}`}
                   />
                   <AvatarFallback>
-                    {teacher.user.firstName[0]}
-                    {teacher.user.lastInitial}
+                    {user.firstName?.[0] || ""}
+                    {user.lastInitial || ""}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <CardTitle>
-                    {teacher.user.firstName} {teacher.user.lastInitial}
+                    {user.firstName} {user.lastInitial}
                   </CardTitle>
                   <CardDescription>Teacher Profile</CardDescription>
                 </div>
               </CardHeader>
               <CardContent>
-                {sanitizedBio && (
-                  <div
-                    className="prose prose-sm dark:prose-invert max-w-none mb-4"
-                    dangerouslySetInnerHTML={{ __html: sanitizedBio }}
-                  />
+                {truncatedBio && (
+                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                    {truncatedBio}
+                  </p>
                 )}
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {teacher.skills.map((skillItem) => (
+                  {teacherProfile.skills.map((skillItem) => (
                     <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
                   ))}
                 </div>
@@ -102,7 +120,7 @@ async function ProfileList() {
   );
 }
 
-// Create a loading skeleton component
+// Updated ProfileSkeleton to include bio
 function ProfileSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -116,7 +134,7 @@ function ProfileSkeleton() {
             </div>
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-24 w-full mb-4" />
+            <Skeleton className="h-12 w-full mb-4" />
             <div className="flex flex-wrap gap-2 mt-2">
               <Skeleton className="h-6 w-16 rounded-full" />
               <Skeleton className="h-6 w-20 rounded-full" />

@@ -10,10 +10,12 @@ export default function Page() {
       overrides={{
         "teacher-profile": { hidden: true },
         [id]: {
-          label: "Teacher Profile",
+          hidden: true,
+        },
+        edit: {
+          label: "Edit Teacher Profile",
           href: `/dashboard/teacher-profile/${id}/edit`,
         },
-        edit: { label: "Edit" },
       }}
     />
   );

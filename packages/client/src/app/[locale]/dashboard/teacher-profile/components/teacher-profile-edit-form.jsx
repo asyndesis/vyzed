@@ -6,22 +6,13 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
+import { Form, FormLabel } from "@/components/ui/form";
 import {
   Trash2,
   Plus,
   Loader2,
   GraduationCap,
   Save,
-  User,
   BookOpen,
   AlertCircle,
 } from "lucide-react";
@@ -45,11 +36,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { renderProficiency } from "@/lib/utils";
-import Tiptap from "@/components/tip-tap";
 
 const SKILL_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
-// Single GraphQL mutation for updating the entire profile
+// Single GraphQL mutation for updating the entire profile - removed bio field
 const UPDATE_TEACHER_PROFILE = gql`
   mutation UpdateTeacherProfile(
     $id: PostgresID!
@@ -57,7 +47,6 @@ const UPDATE_TEACHER_PROFILE = gql`
   ) {
     updateTeacherProfile(id: $id, input: $input) {
       id
-      bio
       skills {
         id
         proficiency
@@ -87,9 +76,8 @@ const GET_SKILLS = gql`
   }
 `;
 
-// Combined form schema - remove name field
+// Updated form schema - removed bio field
 const profileSchema = z.object({
-  bio: z.string().optional(),
   skills: z.array(
     z.object({
       id: z.string().optional(),
@@ -108,7 +96,6 @@ export function TeacherProfileEditForm({ profile }) {
 
   // Use a ref to store initial values to prevent them from changing on re-renders
   const initialValuesRef = useRef({
-    bio: profile.bio || "",
     skills:
       profile.skills?.map((skill) => ({
         id: skill.id,
@@ -134,7 +121,6 @@ export function TeacherProfileEditForm({ profile }) {
   const form = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      bio: initialValuesRef.current.bio,
       skills: initialSkills,
     },
   });
@@ -144,9 +130,6 @@ export function TeacherProfileEditForm({ profile }) {
 
   // Replace the useEffect with this cleaner implementation
   const checkFormChanges = () => {
-    // Compare bio
-    const bioChanged = formValues.bio !== initialValuesRef.current.bio;
-
     // Create a map of initial skills for efficient lookup
     const initialSkillsMap = new Map(
       initialValuesRef.current.skills.map((skill) => [skill.id, skill])
@@ -173,7 +156,7 @@ export function TeacherProfileEditForm({ profile }) {
             skill.proficiency !== initialSkillsMap.get(skill.id).proficiency)
       );
 
-    return bioChanged || skillsChanged;
+    return skillsChanged;
   };
 
   // Use a custom hook for debounced value
@@ -253,12 +236,11 @@ export function TeacherProfileEditForm({ profile }) {
           proficiency: skill.proficiency,
         }));
 
-      // Update profile with all data
+      // Update profile with all data - removed bio
       const result = await updateProfile({
         variables: {
           id: profile.id,
           input: {
-            bio: values.bio,
             skills: skillsInput,
           },
         },
@@ -281,12 +263,10 @@ export function TeacherProfileEditForm({ profile }) {
 
         // Update the initial values ref with the new data
         initialValuesRef.current = {
-          bio: updatedProfile.bio || "",
           skills: updatedSkills,
         };
 
         form.reset({
-          bio: updatedProfile.bio || "",
           skills: updatedSkills,
         });
 
@@ -368,248 +348,214 @@ export function TeacherProfileEditForm({ profile }) {
           </Badge>
         </div>
 
-        {/* Side-by-side layout for larger screens */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Bio Section */}
-          <Card>
-            <CardHeader>
+        {/* Skills Section - now full width since bio section is removed */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                Profile Information
+                <BookOpen className="h-5 w-5" />
+                Teaching Skills
               </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
-                    <FormControl>
-                      <Tiptap {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Describe your teaching style, experience, and what
-                      students can expect
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+              <Dialog
+                open={isSkillModalOpen}
+                onOpenChange={setIsSkillModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-1.5">
+                    <Plus className="h-4 w-4" />
+                    Add Skill
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>Add New Skill</DialogTitle>
+                    <DialogDescription>
+                      Add a skill that you can teach to students.
+                    </DialogDescription>
+                  </DialogHeader>
 
-          {/* Skills Section */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  Teaching Skills
-                </CardTitle>
-                <Dialog
-                  open={isSkillModalOpen}
-                  onOpenChange={setIsSkillModalOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button size="sm" className="gap-1.5">
-                      <Plus className="h-4 w-4" />
-                      Add Skill
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                      <DialogTitle>Add New Skill</DialogTitle>
-                      <DialogDescription>
-                        Add a skill that you can teach to students.
-                      </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <FormLabel>Skill Category</FormLabel>
-                        <Select
-                          value={newSkillCategory}
-                          onValueChange={setNewSkillCategory}
-                          disabled={skillsLoading}
-                        >
-                          <SelectTrigger>
-                            {skillsLoading ? (
-                              <div className="flex items-center">
-                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                <span>Loading...</span>
-                              </div>
-                            ) : (
-                              <SelectValue placeholder="Select a category" />
-                            )}
-                          </SelectTrigger>
-                          <SelectContent>
-                            {skillsData?.rootSkills?.map((category) => (
-                              <SelectItem key={category.id} value={category.id}>
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <FormLabel>Specific Skill</FormLabel>
-                        <Select
-                          value={newSkillId}
-                          onValueChange={setNewSkillId}
-                          disabled={
-                            !newSkillCategory ||
-                            getAvailableSkills(newSkillCategory).length === 0
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={
-                                newSkillCategory
-                                  ? "Select a skill"
-                                  : "First select a category"
-                              }
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {getAvailableSkills(newSkillCategory).map(
-                              (skill) => (
-                                <SelectItem key={skill.id} value={skill.id}>
-                                  {skill.name}
-                                </SelectItem>
-                              )
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <FormLabel>Proficiency Level</FormLabel>
-                        <Select
-                          value={String(newSkillProficiency)}
-                          onValueChange={(value) =>
-                            setNewSkillProficiency(parseInt(value, 10))
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {SKILL_LEVELS.map((proficiency) => (
-                              <SelectItem
-                                key={proficiency}
-                                value={String(proficiency)}
-                              >
-                                {renderProficiency({
-                                  proficiency,
-                                  framework: getSkillFramework(newSkillId),
-                                })}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <DialogFooter className="mt-6">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setIsSkillModalOpen(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={() =>
-                            addSkill(
-                              newSkillCategory,
-                              newSkillId,
-                              newSkillProficiency
-                            )
-                          }
-                          disabled={!newSkillId}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Skill
-                        </Button>
-                      </DialogFooter>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <FormLabel>Skill Category</FormLabel>
+                      <Select
+                        value={newSkillCategory}
+                        onValueChange={setNewSkillCategory}
+                        disabled={skillsLoading}
+                      >
+                        <SelectTrigger>
+                          {skillsLoading ? (
+                            <div className="flex items-center">
+                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                              <span>Loading...</span>
+                            </div>
+                          ) : (
+                            <SelectValue placeholder="Select a category" />
+                          )}
+                        </SelectTrigger>
+                        <SelectContent>
+                          {skillsData?.rootSkills?.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                {formValues.skills.filter((s) => !s.isDeleted).length > 0 ? (
-                  formValues.skills.map(
-                    (skillItem, index) =>
-                      !skillItem.isDeleted && (
-                        <Card key={index} className="overflow-hidden">
-                          <CardContent className="p-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                              <div className="font-medium">
-                                {skillItem.skillName}
-                              </div>
-                            </div>
 
-                            <div className="flex items-center gap-2">
-                              <Select
-                                value={String(skillItem.proficiency)}
-                                onValueChange={(value) =>
-                                  updateSkillProficiency(index, value)
-                                }
-                              >
-                                <SelectTrigger className="w-[220px]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {SKILL_LEVELS.map((proficiency) => (
-                                    <SelectItem
-                                      key={proficiency}
-                                      value={String(proficiency)}
-                                    >
-                                      {renderProficiency({
-                                        proficiency,
-                                        framework: getSkillFramework(
-                                          skillItem.skillId
-                                        ),
-                                      })}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                    <div className="space-y-2">
+                      <FormLabel>Specific Skill</FormLabel>
+                      <Select
+                        value={newSkillId}
+                        onValueChange={setNewSkillId}
+                        disabled={
+                          !newSkillCategory ||
+                          getAvailableSkills(newSkillCategory).length === 0
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={
+                              newSkillCategory
+                                ? "Select a skill"
+                                : "First select a category"
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getAvailableSkills(newSkillCategory).map((skill) => (
+                            <SelectItem key={skill.id} value={skill.id}>
+                              {skill.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeSkill(index)}
-                                className="h-8 w-8 rounded-full"
-                              >
-                                <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                              </Button>
+                    <div className="space-y-2">
+                      <FormLabel>Proficiency Level</FormLabel>
+                      <Select
+                        value={String(newSkillProficiency)}
+                        onValueChange={(value) =>
+                          setNewSkillProficiency(parseInt(value, 10))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SKILL_LEVELS.map((proficiency) => (
+                            <SelectItem
+                              key={proficiency}
+                              value={String(proficiency)}
+                            >
+                              {renderProficiency({
+                                proficiency,
+                                framework: getSkillFramework(newSkillId),
+                              })}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <DialogFooter className="mt-6">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsSkillModalOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() =>
+                          addSkill(
+                            newSkillCategory,
+                            newSkillId,
+                            newSkillProficiency
+                          )
+                        }
+                        disabled={!newSkillId}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Skill
+                      </Button>
+                    </DialogFooter>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+              {formValues.skills.filter((s) => !s.isDeleted).length > 0 ? (
+                formValues.skills.map(
+                  (skillItem, index) =>
+                    !skillItem.isDeleted && (
+                      <Card key={index} className="overflow-hidden">
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <GraduationCap className="h-5 w-5 text-muted-foreground" />
+                            <div className="font-medium">
+                              {skillItem.skillName}
                             </div>
-                          </CardContent>
-                        </Card>
-                      )
-                  )
-                ) : (
-                  <Card className="border-dashed">
-                    <CardContent className="p-8 flex flex-col items-center justify-center">
-                      <GraduationCap className="h-10 w-10 text-muted-foreground mb-3" />
-                      <p className="text-muted-foreground text-center">
-                        You have not added any teaching skills yet.
-                        <br />
-                        Click Add Skill to add skills you can teach.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Select
+                              value={String(skillItem.proficiency)}
+                              onValueChange={(value) =>
+                                updateSkillProficiency(index, value)
+                              }
+                            >
+                              <SelectTrigger className="w-[220px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {SKILL_LEVELS.map((proficiency) => (
+                                  <SelectItem
+                                    key={proficiency}
+                                    value={String(proficiency)}
+                                  >
+                                    {renderProficiency({
+                                      proficiency,
+                                      framework: getSkillFramework(
+                                        skillItem.skillId
+                                      ),
+                                    })}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeSkill(index)}
+                              className="h-8 w-8 rounded-full"
+                            >
+                              <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )
+                )
+              ) : (
+                <Card className="border-dashed">
+                  <CardContent className="p-8 flex flex-col items-center justify-center">
+                    <GraduationCap className="h-10 w-10 text-muted-foreground mb-3" />
+                    <p className="text-muted-foreground text-center">
+                      You have not added any teaching skills yet.
+                      <br />
+                      Click Add Skill to add skills you can teach.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Save button - now disabled when no changes */}
         <div className="flex justify-between items-center pt-6 mt-6 border-t">
