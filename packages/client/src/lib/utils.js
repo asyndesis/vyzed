@@ -21,7 +21,7 @@ export const renderProficiency = ({ proficiency, framework }) => {
     4: "Upper Intermediate",
     5: "Advanced",
     6: "Proficient",
-    7: "Native",
+    7: framework === "CEFR" ? "Native" : "Master",
   };
 
   // CEFR annotations

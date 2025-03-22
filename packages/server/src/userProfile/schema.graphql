@@ -2,6 +2,7 @@ type UserProfile {
   id: PostgresID!
   userId: PostgresID!
   bio: String
+  languages: [UserLanguage!]
   createdAt: DateTime!
   updatedAt: DateTime!
   createdBy: PostgresID
@@ -11,10 +12,12 @@ type UserProfile {
 input CreateUserProfileInput {
   userId: PostgresID!
   bio: String
+  languages: [UserLanguageInput!]
 }
 
 input UpdateUserProfileInput {
   bio: String
+  languages: [UserLanguageInput!]
 }
 
 type Query {

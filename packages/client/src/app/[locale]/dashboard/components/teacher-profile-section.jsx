@@ -165,6 +165,7 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
               >
                 <Link
                   href={`/dashboard/teacher-profile/${user.teacherProfile.id}/edit`}
+                  scroll={false}
                 >
                   Edit Profile
                   <ChevronRight className="h-3.5 w-3.5" />

@@ -7,7 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-export default async function MainLayout({ children, breadcrumbs }) {
+export default function DashboardLayout({ children, breadcrumbs, modal }) {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -22,6 +22,7 @@ export default async function MainLayout({ children, breadcrumbs }) {
         </header>
         <div className="p-4 pt-0 flex flex-1">{children}</div>
       </SidebarInset>
+      {modal}
     </SidebarProvider>
   );
 }

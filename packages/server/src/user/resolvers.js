@@ -88,6 +88,15 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
+    publicUserById: async (_, { id }) => {
+      try {
+        return await prisma.user.findUnique({
+          where: { id },
+        });
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    },
   },
   Mutation: {
     createUser: async (parent, args, { user }) => {

@@ -43,6 +43,11 @@ const CREATE_USER_PROFILE = gql`
     createUserProfile(input: $input) {
       id
       bio
+      languages {
+        id
+        skillId
+        proficiency
+      }
     }
   }
 `;
@@ -56,6 +61,11 @@ const UPDATE_USER_PROFILE = gql`
     updateUserProfile(id: $id, input: $input) {
       id
       bio
+      languages {
+        id
+        skillId
+        proficiency
+      }
     }
   }
 `;
@@ -120,6 +130,7 @@ export async function saveUserData({
   firstName,
   lastName,
   bio,
+  languages,
   userProfile,
 }) {
   // First, update the user's name
@@ -143,6 +154,7 @@ export async function saveUserData({
         id: userProfile.id,
         input: {
           bio,
+          languages,
         },
       },
     });
@@ -154,6 +166,7 @@ export async function saveUserData({
         input: {
           userId,
           bio,
+          languages,
         },
       },
     });

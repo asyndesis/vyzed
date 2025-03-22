@@ -54,6 +54,7 @@ type Query {
   checkUserExistsByAuthId(authId: String!): Boolean!
   users: [User!]!
   publicUsers: [PublicUser!]!
+  publicUserById(id: PostgresID!): PublicUser
 }
 
 # Mutations

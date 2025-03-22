@@ -28,10 +28,12 @@ model User {
 }
 
 model UserProfile {
-    id        String   @id @default(cuid())
-    userId    String   @unique
-    user      User     @relation(fields: [userId], references: [id])
+    id        String         @id @default(cuid())
+    userId    String         @unique
+    user      User           @relation(fields: [userId], references: [id])
     bio       String?
+    languages UserLanguage[] @relation("UserProfileToLanguages")
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     createdBy String?
@@ -60,6 +62,19 @@ model TeacherProfile {
     updatedBy String?
 }
 
+model UserLanguage {
+    id            String      @id @default(cuid())
+    userProfileId String
+    userProfile   UserProfile @relation("UserProfileToLanguages", fields: [userProfileId], references: [id], onDelete: Cascade)
+    skillId       String
+    proficiency   Int
+    skill         Skill       @relation(fields: [skillId], references: [id])
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+    createdBy     String?
+    updatedBy     String?
+}
+
 model StudentSkill {
     id               String         @id @default(cuid())
     studentProfileId String
@@ -79,12 +94,11 @@ model TeacherSkill {
     teacherProfile   TeacherProfile @relation("TeacherProfileToSkills", fields: [teacherProfileId], references: [id], onDelete: Cascade)
     skillId          String
     proficiency      Int
-
-    skill     Skill    @relation(fields: [skillId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    createdBy String?
-    updatedBy String?
+    skill            Skill          @relation(fields: [skillId], references: [id])
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    createdBy        String?
+    updatedBy        String?
 }
 
 model Skill {
@@ -100,6 +114,7 @@ model Skill {
     updatedAt     DateTime        @updatedAt
     createdBy     String?
     updatedBy     String?
+    UserLanguage  UserLanguage[]
 }
 
 enum SkillFramework {

@@ -2,44 +2,25 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Form, FormLabel } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import {
-  Trash2,
-  Plus,
-  Loader2,
   GraduationCap,
   Save,
   BookOpen,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { renderProficiency } from "@/lib/utils";
+import { SkillSelector } from "@/components/skill-selector";
 
 const SKILL_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
-// Single GraphQL mutation for updating the entire profile - removed bio field
+// Single GraphQL mutation for updating the entire profile
 const UPDATE_TEACHER_PROFILE = gql`
   mutation UpdateTeacherProfile(
     $id: PostgresID!
@@ -60,29 +41,15 @@ const UPDATE_TEACHER_PROFILE = gql`
   }
 `;
 
-// GraphQL query for skill categories and skills
-const GET_SKILLS = gql`
-  query GetSkills {
-    rootSkills {
-      id
-      name
-      framework
-      children {
-        id
-        name
-        framework
-      }
-    }
-  }
-`;
-
-// Updated form schema - removed bio field
+// Updated form schema
 const profileSchema = z.object({
   skills: z.array(
     z.object({
       id: z.string().optional(),
       skillId: z.string(),
-      proficiency: z.coerce.number().min(1).max(5),
+      proficiency: z.coerce.number().min(1).max(7),
+      skillName: z.string(),
+      framework: z.string().optional(),
       isDeleted: z.boolean().optional(),
       isNew: z.boolean().optional(),
     })
@@ -91,7 +58,6 @@ const profileSchema = z.object({
 
 export function TeacherProfileEditForm({ profile }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Use a ref to store initial values to prevent them from changing on re-renders
@@ -114,9 +80,6 @@ export function TeacherProfileEditForm({ profile }) {
   // Mutation for updating the entire profile
   const [updateProfile] = useMutation(UPDATE_TEACHER_PROFILE);
 
-  // Query for skills
-  const { data: skillsData, loading: skillsLoading } = useQuery(GET_SKILLS);
-
   // Initialize form with all profile data
   const form = useForm({
     resolver: zodResolver(profileSchema),
@@ -125,101 +88,63 @@ export function TeacherProfileEditForm({ profile }) {
     },
   });
 
-  // Watch for form changes to enable/disable save button
+  // Watch all form values
   const formValues = form.watch();
 
-  // Replace the useEffect with this cleaner implementation
-  const checkFormChanges = () => {
-    // Create a map of initial skills for efficient lookup
-    const initialSkillsMap = new Map(
-      initialValuesRef.current.skills.map((skill) => [skill.id, skill])
-    );
-
-    // Count active skills (not deleted)
-    const activeSkillsCount = formValues.skills.filter(
-      (s) => !s.isDeleted
-    ).length;
-    const initialSkillsCount = initialValuesRef.current.skills.length;
-
-    // Check if skills have changed
-    const skillsChanged =
-      // Length check (quick first check)
-      activeSkillsCount !== initialSkillsCount ||
-      // Detailed comparison
-      formValues.skills.some(
-        (skill) =>
-          skill.isNew ||
-          skill.isDeleted ||
-          (skill.id && !initialSkillsMap.has(skill.id)) ||
-          (skill.id &&
-            initialSkillsMap.has(skill.id) &&
-            skill.proficiency !== initialSkillsMap.get(skill.id).proficiency)
-      );
-
-    return skillsChanged;
-  };
-
-  // Use a custom hook for debounced value
-  function useDebounce(value, delay) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }, [value, delay]);
-
-    return debouncedValue;
-  }
-
-  // Replace the useEffect block with this
-  const hasFormChanges = checkFormChanges();
-  const debouncedHasChanges = useDebounce(hasFormChanges, 300);
-
-  // Update the state when the debounced value changes
+  // Use a simple effect to detect changes by comparing with initial values
   useEffect(() => {
-    setHasChanges(debouncedHasChanges);
-  }, [debouncedHasChanges]);
+    const currentFormValues = {
+      skills: (formValues.skills || [])
+        .filter((skill) => !skill.isDeleted)
+        .map((skill) => ({
+          id: skill.id,
+          skillId: skill.skillId,
+          proficiency: skill.proficiency,
+        })),
+    };
 
-  // Get available skills for the modal
-  const getAvailableSkills = (categoryId) => {
-    if (!categoryId || !skillsData?.rootSkills) return [];
+    const initialFormValues = {
+      skills: initialValuesRef.current.skills.map((skill) => ({
+        id: skill.id,
+        skillId: skill.skillId,
+        proficiency: skill.proficiency,
+      })),
+    };
 
-    const category = skillsData.rootSkills.find((r) => r.id === categoryId);
-    if (!category || !category.children) return [];
+    // Use JSON.stringify for deep comparison
+    const hasChanges =
+      JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues);
+    setHasChanges(hasChanges);
+  }, [formValues]);
 
-    const currentSkillIds = formValues.skills
-      .filter((s) => !s.isDeleted)
-      .map((s) => s.skillId);
-
-    return category.children.filter(
-      (child) => !currentSkillIds.includes(child.id)
-    );
+  // Handler for adding a skill
+  const handleAddSkill = (skill) => {
+    const currentSkills = form.getValues("skills");
+    form.setValue("skills", [...currentSkills, { ...skill, isNew: true }]);
   };
 
-  // Create a helper function to find the framework for a skill
-  const getSkillFramework = (skillId) => {
-    // Check if skillsData exists and has rootSkills
-    if (!skillsData?.rootSkills) return null;
+  // Handler for removing a skill
+  const handleRemoveSkill = (index) => {
+    const skills = form.getValues("skills");
+    const updatedSkills = [...skills];
 
-    // Look through all skill categories
-    for (const category of skillsData.rootSkills) {
-      // Check if the category has children
-      if (category.children) {
-        // Look for our skill in this category's children
-        const skill = category.children.find((s) => s.id === skillId);
-        if (skill) {
-          return skill.framework;
-        }
-      }
+    if (updatedSkills[index].isNew) {
+      // If it's a new skill, just remove it from the array
+      updatedSkills.splice(index, 1);
+    } else {
+      // Otherwise mark it as deleted
+      updatedSkills[index].isDeleted = true;
     }
 
-    // If not found
-    return null;
+    form.setValue("skills", updatedSkills);
+  };
+
+  // Handler for updating skill proficiency
+  const handleUpdateSkillProficiency = (index, newProficiency) => {
+    const skills = form.getValues("skills");
+    const updatedSkills = [...skills];
+    updatedSkills[index].proficiency = newProficiency;
+    form.setValue("skills", updatedSkills);
   };
 
   // Handle form submission
@@ -236,7 +161,7 @@ export function TeacherProfileEditForm({ profile }) {
           proficiency: skill.proficiency,
         }));
 
-      // Update profile with all data - removed bio
+      // Update profile with all data
       const result = await updateProfile({
         variables: {
           id: profile.id,
@@ -281,55 +206,10 @@ export function TeacherProfileEditForm({ profile }) {
     }
   }
 
-  // Add a new skill to the form
-  function addSkill(categoryId, skillId, proficiency) {
-    const selectedSkill = getAvailableSkills(categoryId).find(
-      (s) => s.id === skillId
-    );
-    if (!selectedSkill) return;
-
-    const newSkill = {
-      skillId,
-      proficiency,
-      skillName: selectedSkill.name,
-      framework: selectedSkill.framework,
-      isNew: true,
-      isDeleted: false,
-    };
-
-    const currentSkills = form.getValues("skills");
-    form.setValue("skills", [...currentSkills, newSkill]);
-    setIsSkillModalOpen(false);
-  }
-
-  // Remove a skill from the form
-  function removeSkill(index) {
-    const skills = form.getValues("skills");
-    const updatedSkills = [...skills];
-
-    if (updatedSkills[index].isNew) {
-      // If it's a new skill, just remove it from the array
-      updatedSkills.splice(index, 1);
-    } else {
-      // Otherwise mark it as deleted
-      updatedSkills[index].isDeleted = true;
-    }
-
-    form.setValue("skills", updatedSkills);
-  }
-
-  // Update skill proficiency
-  function updateSkillProficiency(index, newProficiency) {
-    const skills = form.getValues("skills");
-    const updatedSkills = [...skills];
-    updatedSkills[index].proficiency = parseInt(newProficiency, 10);
-    form.setValue("skills", updatedSkills);
-  }
-
-  // New skill form
-  const [newSkillCategory, setNewSkillCategory] = useState("");
-  const [newSkillId, setNewSkillId] = useState("");
-  const [newSkillProficiency, setNewSkillProficiency] = useState(3);
+  // Filter out deleted skills for display
+  const displaySkills = (formValues.skills || []).filter(
+    (skill) => !skill.isDeleted
+  );
 
   return (
     <Form {...form}>
@@ -348,212 +228,28 @@ export function TeacherProfileEditForm({ profile }) {
           </Badge>
         </div>
 
-        {/* Skills Section - now full width since bio section is removed */}
+        {/* Skills Section */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                Teaching Skills
-              </CardTitle>
-              <Dialog
-                open={isSkillModalOpen}
-                onOpenChange={setIsSkillModalOpen}
-              >
-                <DialogTrigger asChild>
-                  <Button size="sm" className="gap-1.5">
-                    <Plus className="h-4 w-4" />
-                    Add Skill
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Add New Skill</DialogTitle>
-                    <DialogDescription>
-                      Add a skill that you can teach to students.
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <FormLabel>Skill Category</FormLabel>
-                      <Select
-                        value={newSkillCategory}
-                        onValueChange={setNewSkillCategory}
-                        disabled={skillsLoading}
-                      >
-                        <SelectTrigger>
-                          {skillsLoading ? (
-                            <div className="flex items-center">
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                              <span>Loading...</span>
-                            </div>
-                          ) : (
-                            <SelectValue placeholder="Select a category" />
-                          )}
-                        </SelectTrigger>
-                        <SelectContent>
-                          {skillsData?.rootSkills?.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <FormLabel>Specific Skill</FormLabel>
-                      <Select
-                        value={newSkillId}
-                        onValueChange={setNewSkillId}
-                        disabled={
-                          !newSkillCategory ||
-                          getAvailableSkills(newSkillCategory).length === 0
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder={
-                              newSkillCategory
-                                ? "Select a skill"
-                                : "First select a category"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {getAvailableSkills(newSkillCategory).map((skill) => (
-                            <SelectItem key={skill.id} value={skill.id}>
-                              {skill.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <FormLabel>Proficiency Level</FormLabel>
-                      <Select
-                        value={String(newSkillProficiency)}
-                        onValueChange={(value) =>
-                          setNewSkillProficiency(parseInt(value, 10))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SKILL_LEVELS.map((proficiency) => (
-                            <SelectItem
-                              key={proficiency}
-                              value={String(proficiency)}
-                            >
-                              {renderProficiency({
-                                proficiency,
-                                framework: getSkillFramework(newSkillId),
-                              })}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <DialogFooter className="mt-6">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsSkillModalOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() =>
-                          addSkill(
-                            newSkillCategory,
-                            newSkillId,
-                            newSkillProficiency
-                          )
-                        }
-                        disabled={!newSkillId}
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Skill
-                      </Button>
-                    </DialogFooter>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
+              Teaching Skills
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
-              {formValues.skills.filter((s) => !s.isDeleted).length > 0 ? (
-                formValues.skills.map(
-                  (skillItem, index) =>
-                    !skillItem.isDeleted && (
-                      <Card key={index} className="overflow-hidden">
-                        <CardContent className="p-4 flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                            <div className="font-medium">
-                              {skillItem.skillName}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Select
-                              value={String(skillItem.proficiency)}
-                              onValueChange={(value) =>
-                                updateSkillProficiency(index, value)
-                              }
-                            >
-                              <SelectTrigger className="w-[220px]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {SKILL_LEVELS.map((proficiency) => (
-                                  <SelectItem
-                                    key={proficiency}
-                                    value={String(proficiency)}
-                                  >
-                                    {renderProficiency({
-                                      proficiency,
-                                      framework: getSkillFramework(
-                                        skillItem.skillId
-                                      ),
-                                    })}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeSkill(index)}
-                              className="h-8 w-8 rounded-full"
-                            >
-                              <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )
-                )
-              ) : (
-                <Card className="border-dashed">
-                  <CardContent className="p-8 flex flex-col items-center justify-center">
-                    <GraduationCap className="h-10 w-10 text-muted-foreground mb-3" />
-                    <p className="text-muted-foreground text-center">
-                      You have not added any teaching skills yet.
-                      <br />
-                      Click Add Skill to add skills you can teach.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+            <SkillSelector
+              skills={displaySkills}
+              onAddSkill={handleAddSkill}
+              onRemoveSkill={handleRemoveSkill}
+              onUpdateProficiency={handleUpdateSkillProficiency}
+              buttonLabel="Add Skill"
+              dialogTitle="Add New Skill"
+              dialogDescription="Add a skill that you can teach to students."
+              showProficiency={true}
+              icon={<GraduationCap className="h-5 w-5 text-muted-foreground" />}
+              proficiencyLevels={SKILL_LEVELS}
+              emptyMessage="You have not added any teaching skills yet. Click Add Skill to add skills you can teach."
+            />
           </CardContent>
         </Card>
 

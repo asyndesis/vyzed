@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { getClient } from "@/lib/apollo-client";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Calendar, User, GraduationCap, Mail } from "lucide-react";
+import { Calendar, User, GraduationCap, Mail, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -18,26 +18,38 @@ import { Skeleton } from "@/components/ui/skeleton";
 import UserSkillBadge from "@/components/user-skill-badge";
 
 // GraphQL query to fetch a specific teacher profile
-const GET_TEACHER = gql`
-  query TeacherProfile($id: PostgresID!) {
-    teacherProfileById(id: $id) {
+const GET_PUBLIC_USER = gql`
+  query PublicUserById($id: PostgresID!) {
+    publicUserById(id: $id) {
       id
-      userId
-      user {
+      firstName
+      lastInitial
+      imageUrl
+      createdAt
+      userProfile {
         id
-        firstName
-        lastInitial
-        imageUrl
-        createdAt
-      }
-      skills {
-        id
-        skill {
+        bio
+        languages {
           id
-          name
-          framework
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
         }
-        proficiency
+      }
+      teacherProfile {
+        id
+        skills {
+          id
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
+        }
       }
     }
   }
@@ -45,77 +57,74 @@ const GET_TEACHER = gql`
 
 export async function generateMetadata({ params }) {
   const { data } = await getClient().query({
-    query: GET_TEACHER,
+    query: GET_PUBLIC_USER,
     variables: { id: params.id },
   });
 
-  const profile = data?.teacherProfileById;
+  const profile = data?.publicUserById;
 
   if (!profile) {
     return { title: "Teacher Not Found" };
   }
 
   return {
-    title: `${profile.user.firstName} ${profile.user.lastInitial} - Teacher Profile`,
-    description: `View ${profile.user.firstName}'s teaching profile and skills`,
+    title: `${profile.firstName} ${profile.lastInitial} - Teacher Profile`,
+    description: `View ${profile.firstName}'s teaching profile and skills`,
   };
 }
 
 async function TeacherProfileDetail({ id }) {
   const { data } = await getClient().query({
-    query: GET_TEACHER,
+    query: GET_PUBLIC_USER,
     variables: { id },
   });
 
-  const teacher = data?.teacherProfileById;
+  const user = data?.publicUserById;
 
-  if (!teacher) {
+  if (!user) {
     notFound();
   }
 
-  const joinedDate = new Date(teacher.user.createdAt).toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-    }
-  );
+  const joinedDate = new Date(user.createdAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+  });
 
   return (
     <div className="container p-2 space-y-8">
       <header className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          {teacher.user.firstName} {teacher.user.lastInitial}
+          {user.firstName} {user.lastInitial}
         </h1>
         <div className="text-muted-foreground mt-1 flex items-center gap-2">
           <Badge variant="outline">Teacher</Badge>
           <span className="text-sm">·</span>
           <span className="text-sm flex items-center gap-1">
             <GraduationCap className="h-3.5 w-3.5" />
-            {teacher.skills.length} skills
+            {user.teacherProfile.skills.length} skills
           </span>
         </div>
       </header>
       <Separator />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Teacher Info Card - Refined */}
+        {/* Teacher Info Card - Enhanced */}
         <Card className="md:col-span-1 overflow-hidden">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-4">
-              <Avatar className="h-28 w-28 border-4 border-background">
+              <Avatar className="h-40 w-40 rounded-md border-4 border-background shadow-lg">
                 <AvatarImage
-                  src={teacher.user.imageUrl}
-                  alt={`${teacher.user.firstName} ${teacher.user.lastInitial}`}
+                  src={user.imageUrl}
+                  alt={`${user.firstName} ${user.lastInitial}`}
                 />
-                <AvatarFallback className="text-xl">
-                  {teacher.user.firstName[0]}
-                  {teacher.user.lastInitial}
+                <AvatarFallback className="text-2xl">
+                  {user.firstName[0]}
+                  {user.lastInitial}
                 </AvatarFallback>
               </Avatar>
 
               <div className="text-center pt-2">
                 <h2 className="text-xl font-semibold">
-                  {teacher.user.firstName} {teacher.user.lastInitial}
+                  {user.firstName} {user.lastInitial}
                 </h2>
                 <p className="text-muted-foreground text-sm">
                   Experienced Teacher
@@ -139,7 +148,7 @@ async function TeacherProfileDetail({ id }) {
           </CardFooter>
         </Card>
 
-        {/* Main Content: Bio and Skills */}
+        {/* Main Content: Bio, Skills, and Languages */}
         <div className="md:col-span-2 space-y-6">
           {/* Bio - With better styling */}
           <Card>
@@ -150,9 +159,11 @@ async function TeacherProfileDetail({ id }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {teacher.bio ? (
+              {user.userProfile?.bio ? (
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <div dangerouslySetInnerHTML={{ __html: teacher.bio }} />
+                  <div
+                    dangerouslySetInnerHTML={{ __html: user.userProfile.bio }}
+                  />
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-6 text-center bg-muted/20 rounded-lg border border-dashed">
@@ -164,7 +175,7 @@ async function TeacherProfileDetail({ id }) {
             </CardContent>
           </Card>
 
-          {/* Skills - With better styling */}
+          {/* Teaching Skills - Enhanced */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
@@ -173,9 +184,10 @@ async function TeacherProfileDetail({ id }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {teacher.skills && teacher.skills.length > 0 ? (
+              {user.teacherProfile?.skills &&
+              user.teacherProfile.skills.length > 0 ? (
                 <div className="grid grid-cols-1 gap-3">
-                  {teacher.skills.map((skillItem) => (
+                  {user.teacherProfile.skills.map((skillItem) => (
                     <div
                       key={skillItem.id}
                       className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/10 transition-colors"
@@ -195,13 +207,46 @@ async function TeacherProfileDetail({ id }) {
               )}
             </CardContent>
           </Card>
+
+          {/* Languages - New section */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Globe className="h-5 w-5" />
+                Spoken Languages
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {user.userProfile?.languages &&
+              user.userProfile.languages.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3">
+                  {user.userProfile.languages.map((language) => (
+                    <div
+                      key={language.id}
+                      className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/10 transition-colors"
+                    >
+                      <div className="font-medium">{language.skill.name}</div>
+                      <UserSkillBadge userSkill={language} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 bg-muted/20 rounded-lg border border-dashed">
+                  <Globe className="h-10 w-10 text-muted-foreground mb-3" />
+                  <p className="text-muted-foreground text-center">
+                    No languages have been added yet.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
   );
 }
 
-// Loading skeleton - Updated to match new design
+// Update skeleton to match new layout too
 function ProfileDetailSkeleton() {
   return (
     <>
@@ -226,7 +271,7 @@ function ProfileDetailSkeleton() {
         <Card className="md:col-span-1 overflow-hidden">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center space-y-4">
-              <Skeleton className="h-28 w-28 rounded-full" />
+              <Skeleton className="h-40 w-40 rounded-md" />
               <div className="space-y-2 text-center w-full pt-2">
                 <Skeleton className="h-6 w-32 mx-auto" />
                 <Skeleton className="h-4 w-40 mx-auto" />
@@ -257,6 +302,16 @@ function ProfileDetailSkeleton() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent className="space-y-3">
               <Skeleton className="h-12 w-full rounded-lg" />
               <Skeleton className="h-12 w-full rounded-lg" />
             </CardContent>

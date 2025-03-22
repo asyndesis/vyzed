@@ -22,6 +22,16 @@ const GET_USER_PROFILES = gql`
       userProfile {
         id
         bio
+        languages {
+          id
+          skillId
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
+        }
       }
       studentProfile {
         id
@@ -52,6 +62,8 @@ export default async function DashboardPage() {
   const hasStudentProfile = !!user?.studentProfile;
   const hasTeacherProfile = !!user?.teacherProfile;
   const hasUserProfile = !!user?.userProfile;
+
+  console.log(user);
 
   return (
     <div className="container p-2 space-y-8">

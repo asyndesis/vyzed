@@ -13,13 +13,14 @@ import { getClient } from "@/lib/apollo-client";
 import UserSkillBadge from "@/components/user-skill-badge";
 import { convert } from "html-to-text";
 import Link from "next/link";
+import { BookOpen, Globe } from "lucide-react";
 
 export const metadata = {
   title: "Teachers",
   description: "Find a teacher for your child",
 };
 
-// Updated GraphQL query to include userProfile.bio
+// Updated GraphQL query to include userProfile.languages
 const GET_TEACHERS = gql`
   query GetPublicUsers {
     publicUsers {
@@ -30,6 +31,15 @@ const GET_TEACHERS = gql`
       userProfile {
         id
         bio
+        languages {
+          id
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
+        }
       }
       teacherProfile {
         id
@@ -46,7 +56,7 @@ const GET_TEACHERS = gql`
   }
 `;
 
-// Updated ProfileList component to display bio text
+// Updated ProfileList component to display bio text and languages
 async function ProfileList() {
   // Fetch teachers data server-side
   const { data } = await getClient().query({
@@ -60,6 +70,7 @@ async function ProfileList() {
     <div className="grid grid-cols-1 gap-6">
       {teachers.map((user) => {
         const teacherProfile = user.teacherProfile;
+        const languages = user.userProfile?.languages || [];
 
         // Convert HTML bio to plain text for display
         const bioText = user.userProfile?.bio
@@ -77,41 +88,76 @@ async function ProfileList() {
 
         return (
           <Link
-            href={`/dashboard/teachers/${teacherProfile.id}`}
+            href={`/dashboard/teachers/${user.id}`}
             key={user.id}
-            className="block transition-all hover:shadow-md"
+            className="block"
           >
-            <Card className="overflow-hidden">
-              <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage
-                    src={user.imageUrl}
-                    alt={`${user.firstName} ${user.lastInitial}`}
-                  />
-                  <AvatarFallback>
-                    {user.firstName?.[0] || ""}
-                    {user.lastInitial || ""}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <CardTitle>
-                    {user.firstName} {user.lastInitial}
-                  </CardTitle>
-                  <CardDescription>Teacher Profile</CardDescription>
+            <Card className="overflow-hidden transition-all hover:shadow-md">
+              <div className="flex">
+                <div className="pl-6 pt-6">
+                  <Avatar className="h-40 w-40 rounded-md">
+                    <AvatarImage
+                      src={user.imageUrl}
+                      alt={`${user.firstName} ${user.lastInitial}`}
+                    />
+                    <AvatarFallback>
+                      {user.firstName?.[0] || ""}
+                      {user.lastInitial || ""}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
-              </CardHeader>
-              <CardContent>
-                {truncatedBio && (
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                    {truncatedBio}
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {teacherProfile.skills.map((skillItem) => (
-                    <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
-                  ))}
+                <div className="flex-1">
+                  <CardHeader className="pb-2">
+                    <CardTitle>
+                      {user.firstName} {user.lastInitial}
+                    </CardTitle>
+                    <CardDescription>Teacher Profile</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {truncatedBio && (
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {truncatedBio}
+                      </p>
+                    )}
+
+                    {/* Teaching Skills Section */}
+                    {teacherProfile.skills.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          TEACHING SKILLS
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {teacherProfile.skills.map((skillItem) => (
+                            <UserSkillBadge
+                              key={skillItem.id}
+                              userSkill={skillItem}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Languages Section */}
+                    {languages.length > 0 && (
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                          <Globe className="h-3.5 w-3.5" />
+                          SPOKEN LANGUAGES
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {languages.map((skillItem) => (
+                            <UserSkillBadge
+                              key={skillItem.id}
+                              userSkill={skillItem}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           </Link>
         );
@@ -120,7 +166,7 @@ async function ProfileList() {
   );
 }
 
-// Updated ProfileSkeleton to include bio
+// Updated ProfileSkeleton to include languages
 function ProfileSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -133,12 +179,26 @@ function ProfileSkeleton() {
               <Skeleton className="h-3 w-24" />
             </div>
           </CardHeader>
-          <CardContent>
-            <Skeleton className="h-12 w-full mb-4" />
-            <div className="flex flex-wrap gap-2 mt-2">
-              <Skeleton className="h-6 w-16 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-14 rounded-full" />
+          <CardContent className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+
+            {/* Teaching Skills Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-3 w-32" />
+              <div className="flex flex-wrap gap-2">
+                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-14 rounded-full" />
+              </div>
+            </div>
+
+            {/* Languages Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-3 w-36" />
+              <div className="flex flex-wrap gap-2">
+                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-14 rounded-full" />
+              </div>
             </div>
           </CardContent>
         </Card>
