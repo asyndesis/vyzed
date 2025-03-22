@@ -121,25 +121,17 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
             <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
             <CardHeader className="pb-2 pt-4">
               <div className="flex justify-between items-start">
-                <CardTitle className="text-lg sm:text-xl">
-                  {`${user.firstName} ${user.lastInitial}`}
-                </CardTitle>
+                <div className="text-xs font-medium text-emerald-700/70 dark:text-emerald-400/70 uppercase tracking-wider">
+                  Teaching Skills
+                </div>
                 <Badge className="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900 dark:text-emerald-300 border-none">
                   {user.teacherProfile.skills.length} skills
                 </Badge>
               </div>
-              <CardDescription>
-                {user.teacherProfile.bio
-                  ? convert(user.teacherProfile.bio)
-                  : ""}
-              </CardDescription>
             </CardHeader>
             <CardContent className="pb-3 pt-0">
               {user.teacherProfile.skills.length > 0 ? (
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-emerald-700/70 dark:text-emerald-400/70 uppercase tracking-wider">
-                    Skills
-                  </p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {user.teacherProfile.skills.map((userSkill) => (
                       <UserSkillBadge

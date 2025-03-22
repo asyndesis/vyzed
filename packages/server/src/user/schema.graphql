@@ -53,8 +53,11 @@ type Query {
   userByAuthId(authId: String!): User
   checkUserExistsByAuthId(authId: String!): Boolean!
   users: [User!]!
-  publicUsers: [PublicUser!]!
   publicUserById(id: PostgresID!): PublicUser
+  publicTeacherUsers(
+    skillIds: [ID!]
+    pagination: PaginationInput
+  ): TeacherUserResult!
 }
 
 # Mutations
@@ -63,4 +66,10 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(id: PostgresID!, input: UpdateUserInput!): User!
   deleteUser(id: PostgresID!): Boolean!
+}
+
+# Paginated response type
+type TeacherUserResult {
+  users: [PublicUser!]!
+  pagination: PaginationInfo!
 }

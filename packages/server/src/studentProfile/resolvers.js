@@ -35,7 +35,7 @@ export const studentProfileResolvers = {
     },
   },
   Mutation: {
-    createStudentProfile: async (_, { input }, { prisma, user }) => {
+    createStudentProfile: async (_, { input }, { user }) => {
       const { userId } = input;
 
       return prisma.studentProfile.create({

@@ -35,6 +35,15 @@ const GET_USER_PROFILES = gql`
       }
       studentProfile {
         id
+        skills {
+          id
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
+        }
       }
       teacherProfile {
         id

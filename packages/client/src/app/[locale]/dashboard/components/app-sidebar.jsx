@@ -7,8 +7,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { HomeIcon, SettingsIcon, UsersIcon } from "lucide-react";
+import { currentUser } from "@clerk/nextjs/server";
 
-export function AppSidebar({ ...props }) {
+export async function AppSidebar() {
+  const user = await currentUser();
+  const isAuthenticated = !!user;
+
   const navigationItems = [
     {
       title: "Dashboard",
@@ -43,13 +47,11 @@ export function AppSidebar({ ...props }) {
   ];
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarContent>
         <NavMain items={navigationItems} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
+      <SidebarFooter>{isAuthenticated && <NavUser />}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

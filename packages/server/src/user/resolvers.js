@@ -81,18 +81,70 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    publicUsers: async (_, __, { prisma }) => {
-      try {
-        return await prisma.user.findMany();
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
     publicUserById: async (_, { id }) => {
       try {
         return await prisma.user.findUnique({
           where: { id },
         });
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    },
+    publicTeacherUsers: async (_, { skillIds, pagination }, { prisma }) => {
+      try {
+        const where = {
+          teacherProfiles: {
+            isNot: null,
+          },
+        };
+
+        if (skillIds?.length > 0) {
+          where.teacherProfiles = {
+            ...where.teacherProfiles,
+            skills: {
+              some: {
+                skillId: {
+                  in: skillIds,
+                },
+              },
+            },
+          };
+        }
+
+        const total = await prisma.user.count({ where });
+
+        const take = pagination?.limit || 10;
+        const skip = pagination?.offset || 0;
+
+        const users = await prisma.user.findMany({
+          where,
+          take,
+          skip,
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            teacherProfiles: {
+              include: {
+                skills: {
+                  include: {
+                    skill: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        return {
+          users,
+          pagination: {
+            total,
+            limit: take,
+            offset: skip,
+            hasMore: skip + take < total,
+          },
+        };
       } catch (err) {
         throw new Error(err.message);
       }
@@ -124,7 +176,6 @@ export const userResolvers = {
     },
     createMyUser: async (parent, args, { auth }) => {
       const { input } = args;
-      // They don't have a user yet, so we rely on clerk auth
       const { userId: authId } = auth;
       try {
         const existingUser = await prisma.user.findUnique({
@@ -149,7 +200,7 @@ export const userResolvers = {
       }
     },
     updateUser: async (parent, args, { user }) => {
-      const { id, input } = args; // Use 'id' and 'input' from args
+      const { id, input } = args;
       const { authId } = user || {};
       try {
         const updatedUser = await prisma.user.update({
@@ -165,10 +216,10 @@ export const userResolvers = {
       }
     },
     deleteUser: async (parent, args) => {
-      const { id } = args; // Use 'id' from args
+      const { id } = args;
       try {
         await prisma.user.delete({ where: { id } });
-        return true; // Return a Boolean as per your schema
+        return true;
       } catch (err) {
         throw new Error(err.message);
       }

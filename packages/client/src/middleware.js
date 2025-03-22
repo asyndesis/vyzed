@@ -8,9 +8,10 @@ const isRootRoute = createRouteMatcher(["/"]);
 
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/:locale",
-  "/:locale/(sign-in|sign-up)(.*)",
+  "/:locale?", // locale is optional
+  "/:locale?/(sign-in|sign-up)(.*)",
   "/api(.*)",
+  "/:locale?/dashboard/teachers(.*)",
 ]);
 
 const intlMiddleware = createMiddleware(routing);

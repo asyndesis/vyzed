@@ -8,8 +8,8 @@ export const userPermissions = {
     userByAuthId: and(isAuthed, isAdmin),
     users: and(isAuthed, isAdmin),
     checkUserExistsByAuthId: isAuthed,
-    publicUsers: isPublic,
-    publicUserById: isAuthed,
+    publicTeacherUsers: isPublic,
+    publicUserById: isPublic,
   },
   Mutation: {
     createUser: and(isAuthed, isAdmin),
