@@ -22,8 +22,11 @@ export const metadata = {
 
 // GraphQL query - clearly named and organized
 const GET_TEACHERS = gql`
-  query GetTeachers($pagination: PaginationInput, $skillIds: [ID!]) {
-    publicTeacherUsers(pagination: $pagination, skillIds: $skillIds) {
+  query GetTeachers(
+    $pagination: PaginationInput
+    $filters: TeacherUserFilters
+  ) {
+    publicTeacherUsers(pagination: $pagination, filters: $filters) {
       users {
         id
         firstName
@@ -209,12 +212,11 @@ function Pagination({ offset, limit, total, hasMore }) {
 }
 
 // Main data fetching component
-async function TeachersList({ offset = 0, limit = 10, skillIds = [] }) {
+async function TeachersList({ offset = 0, limit = 10 }) {
   const { data } = await getClient().query({
     query: GET_TEACHERS,
     variables: {
       pagination: { limit, offset },
-      skillIds: skillIds.length > 0 ? skillIds : undefined,
     },
   });
 
@@ -278,13 +280,9 @@ function SkillSectionSkeleton() {
 
 // Main page component - clean, focused, and simple
 export default async function TeachersPage({ searchParams }) {
-  const offset = parseInt(searchParams?.offset) || 0;
+  const params = await searchParams;
+  const offset = parseInt(params?.offset) || 0;
   const limit = 10;
-  const skillIds = Array.isArray(searchParams?.skill)
-    ? searchParams.skill
-    : searchParams?.skill
-      ? [searchParams.skill]
-      : [];
 
   return (
     <div className="container p-2">
@@ -296,7 +294,7 @@ export default async function TeachersPage({ searchParams }) {
       </div>
 
       <Suspense fallback={<TeachersListSkeleton />}>
-        <TeachersList offset={offset} limit={limit} skillIds={skillIds} />
+        <TeachersList offset={offset} limit={limit} />
       </Suspense>
     </div>
   );

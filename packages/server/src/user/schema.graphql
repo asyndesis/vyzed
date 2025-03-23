@@ -55,7 +55,7 @@ type Query {
   users: [User!]!
   publicUserById(id: PostgresID!): PublicUser
   publicTeacherUsers(
-    skillIds: [ID!]
+    filters: TeacherUserFilters
     pagination: PaginationInput
   ): TeacherUserResult!
 }
@@ -66,6 +66,25 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(id: PostgresID!, input: UpdateUserInput!): User!
   deleteUser(id: PostgresID!): Boolean!
+}
+
+input TeacherUserFilters {
+  # we need to get teacherskills and their proficiency level,
+  teachingSkills: [TeacherSkillFilter!]
+  # we need to get student skills and their proficiency level,
+  studentSkills: [StudentSkillFilter!]
+  # we need to get the search query,
+  search: String
+}
+
+input TeacherSkillFilter {
+  skillId: PostgresID!
+  proficiency: String!
+}
+
+input StudentSkillFilter {
+  skillId: PostgresID!
+  proficiency: String!
 }
 
 # Paginated response type

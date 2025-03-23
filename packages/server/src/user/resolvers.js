@@ -90,41 +90,148 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    publicTeacherUsers: async (_, { skillIds, pagination }, { prisma }) => {
+    publicTeacherUsers: async (_, { filters, pagination }, { prisma }) => {
       try {
-        const where = {
-          teacherProfiles: {
+        // Base condition - user must have a teacherProfile
+        let baseWhere = {
+          teacherProfile: {
             isNot: null,
           },
         };
 
-        if (skillIds?.length > 0) {
-          where.teacherProfiles = {
-            ...where.teacherProfiles,
-            skills: {
-              some: {
-                skillId: {
-                  in: skillIds,
+        // Start with the base condition
+        let whereConditions = [baseWhere];
+
+        // Add teaching skill filters if provided
+        if (filters?.teachingSkills?.length > 0) {
+          // For each teaching skill filter, create a separate condition
+          filters.teachingSkills.forEach(({ skillId, proficiency }) => {
+            const proficiencyValue = parseInt(proficiency, 10);
+
+            // Only add valid proficiency values
+            if (!isNaN(proficiencyValue)) {
+              whereConditions.push({
+                teacherProfile: {
+                  skills: {
+                    some: {
+                      skillId: skillId,
+                      proficiency: {
+                        gte: proficiencyValue, // Greater than or equal to the specified proficiency
+                      },
+                    },
+                  },
                 },
-              },
-            },
-          };
+              });
+            } else {
+              // If no valid proficiency, just filter by skillId
+              whereConditions.push({
+                teacherProfile: {
+                  skills: {
+                    some: {
+                      skillId: skillId,
+                    },
+                  },
+                },
+              });
+            }
+          });
         }
 
-        const total = await prisma.user.count({ where });
+        // Add student skill filters if provided
+        if (filters?.studentSkills?.length > 0) {
+          // For each student skill filter, create a separate condition
+          filters.studentSkills.forEach(({ skillId, proficiency }) => {
+            const proficiencyValue = parseInt(proficiency, 10);
 
+            // Only add valid proficiency values
+            if (!isNaN(proficiencyValue)) {
+              whereConditions.push({
+                studentProfile: {
+                  skills: {
+                    some: {
+                      skillId: skillId,
+                      proficiency: {
+                        gte: proficiencyValue,
+                      },
+                    },
+                  },
+                },
+              });
+            } else {
+              // If no valid proficiency, just filter by skillId
+              whereConditions.push({
+                studentProfile: {
+                  skills: {
+                    some: {
+                      skillId: skillId,
+                    },
+                  },
+                },
+              });
+            }
+          });
+        }
+
+        // Add search filter if provided
+        if (filters?.search) {
+          const searchTerm = filters.search.trim();
+
+          if (searchTerm) {
+            whereConditions.push({
+              OR: [
+                { firstName: { contains: searchTerm, mode: "insensitive" } },
+                { lastName: { contains: searchTerm, mode: "insensitive" } },
+              ],
+            });
+          }
+        }
+
+        // Combine all conditions with AND
+        const finalWhere =
+          whereConditions.length > 1
+            ? { AND: whereConditions }
+            : whereConditions[0];
+
+        // Count total matching users for pagination
+        const total = await prisma.user.count({
+          where: finalWhere,
+        });
+
+        // Default pagination settings
         const take = pagination?.limit || 10;
         const skip = pagination?.offset || 0;
 
+        // Fetch users with all relevant profile data
         const users = await prisma.user.findMany({
-          where,
+          where: finalWhere,
           take,
           skip,
           orderBy: {
-            createdAt: "desc",
+            createdAt: "desc", // Most recent first
           },
           include: {
-            teacherProfiles: {
+            // Include teacher profile with skills
+            teacherProfile: {
+              include: {
+                skills: {
+                  include: {
+                    skill: true,
+                  },
+                },
+              },
+            },
+            // Include user profile with languages
+            userProfile: {
+              include: {
+                languages: {
+                  include: {
+                    skill: true,
+                  },
+                },
+              },
+            },
+            // Include student profile with skills
+            studentProfile: {
               include: {
                 skills: {
                   include: {
@@ -136,6 +243,7 @@ export const userResolvers = {
           },
         });
 
+        // Return results with pagination info
         return {
           users,
           pagination: {
@@ -146,7 +254,8 @@ export const userResolvers = {
           },
         };
       } catch (err) {
-        throw new Error(err.message);
+        console.error("Error in publicTeacherUsers resolver:", err);
+        throw new Error(`Failed to fetch teachers: ${err.message}`);
       }
     },
   },

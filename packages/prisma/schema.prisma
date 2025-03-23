@@ -11,20 +11,20 @@ datasource db {
 }
 
 model User {
-    id              String          @id @default(cuid())
-    email           String          @unique
-    firstName       String?
-    lastName        String?
-    imageUrl        String?
-    roles           String[]        @default([])
-    authId          String          @unique
-    userProfile     UserProfile?
-    studentProfile  StudentProfile?
-    teacherProfiles TeacherProfile?
-    createdAt       DateTime        @default(now())
-    updatedAt       DateTime        @updatedAt
-    createdBy       String?
-    updatedBy       String?
+    id             String          @id @default(cuid())
+    email          String          @unique
+    firstName      String?
+    lastName       String?
+    imageUrl       String?
+    roles          String[]        @default([])
+    authId         String          @unique
+    userProfile    UserProfile?
+    studentProfile StudentProfile?
+    teacherProfile TeacherProfile?
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    createdBy      String?
+    updatedBy      String?
 }
 
 model UserProfile {
