@@ -139,26 +139,102 @@ export function UserProfileSection({ user }) {
 
   // Handler for removing a language
   const handleRemoveLanguage = (index) => {
+    // First, get the actual language item we want to remove using the provided index
     const languages = form.getValues("languages") || [];
-    const updatedLanguages = [...languages];
+    const displayLanguages = languages.filter(
+      (lang) => lang && lang.isDeleted !== true
+    );
 
-    if (updatedLanguages[index].isNew) {
-      // If it's a new language, just remove it from the array
-      updatedLanguages.splice(index, 1);
-    } else {
-      // Otherwise mark it as deleted
-      updatedLanguages[index].isDeleted = true;
+    // Find the actual language to remove from the display index
+    const languageToRemove = displayLanguages[index];
+
+    if (!languageToRemove) {
+      console.error("Could not find language to remove at index:", index);
+      return;
     }
 
-    form.setValue("languages", updatedLanguages);
+    // Now find this language in the original array by matching its skillId
+    const updatedLanguages = [...languages];
+    const actualIndex = updatedLanguages.findIndex(
+      (lang) =>
+        lang &&
+        lang.skillId === languageToRemove.skillId &&
+        lang.isDeleted !== true
+    );
+
+    if (actualIndex === -1) {
+      console.error(
+        "Could not find language in form values:",
+        languageToRemove
+      );
+      return;
+    }
+
+    // Now remove or mark as deleted based on whether it's new
+    if (updatedLanguages[actualIndex].isNew) {
+      // If it's a new language, completely remove it from the array
+      updatedLanguages.splice(actualIndex, 1);
+    } else {
+      // For existing languages, mark as deleted
+      updatedLanguages[actualIndex] = {
+        ...updatedLanguages[actualIndex],
+        isDeleted: true,
+      };
+    }
+
+    // Update the form state
+    form.setValue("languages", updatedLanguages, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   };
 
   // Handler for updating language proficiency
   const handleUpdateLanguageProficiency = (index, newProficiency) => {
+    // First, get the actual language item we want to update using the provided index
     const languages = form.getValues("languages") || [];
+    const displayLanguages = languages.filter(
+      (lang) => lang && lang.isDeleted !== true
+    );
+
+    // Find the actual language to update from the display index
+    const languageToUpdate = displayLanguages[index];
+
+    if (!languageToUpdate) {
+      console.error("Could not find language to update at index:", index);
+      return;
+    }
+
+    // Now find this language in the original array by matching its skillId
     const updatedLanguages = [...languages];
-    updatedLanguages[index].proficiency = newProficiency;
-    form.setValue("languages", updatedLanguages);
+    const actualIndex = updatedLanguages.findIndex(
+      (lang) =>
+        lang &&
+        lang.skillId === languageToUpdate.skillId &&
+        lang.isDeleted !== true
+    );
+
+    if (actualIndex === -1) {
+      console.error(
+        "Could not find language in form values:",
+        languageToUpdate
+      );
+      return;
+    }
+
+    // Update the proficiency
+    updatedLanguages[actualIndex] = {
+      ...updatedLanguages[actualIndex],
+      proficiency: newProficiency,
+    };
+
+    // Update the form state
+    form.setValue("languages", updatedLanguages, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   };
 
   async function onSubmit(values) {
@@ -208,7 +284,7 @@ export function UserProfileSection({ user }) {
 
   // Filter out deleted languages for display
   const displayLanguages = (formValues.languages || []).filter(
-    (lang) => !lang.isDeleted
+    (lang) => lang && lang.isDeleted !== true
   );
 
   return (

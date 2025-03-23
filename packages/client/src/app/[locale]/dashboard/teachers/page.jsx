@@ -14,6 +14,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { TeacherListFilters } from "./components/teacher-list-filters";
+import { revalidatePath } from "next/cache";
 
 export const metadata = {
   title: "Teachers",
@@ -79,6 +81,41 @@ const GET_TEACHERS = gql`
     }
   }
 `;
+
+// Server action to handle filter updates
+async function applyFilters(formData) {
+  "use server";
+
+  const filters = JSON.parse(formData.get("filters"));
+
+  // Create a cleaner URL format with individual parameters for each filter type
+  const params = new URLSearchParams();
+
+  // Add teaching skills directly as comma-separated IDs with proficiency
+  if (filters.teachingSkills?.length) {
+    const teachingParam = filters.teachingSkills
+      .map((skill) => `${skill.skillId}:${skill.proficiency}`)
+      .join(",");
+    params.set("teaching", teachingParam);
+  }
+
+  // Add student skills directly as comma-separated IDs with proficiency
+  if (filters.studentSkills?.length) {
+    const studentParam = filters.studentSkills
+      .map((skill) => `${skill.skillId}:${skill.proficiency}`)
+      .join(",");
+    params.set("student", studentParam);
+  }
+
+  // Reset pagination when filters change
+  params.set("offset", "0");
+
+  // Create the path with clean URL parameters
+  const path = `/dashboard/teachers?${params.toString()}`;
+
+  revalidatePath(path);
+  return { path };
+}
 
 // Extracted teacher card into a separate, focused component
 function TeacherCard({ user }) {
@@ -178,8 +215,14 @@ function SkillSection({ skills, icon, tooltipText }) {
 }
 
 // Clean pagination component
-function Pagination({ offset, limit, total, hasMore }) {
-  const buildUrl = (newOffset) => `/dashboard/teachers?offset=${newOffset}`;
+function Pagination({ offset, limit, total, hasMore, filters }) {
+  const buildUrl = (newOffset) => {
+    const params = new URLSearchParams({ offset: newOffset });
+    if (filters) {
+      params.set("filters", encodeURIComponent(JSON.stringify(filters)));
+    }
+    return `/dashboard/teachers?${params}`;
+  };
 
   return (
     <div className="space-y-2 mt-6">
@@ -212,12 +255,20 @@ function Pagination({ offset, limit, total, hasMore }) {
 }
 
 // Main data fetching component
-async function TeachersList({ offset = 0, limit = 10 }) {
+async function TeachersList({ offset = 0, limit = 10, filters = null }) {
+  const variables = {
+    pagination: { limit, offset },
+  };
+
+  // Add filters if provided
+  if (filters) {
+    variables.filters = filters;
+  }
+
   const { data } = await getClient().query({
     query: GET_TEACHERS,
-    variables: {
-      pagination: { limit, offset },
-    },
+    variables,
+    fetchPolicy: "network-only", // Ensure fresh data with filters
   });
 
   const { users: teachers, pagination } = data.publicTeacherUsers;
@@ -235,6 +286,7 @@ async function TeachersList({ offset = 0, limit = 10 }) {
         limit={limit}
         total={pagination.total}
         hasMore={pagination.hasMore}
+        filters={filters}
       />
     </div>
   );
@@ -278,11 +330,42 @@ function SkillSectionSkeleton() {
   );
 }
 
-// Main page component - clean, focused, and simple
+// Main page component with improved URL parameter parsing
 export default async function TeachersPage({ searchParams }) {
   const params = await searchParams;
   const offset = parseInt(params?.offset) || 0;
   const limit = 10;
+
+  // Parse filters from URL using the cleaner format
+  const filters = {};
+
+  // Parse teaching skills
+  if (params?.teaching) {
+    filters.teachingSkills = params.teaching
+      .split(",")
+      .filter(Boolean)
+      .map((item) => {
+        const [skillId, proficiency = "5"] = item.split(":");
+        return {
+          skillId,
+          proficiency: parseInt(proficiency, 10),
+        };
+      });
+  }
+
+  // Parse student skills
+  if (params?.student) {
+    filters.studentSkills = params.student
+      .split(",")
+      .filter(Boolean)
+      .map((item) => {
+        const [skillId, proficiency = "5"] = item.split(":");
+        return {
+          skillId,
+          proficiency: parseInt(proficiency, 10),
+        };
+      });
+  }
 
   return (
     <div className="container p-2">
@@ -293,8 +376,13 @@ export default async function TeachersPage({ searchParams }) {
         </p>
       </div>
 
-      <Suspense fallback={<TeachersListSkeleton />}>
-        <TeachersList offset={offset} limit={limit} />
+      <TeacherListFilters initialFilters={filters} />
+
+      <Suspense
+        key={`${params?.teaching || ""}-${params?.student || ""}-${offset}`}
+        fallback={<TeachersListSkeleton />}
+      >
+        <TeachersList offset={offset} limit={limit} filters={filters} />
       </Suspense>
     </div>
   );

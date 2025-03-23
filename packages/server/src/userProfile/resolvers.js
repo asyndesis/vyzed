@@ -65,7 +65,6 @@ export const userProfileResolvers = {
     },
     updateUserProfile: async (_, { id, input }, { user }) => {
       const { bio, languages } = input;
-      console.log(languages);
 
       return await prisma.$transaction(async (tx) => {
         await tx.userProfile.update({

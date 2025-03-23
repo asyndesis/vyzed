@@ -70,21 +70,16 @@ type Mutation {
 
 input TeacherUserFilters {
   # we need to get teacherskills and their proficiency level,
-  teachingSkills: [TeacherSkillFilter!]
+  teachingSkills: [TeacherUserSkillFilter!]
   # we need to get student skills and their proficiency level,
-  studentSkills: [StudentSkillFilter!]
+  studentSkills: [TeacherUserSkillFilter!]
   # we need to get the search query,
   search: String
 }
 
-input TeacherSkillFilter {
+input TeacherUserSkillFilter {
   skillId: PostgresID!
-  proficiency: String!
-}
-
-input StudentSkillFilter {
-  skillId: PostgresID!
-  proficiency: String!
+  proficiency: Int!
 }
 
 # Paginated response type

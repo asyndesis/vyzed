@@ -93,157 +93,114 @@ export const userResolvers = {
     publicTeacherUsers: async (_, { filters, pagination }, { prisma }) => {
       try {
         // Base condition - user must have a teacherProfile
-        let baseWhere = {
+        const where = {
           teacherProfile: {
             isNot: null,
           },
         };
 
-        // Start with the base condition
-        let whereConditions = [baseWhere];
-
-        // Add teaching skill filters if provided
+        // Add teaching skills filter if provided
         if (filters?.teachingSkills?.length > 0) {
-          // For each teaching skill filter, create a separate condition
-          filters.teachingSkills.forEach(({ skillId, proficiency }) => {
-            const proficiencyValue = parseInt(proficiency, 10);
-
-            // Only add valid proficiency values
-            if (!isNaN(proficiencyValue)) {
-              whereConditions.push({
-                teacherProfile: {
+          // Use 'some' to find teachers with any of the specified skills
+          where.AND = filters.teachingSkills.map(
+            ({ skillId, proficiency }) => ({
+              teacherProfile: {
+                is: {
                   skills: {
                     some: {
-                      skillId: skillId,
-                      proficiency: {
-                        gte: proficiencyValue, // Greater than or equal to the specified proficiency
-                      },
+                      skillId,
+                      proficiency: { gte: Number(proficiency) },
                     },
                   },
                 },
-              });
-            } else {
-              // If no valid proficiency, just filter by skillId
-              whereConditions.push({
-                teacherProfile: {
-                  skills: {
-                    some: {
-                      skillId: skillId,
-                    },
-                  },
-                },
-              });
-            }
-          });
+              },
+            })
+          );
         }
 
-        // Add student skill filters if provided
+        // Add student skills filter if provided
         if (filters?.studentSkills?.length > 0) {
-          // For each student skill filter, create a separate condition
-          filters.studentSkills.forEach(({ skillId, proficiency }) => {
-            const proficiencyValue = parseInt(proficiency, 10);
-
-            // Only add valid proficiency values
-            if (!isNaN(proficiencyValue)) {
-              whereConditions.push({
-                studentProfile: {
+          // If we already have teaching skills filters, append to AND array
+          const studentSkillsConditions = filters.studentSkills.map(
+            ({ skillId, proficiency }) => ({
+              studentProfile: {
+                is: {
                   skills: {
                     some: {
-                      skillId: skillId,
-                      proficiency: {
-                        gte: proficiencyValue,
-                      },
+                      skillId,
+                      proficiency: { gte: Number(proficiency) },
                     },
                   },
                 },
-              });
-            } else {
-              // If no valid proficiency, just filter by skillId
-              whereConditions.push({
-                studentProfile: {
-                  skills: {
-                    some: {
-                      skillId: skillId,
-                    },
-                  },
-                },
-              });
-            }
-          });
-        }
+              },
+            })
+          );
 
-        // Add search filter if provided
-        if (filters?.search) {
-          const searchTerm = filters.search.trim();
-
-          if (searchTerm) {
-            whereConditions.push({
-              OR: [
-                { firstName: { contains: searchTerm, mode: "insensitive" } },
-                { lastName: { contains: searchTerm, mode: "insensitive" } },
-              ],
-            });
+          if (where.AND) {
+            where.AND = [...where.AND, ...studentSkillsConditions];
+          } else {
+            where.AND = studentSkillsConditions;
           }
         }
 
-        // Combine all conditions with AND
-        const finalWhere =
-          whereConditions.length > 1
-            ? { AND: whereConditions }
-            : whereConditions[0];
+        // Add search filter if provided
+        if (filters?.search?.trim()) {
+          const searchCondition = {
+            OR: [
+              {
+                firstName: {
+                  contains: filters.search.trim(),
+                  mode: "insensitive",
+                },
+              },
+              {
+                lastName: {
+                  contains: filters.search.trim(),
+                  mode: "insensitive",
+                },
+              },
+            ],
+          };
 
-        // Count total matching users for pagination
-        const total = await prisma.user.count({
-          where: finalWhere,
-        });
+          if (where.AND) {
+            where.AND.push(searchCondition);
+          } else {
+            where.AND = [searchCondition];
+          }
+        }
 
-        // Default pagination settings
+        // Set pagination parameters
         const take = pagination?.limit || 10;
         const skip = pagination?.offset || 0;
 
-        // Fetch users with all relevant profile data
+        // Get total count for pagination
+        const total = await prisma.user.count({ where });
+
+        // Fetch users with profiles
         const users = await prisma.user.findMany({
-          where: finalWhere,
+          where,
           take,
           skip,
-          orderBy: {
-            createdAt: "desc", // Most recent first
-          },
+          orderBy: { createdAt: "desc" },
           include: {
-            // Include teacher profile with skills
             teacherProfile: {
               include: {
-                skills: {
-                  include: {
-                    skill: true,
-                  },
-                },
+                skills: { include: { skill: true } },
               },
             },
-            // Include user profile with languages
             userProfile: {
               include: {
-                languages: {
-                  include: {
-                    skill: true,
-                  },
-                },
+                languages: { include: { skill: true } },
               },
             },
-            // Include student profile with skills
             studentProfile: {
               include: {
-                skills: {
-                  include: {
-                    skill: true,
-                  },
-                },
+                skills: { include: { skill: true } },
               },
             },
           },
         });
 
-        // Return results with pagination info
         return {
           users,
           pagination: {
