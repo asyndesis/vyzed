@@ -14,8 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TeacherListFilters } from "./components/teacher-list-filters";
-import { revalidatePath } from "next/cache";
+import { ClientFilterManager } from "./components/client-filter-manager";
 
 export const metadata = {
   title: "Teachers",
@@ -81,41 +80,6 @@ const GET_TEACHERS = gql`
     }
   }
 `;
-
-// Server action to handle filter updates
-async function applyFilters(formData) {
-  "use server";
-
-  const filters = JSON.parse(formData.get("filters"));
-
-  // Create a cleaner URL format with individual parameters for each filter type
-  const params = new URLSearchParams();
-
-  // Add teaching skills directly as comma-separated IDs with proficiency
-  if (filters.teachingSkills?.length) {
-    const teachingParam = filters.teachingSkills
-      .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-      .join(",");
-    params.set("teaching", teachingParam);
-  }
-
-  // Add student skills directly as comma-separated IDs with proficiency
-  if (filters.studentSkills?.length) {
-    const studentParam = filters.studentSkills
-      .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-      .join(",");
-    params.set("student", studentParam);
-  }
-
-  // Reset pagination when filters change
-  params.set("offset", "0");
-
-  // Create the path with clean URL parameters
-  const path = `/dashboard/teachers?${params.toString()}`;
-
-  revalidatePath(path);
-  return { path };
-}
 
 // Extracted teacher card into a separate, focused component
 function TeacherCard({ user }) {
@@ -215,12 +179,11 @@ function SkillSection({ skills, icon, tooltipText }) {
 }
 
 // Clean pagination component
-function Pagination({ offset, limit, total, hasMore, filters }) {
+function Pagination({ offset, limit, total, hasMore, teaching, student }) {
   const buildUrl = (newOffset) => {
     const params = new URLSearchParams({ offset: newOffset });
-    if (filters) {
-      params.set("filters", encodeURIComponent(JSON.stringify(filters)));
-    }
+    if (teaching) params.set("teaching", teaching);
+    if (student) params.set("student", student);
     return `/dashboard/teachers?${params}`;
   };
 
@@ -255,7 +218,13 @@ function Pagination({ offset, limit, total, hasMore, filters }) {
 }
 
 // Main data fetching component
-async function TeachersList({ offset = 0, limit = 10, filters = null }) {
+async function TeachersList({
+  offset = 0,
+  limit = 10,
+  filters = null,
+  teaching,
+  student,
+}) {
   const variables = {
     pagination: { limit, offset },
   };
@@ -286,7 +255,8 @@ async function TeachersList({ offset = 0, limit = 10, filters = null }) {
         limit={limit}
         total={pagination.total}
         hasMore={pagination.hasMore}
-        filters={filters}
+        teaching={teaching}
+        student={student}
       />
     </div>
   );
@@ -330,18 +300,20 @@ function SkillSectionSkeleton() {
   );
 }
 
-// Main page component with improved URL parameter parsing
+// Main page component
 export default async function TeachersPage({ searchParams }) {
   const params = await searchParams;
   const offset = parseInt(params?.offset) || 0;
   const limit = 10;
+  const teaching = params?.teaching || "";
+  const student = params?.student || "";
 
   // Parse filters from URL using the cleaner format
   const filters = {};
 
   // Parse teaching skills
-  if (params?.teaching) {
-    filters.teachingSkills = params.teaching
+  if (teaching) {
+    filters.teachingSkills = teaching
       .split(",")
       .filter(Boolean)
       .map((item) => {
@@ -354,8 +326,8 @@ export default async function TeachersPage({ searchParams }) {
   }
 
   // Parse student skills
-  if (params?.student) {
-    filters.studentSkills = params.student
+  if (student) {
+    filters.studentSkills = student
       .split(",")
       .filter(Boolean)
       .map((item) => {
@@ -376,13 +348,20 @@ export default async function TeachersPage({ searchParams }) {
         </p>
       </div>
 
-      <TeacherListFilters initialFilters={filters} />
+      {/* Client-side filter manager */}
+      <ClientFilterManager initialFilters={filters} />
 
       <Suspense
-        key={`${params?.teaching || ""}-${params?.student || ""}-${offset}`}
+        key={`${teaching || ""}-${student || ""}-${offset}`}
         fallback={<TeachersListSkeleton />}
       >
-        <TeachersList offset={offset} limit={limit} filters={filters} />
+        <TeachersList
+          offset={offset}
+          limit={limit}
+          filters={filters}
+          teaching={teaching}
+          student={student}
+        />
       </Suspense>
     </div>
   );

@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SkillSelectorCompact } from "@/components/skill-selector-compact";
 import { BookOpen, GraduationCap } from "lucide-react";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { gql, useQuery } from "@apollo/client";
 
-// Use the same query as the SkillSelectorCompact
 const GET_SKILLS = gql`
   query GetSkills {
     rootSkills {
@@ -25,17 +23,9 @@ const GET_SKILLS = gql`
   }
 `;
 
-export const TeacherListFilters = ({ initialFilters = {} }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const [initialized, setInitialized] = useState(false);
-
-  // Fetch all skills
   const { data: skillsData } = useQuery(GET_SKILLS);
-
-  // Map to quickly look up skill details
-  const [skillMap, setSkillMap] = useState({});
 
   // Set up form with initial values
   const methods = useForm({
@@ -45,120 +35,112 @@ export const TeacherListFilters = ({ initialFilters = {} }) => {
     },
   });
 
-  // Build skill map once on load
+  // Initialize form values from initialFilters
   useEffect(() => {
     if (skillsData?.rootSkills && !initialized) {
-      // Create a map of all skills for quick lookup
-      const map = {};
+      const enhanceSkill = (filter) => {
+        // Find the skill details in the skills data
+        let skillDetails = null;
 
-      // Process root skills and their children
-      skillsData.rootSkills.forEach((category) => {
-        if (category.children) {
-          category.children.forEach((skill) => {
-            map[skill.id] = {
-              id: skill.id,
-              name: skill.name,
-              framework: skill.framework,
-            };
-          });
+        for (const category of skillsData.rootSkills) {
+          if (category.children) {
+            const found = category.children.find(
+              (s) => s.id === filter.skillId
+            );
+            if (found) {
+              skillDetails = found;
+              break;
+            }
+          }
         }
-      });
 
-      setSkillMap(map);
+        return {
+          skillId: filter.skillId,
+          proficiency: parseInt(filter.proficiency || "5", 10),
+          skillName: skillDetails?.name || filter.skillId,
+          framework: skillDetails?.framework || "DEFAULT",
+          skill: skillDetails || {
+            id: filter.skillId,
+            name: filter.skillId,
+            framework: "DEFAULT",
+          },
+        };
+      };
 
       // Initialize form with filter values
-      const teachingSkills = (initialFilters?.teachingSkills || []).map((f) =>
-        enhanceSkill(f, map)
-      );
-      const studentSkills = (initialFilters?.studentSkills || []).map((f) =>
-        enhanceSkill(f, map)
-      );
+      if (initialFilters?.teachingSkills?.length) {
+        const teachingSkills = initialFilters.teachingSkills.map(enhanceSkill);
+        methods.setValue("teachingSkills", teachingSkills);
+      }
 
-      methods.setValue("teachingSkills", teachingSkills);
-      methods.setValue("studentSkills", studentSkills);
+      if (initialFilters?.studentSkills?.length) {
+        const studentSkills = initialFilters.studentSkills.map(enhanceSkill);
+        methods.setValue("studentSkills", studentSkills);
+      }
 
       setInitialized(true);
     }
   }, [skillsData, initialized, initialFilters, methods]);
 
-  // Helper function to enhance a skill with display data
-  function enhanceSkill(filter, map) {
-    const skill = map[filter.skillId];
-    return {
-      skillId: filter.skillId,
-      proficiency: parseInt(filter.proficiency || "5", 10),
-      skillName: skill?.name || filter.skillId,
-      framework: skill?.framework || "DEFAULT",
-      skill: skill || {
-        id: filter.skillId,
-        name: filter.skillId,
-        framework: "DEFAULT",
-      },
-    };
-  }
-
-  // Update URL directly (much faster than server actions)
-  const updateURL = (teachingSkills, studentSkills) => {
-    // Create a new URLSearchParams object
-    const params = new URLSearchParams(searchParams);
-
-    // Update teaching skills param
-    if (teachingSkills?.length) {
-      params.set(
-        "teaching",
-        teachingSkills
-          .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-          .join(",")
-      );
-    } else {
-      params.delete("teaching");
-    }
-
-    // Update student skills param
-    if (studentSkills?.length) {
-      params.set(
-        "student",
-        studentSkills
-          .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-          .join(",")
-      );
-    } else {
-      params.delete("student");
-    }
-
-    // Reset pagination when filters change
-    params.set("offset", "0");
-
-    // Update URL without full navigation - much faster
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
-  // Handle adding a skill
+  // Update handlers to notify parent
   const handleAddSkill = (filterType, skill) => {
     const currentSkills = methods.getValues(filterType) || [];
     const updatedSkills = [...currentSkills, skill];
     methods.setValue(filterType, updatedSkills);
 
-    // Update URL immediately
-    if (filterType === "teachingSkills") {
-      updateURL(updatedSkills, methods.getValues("studentSkills"));
-    } else {
-      updateURL(methods.getValues("teachingSkills"), updatedSkills);
+    if (onFilterChange) {
+      onFilterChange({
+        teachingSkills:
+          filterType === "teachingSkills"
+            ? updatedSkills
+            : methods.getValues("teachingSkills"),
+        studentSkills:
+          filterType === "studentSkills"
+            ? updatedSkills
+            : methods.getValues("studentSkills"),
+      });
     }
   };
 
-  // Handle removing a skill
-  const handleRemoveSkill = (filterType, index) => {
+  const handleUpdateSkill = (filterType, skillId, updatedSkill) => {
     const currentSkills = methods.getValues(filterType) || [];
-    const updatedSkills = [...currentSkills];
-    updatedSkills.splice(index, 1);
+    const updatedSkills = currentSkills.map((skill) =>
+      skill.skillId === skillId ? updatedSkill : skill
+    );
     methods.setValue(filterType, updatedSkills);
 
-    // Update URL immediately
-    if (filterType === "teachingSkills") {
-      updateURL(updatedSkills, methods.getValues("studentSkills"));
-    } else {
-      updateURL(methods.getValues("teachingSkills"), updatedSkills);
+    if (onFilterChange) {
+      onFilterChange({
+        teachingSkills:
+          filterType === "teachingSkills"
+            ? updatedSkills
+            : methods.getValues("teachingSkills"),
+        studentSkills:
+          filterType === "studentSkills"
+            ? updatedSkills
+            : methods.getValues("studentSkills"),
+      });
+    }
+  };
+
+  const handleRemoveSkill = (filterType, skillId) => {
+    const currentSkills = methods.getValues(filterType) || [];
+    const updatedSkills = currentSkills.filter(
+      (skill) => skill.skillId !== skillId
+    );
+    methods.setValue(filterType, updatedSkills);
+
+    if (onFilterChange) {
+      onFilterChange({
+        teachingSkills:
+          filterType === "teachingSkills"
+            ? updatedSkills
+            : methods.getValues("teachingSkills"),
+        studentSkills:
+          filterType === "studentSkills"
+            ? updatedSkills
+            : methods.getValues("studentSkills"),
+      });
     }
   };
 
@@ -191,8 +173,11 @@ export const TeacherListFilters = ({ initialFilters = {} }) => {
                       onAddSkill={(skill) =>
                         handleAddSkill("teachingSkills", skill)
                       }
-                      onRemoveSkill={(index) =>
-                        handleRemoveSkill("teachingSkills", index)
+                      onRemoveSkill={(skillId) =>
+                        handleRemoveSkill("teachingSkills", skillId)
+                      }
+                      onUpdateSkill={(skillId, skill) =>
+                        handleUpdateSkill("teachingSkills", skillId, skill)
                       }
                       label="Teaching Skills"
                       dialogTitle="Filter by Teaching Skills"
@@ -216,8 +201,11 @@ export const TeacherListFilters = ({ initialFilters = {} }) => {
                       onAddSkill={(skill) =>
                         handleAddSkill("studentSkills", skill)
                       }
-                      onRemoveSkill={(index) =>
-                        handleRemoveSkill("studentSkills", index)
+                      onRemoveSkill={(skillId) =>
+                        handleRemoveSkill("studentSkills", skillId)
+                      }
+                      onUpdateSkill={(skillId, skill) =>
+                        handleUpdateSkill("studentSkills", skillId, skill)
                       }
                       label="Learning Skills"
                       dialogTitle="Filter by Learning Skills"
