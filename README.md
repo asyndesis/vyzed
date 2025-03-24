@@ -20,6 +20,8 @@ DATABASE_URL=
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 CLERK_SECRET_KEY=
 # Port here should match apollo port
 NEXT_PUBLIC_API_URL=http://localhost:4000
@@ -40,7 +42,7 @@ PORT=4000
 # Install packages
 npm install
 # Generates types defs for ORM
-npm run database:generate
+npm run prisma:generate
 # Run the API
 npm run server:dev
 # Run the APP

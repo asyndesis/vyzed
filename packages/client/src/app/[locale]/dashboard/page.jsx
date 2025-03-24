@@ -72,8 +72,6 @@ export default async function DashboardPage() {
   const hasTeacherProfile = !!user?.teacherProfile;
   const hasUserProfile = !!user?.userProfile;
 
-  console.log(user);
-
   return (
     <div className="container p-2 space-y-8">
       {/* Header - Improved spacing and responsiveness */}

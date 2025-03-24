@@ -33,7 +33,7 @@ export const completeOnboarding = async ({ authId, token }) => {
     });
     userData = response.data.checkUserExistsByAuthId;
   } catch (error) {
-    console.log("hey");
+    console.error(error);
   }
 
   // If the user already exists in the database, skip onboarding
