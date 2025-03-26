@@ -62,7 +62,7 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
   };
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-2">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -88,9 +88,6 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">
-            Share your expertise and connect with students
-          </p>
         </div>
         {!hasTeacherProfile && (
           <Button
@@ -116,7 +113,7 @@ export function TeacherProfileSection({ user, hasTeacherProfile }) {
       </div>
 
       {hasTeacherProfile ? (
-        <div className="space-y-4 h-full">
+        <div className="h-full">
           <Card className="overflow-hidden transition-all flex flex-col">
             <div className="h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500" />
             <CardHeader className="pb-2 pt-4">

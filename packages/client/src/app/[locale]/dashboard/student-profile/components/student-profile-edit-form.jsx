@@ -13,11 +13,18 @@ import {
   BookOpen,
   AlertCircle,
   Loader2,
+  ArrowLeft,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SkillSelector } from "@/components/skill-selector";
-
+import { useRouter } from "next/navigation";
 const SKILL_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
 // Updated GraphQL mutation for student profile
@@ -57,6 +64,7 @@ const profileSchema = z.object({
 });
 
 export function StudentProfileEditForm({ profile }) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -214,27 +222,24 @@ export function StudentProfileEditForm({ profile }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Form header with unsaved changes indicator */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Edit Student Profile</h2>
-          <Badge
-            variant="outline"
-            className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
-              hasChanges ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <AlertCircle className="h-3.5 w-3.5" />
-            <span>Unsaved changes</span>
-          </Badge>
-        </div>
-
         {/* Skills Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5" />
-              Learning Skills
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Learning Skills
+              </CardTitle>
+              <Badge
+                variant="outline"
+                className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
+                  hasChanges ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <AlertCircle className="h-3.5 w-3.5" />
+                <span>Unsaved changes</span>
+              </Badge>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <SkillSelector
@@ -251,23 +256,33 @@ export function StudentProfileEditForm({ profile }) {
               emptyMessage="You have not added any learning skills yet. Click Add Skill to add skills you want to learn."
             />
           </CardContent>
+          <CardFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+            >
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
+            <Button
+              className="ml-auto"
+              type="submit"
+              disabled={isSubmitting || !hasChanges}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </CardFooter>
         </Card>
-
-        {/* Save button - now disabled when no changes */}
-        <div className="flex justify-between items-center pt-6 mt-6 border-t">
-          <Button
-            type="submit"
-            disabled={isSubmitting || !hasChanges}
-            className="gap-2"
-          >
-            {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            Save Profile
-          </Button>
-        </div>
       </form>
     </Form>
   );

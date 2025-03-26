@@ -23,9 +23,17 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
-import { UserCircle, Save, Loader2, Globe } from "lucide-react";
+import {
+  UserCircle,
+  ArrowLeft,
+  Save,
+  Loader2,
+  Globe,
+  AlertCircle,
+} from "lucide-react";
 import { useTransition } from "react";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 import { toast } from "sonner";
 import Tiptap from "@/components/tip-tap";
@@ -96,7 +104,7 @@ export function UserProfileEditForm({ user }) {
   // Watch all form values
   const formValues = form.watch();
 
-  // Use a simple effect to detect changes by comparing with initial values
+  // Add the effect to detect changes
   useEffect(() => {
     const currentFormValues = {
       firstName: formValues.firstName,
@@ -267,19 +275,30 @@ export function UserProfileEditForm({ user }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <UserCircle className="h-5 w-5" />
-          User Profile
-        </CardTitle>
-        <CardDescription>
-          Manage your personal information and language preferences
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <UserCircle className="h-5 w-5" />
+                User Profile
+              </CardTitle>
+              <Badge
+                variant="outline"
+                className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
+                  hasChanges ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <AlertCircle className="h-3.5 w-3.5" />
+                <span>Unsaved changes</span>
+              </Badge>
+            </div>
+            <CardDescription>
+              Both teachers and students will see this profile.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -308,7 +327,6 @@ export function UserProfileEditForm({ user }) {
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="bio"
@@ -358,25 +376,35 @@ export function UserProfileEditForm({ user }) {
                 )}
               />
             </div>
-
-            <CardFooter className="flex justify-end">
-              <Button type="submit" disabled={!hasChanges || isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Save Changes
-                  </>
-                )}
-              </Button>
-            </CardFooter>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          </CardContent>
+          <CardFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+            >
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
+            <Button
+              className="ml-auto"
+              type="submit"
+              disabled={!hasChanges || isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
+    </Form>
   );
 }

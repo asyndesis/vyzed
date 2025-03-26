@@ -63,7 +63,7 @@ export function StudentProfileSection({ user, hasStudentProfile }) {
   };
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-2">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -89,9 +89,6 @@ export function StudentProfileSection({ user, hasStudentProfile }) {
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">
-            Track your learning journey
-          </p>
         </div>
         {!hasStudentProfile && (
           <Button
@@ -117,7 +114,7 @@ export function StudentProfileSection({ user, hasStudentProfile }) {
       </div>
 
       {hasStudentProfile ? (
-        <div className="space-y-4 h-full">
+        <div className="h-full">
           <Card className="overflow-hidden transition-all flex flex-col">
             <div className="h-1.5 bg-gradient-to-r from-blue-500 to-indigo-500" />
             <CardHeader className="pb-2 pt-4">
