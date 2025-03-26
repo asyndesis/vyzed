@@ -290,8 +290,8 @@ export function SkillSelector({
           </DialogContent>
         </Dialog>
         {skills.length > 0 ? (
-          skills.map((skillItem, index) => (
-            <Card key={index} className="overflow-hidden">
+          skills.map((skillItem) => (
+            <Card key={skillItem.skillId} className="overflow-hidden">
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {icon || <div className="h-5 w-5" />}
@@ -303,7 +303,10 @@ export function SkillSelector({
                     <Select
                       value={String(skillItem.proficiency)}
                       onValueChange={(value) =>
-                        onUpdateProficiency(index, parseInt(value, 10))
+                        onUpdateProficiency(
+                          skillItem.skillId,
+                          parseInt(value, 10)
+                        )
                       }
                     >
                       <SelectTrigger className="w-[220px]">
@@ -326,7 +329,7 @@ export function SkillSelector({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => onRemoveSkill(index)}
+                    onClick={() => onRemoveSkill(skillItem.skillId)}
                     className="h-8 w-8 rounded-full"
                   >
                     <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />

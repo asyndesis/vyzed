@@ -108,8 +108,13 @@ export function TeacherProfileEditForm({ profile }) {
   };
 
   // Handler for removing a skill
-  const handleRemoveSkill = (index) => {
+  const handleRemoveSkill = (skillId) => {
     const skills = form.getValues("skills");
+    const index = skills.findIndex(
+      (skill) => skill.id === skillId || skill.skillId === skillId
+    );
+    if (index === -1) return;
+
     const updatedSkills = [...skills];
 
     if (updatedSkills[index].isNew) {
@@ -124,8 +129,13 @@ export function TeacherProfileEditForm({ profile }) {
   };
 
   // Handler for updating skill proficiency
-  const handleUpdateSkillProficiency = (index, newProficiency) => {
+  const handleUpdateSkillProficiency = (skillId, newProficiency) => {
     const skills = form.getValues("skills");
+    const index = skills.findIndex(
+      (skill) => skill.id === skillId || skill.skillId === skillId
+    );
+    if (index === -1) return;
+
     const updatedSkills = [...skills];
     updatedSkills[index].proficiency = newProficiency;
     form.setValue("skills", updatedSkills);

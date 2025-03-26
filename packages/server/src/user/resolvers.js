@@ -94,104 +94,84 @@ export const userResolvers = {
       try {
         // Base condition - user must have a teacherProfile
         const where = {
-          teacherProfile: {
-            isNot: null,
-          },
+          teacherProfile: { isNot: null },
+        };
+
+        const addFilterCondition = (condition) => {
+          where.AND = where.AND ? [...where.AND, condition] : [condition];
         };
 
         // Add teaching skills filter if provided
         if (filters?.teachingSkills?.length > 0) {
-          // Use 'some' to find teachers with any of the specified skills
-          where.AND = filters.teachingSkills.map(
-            ({ skillId, proficiency }) => ({
-              teacherProfile: {
-                is: {
-                  skills: {
-                    some: {
-                      skillId,
-                      proficiency: { gte: Number(proficiency) },
-                    },
+          const teachingSkillsCondition = {
+            teacherProfile: {
+              is: {
+                skills: {
+                  some: {
+                    OR: filters.teachingSkills.map(
+                      ({ skillId, proficiency }) => ({
+                        skillId,
+                        proficiency: { gte: Number(proficiency) },
+                      })
+                    ),
                   },
                 },
               },
-            })
-          );
+            },
+          };
+          addFilterCondition(teachingSkillsCondition);
         }
 
         // Add student skills filter if provided
         if (filters?.studentSkills?.length > 0) {
-          // If we already have teaching skills filters, append to AND array
-          const studentSkillsConditions = filters.studentSkills.map(
-            ({ skillId, proficiency }) => ({
-              studentProfile: {
-                is: {
-                  skills: {
-                    some: {
-                      skillId,
-                      proficiency: { gte: Number(proficiency) },
-                    },
+          const studentSkillsCondition = {
+            studentProfile: {
+              is: {
+                skills: {
+                  some: {
+                    OR: filters.studentSkills.map(
+                      ({ skillId, proficiency }) => ({
+                        skillId,
+                        proficiency: { gte: Number(proficiency) },
+                      })
+                    ),
                   },
                 },
               },
-            })
-          );
-
-          if (where.AND) {
-            where.AND = [...where.AND, ...studentSkillsConditions];
-          } else {
-            where.AND = studentSkillsConditions;
-          }
+            },
+          };
+          addFilterCondition(studentSkillsCondition);
         }
 
         // Add language filter if provided
         if (filters?.languages?.length > 0) {
-          // Create conditions for language filtering
-          const languageConditions = filters.languages.map(
-            ({ skillId, proficiency }) => ({
-              userProfile: {
-                is: {
-                  languages: {
-                    some: {
+          const languageCondition = {
+            userProfile: {
+              is: {
+                languages: {
+                  some: {
+                    OR: filters.languages.map(({ skillId, proficiency }) => ({
                       skillId,
                       proficiency: { gte: Number(proficiency) },
-                    },
+                    })),
                   },
                 },
               },
-            })
-          );
-
-          if (where.AND) {
-            where.AND = [...where.AND, ...languageConditions];
-          } else {
-            where.AND = languageConditions;
-          }
+            },
+          };
+          addFilterCondition(languageCondition);
         }
 
         // Add search filter if provided
         if (filters?.search?.trim()) {
+          const searchTerm = filters.search.trim();
           const searchCondition = {
             OR: [
-              {
-                firstName: {
-                  contains: filters.search.trim(),
-                  mode: "insensitive",
-                },
-              },
-              {
-                lastName: {
-                  contains: filters.search.trim(),
-                  mode: "insensitive",
-                },
-              },
+              { firstName: { contains: searchTerm, mode: "insensitive" } },
+              { lastName: { contains: searchTerm, mode: "insensitive" } },
             ],
           };
-
-          if (where.AND) {
-            where.AND.push(searchCondition);
-          } else {
-            where.AND = [searchCondition];
-          }
+          addFilterCondition(searchCondition);
         }
 
         // Set pagination parameters
@@ -209,19 +189,13 @@ export const userResolvers = {
           orderBy: { createdAt: "desc" },
           include: {
             teacherProfile: {
-              include: {
-                skills: { include: { skill: true } },
-              },
+              include: { skills: { include: { skill: true } } },
             },
             userProfile: {
-              include: {
-                languages: { include: { skill: true } },
-              },
+              include: { languages: { include: { skill: true } } },
             },
             studentProfile: {
-              include: {
-                skills: { include: { skill: true } },
-              },
+              include: { skills: { include: { skill: true } } },
             },
           },
         });
