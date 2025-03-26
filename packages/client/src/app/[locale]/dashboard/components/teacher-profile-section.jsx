@@ -26,7 +26,7 @@ import { DeleteProfileDialog } from "./delete-profile-dialog";
 import { createTeacherProfile, deleteTeacherProfile } from "../actions";
 import { useTransition } from "react";
 import UserSkillBadge from "@/components/user-skill-badge";
-import { convert } from "html-to-text";
+
 export function TeacherProfileSection({ user, hasTeacherProfile }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();

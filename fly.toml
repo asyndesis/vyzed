@@ -42,3 +42,6 @@ primary_region = 'mad'
 
 [[vm]]
   size = 'shared-cpu-2x'
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1

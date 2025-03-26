@@ -2,7 +2,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { gql, useMutation } from "@apollo/client";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -17,29 +16,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SkillSelector } from "@/components/skill-selector";
+import { updateTeacherProfile } from "../actions";
 
 const SKILL_LEVELS = [1, 2, 3, 4, 5, 6, 7];
-
-// Single GraphQL mutation for updating the entire profile
-const UPDATE_TEACHER_PROFILE = gql`
-  mutation UpdateTeacherProfile(
-    $id: PostgresID!
-    $input: UpdateTeacherProfileInput!
-  ) {
-    updateTeacherProfile(id: $id, input: $input) {
-      id
-      skills {
-        id
-        proficiency
-        skill {
-          id
-          name
-          framework
-        }
-      }
-    }
-  }
-`;
 
 // Updated form schema
 const profileSchema = z.object({
@@ -76,9 +55,6 @@ export function TeacherProfileEditForm({ profile }) {
 
   // Initialize skills from profile
   const initialSkills = initialValuesRef.current.skills;
-
-  // Mutation for updating the entire profile
-  const [updateProfile] = useMutation(UPDATE_TEACHER_PROFILE);
 
   // Initialize form with all profile data
   const form = useForm({
@@ -161,22 +137,16 @@ export function TeacherProfileEditForm({ profile }) {
           proficiency: skill.proficiency,
         }));
 
-      // Update profile with all data
-      const result = await updateProfile({
-        variables: {
-          id: profile.id,
-          input: {
-            skills: skillsInput,
-          },
-        },
+      // Update profile using server action
+      const result = await updateTeacherProfile(profile.id, {
+        skills: skillsInput,
       });
 
       toast.success("Profile updated successfully");
 
       // Update form with new data from response
-      if (result.data?.updateTeacherProfile) {
-        const updatedProfile = result.data.updateTeacherProfile;
-        const updatedSkills = updatedProfile.skills.map((skill) => ({
+      if (result) {
+        const updatedSkills = result.skills.map((skill) => ({
           id: skill.id,
           skillId: skill.skill.id,
           proficiency: skill.proficiency,

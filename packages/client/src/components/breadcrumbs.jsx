@@ -27,15 +27,14 @@ export const BreadCrumbs = ({ overrides = {}, isLoading = false }) => {
         return null;
       }
 
-      // Set label to "Home" if this is the first segment and matches a locale
-      let label;
+      // Skip this segment if it's the first one and matches a locale pattern
       if (index === 0 && segment.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
-        label = "Home";
-      } else {
-        label = override?.label || startCase(segment);
+        return null;
       }
 
+      const label = override?.label || startCase(segment);
       const href = override?.href || defaultHref;
+
       return { label, href };
     })
     .filter(Boolean); // Remove null entries

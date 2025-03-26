@@ -2,6 +2,7 @@ import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
 import { StudentProfileEditForm } from "../../components/student-profile-edit-form";
 import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata = {
   title: "Student Profile",
@@ -27,7 +28,7 @@ const GET_STUDENT_PROFILE = gql`
 `;
 
 export default async function EditStudentProfilePage({ params }) {
-  const { id: profileId } = params;
+  const { id: profileId } = await params;
 
   // Server-side data fetching
   const { data, error } = await getClient().query({
@@ -58,15 +59,12 @@ export default async function EditStudentProfilePage({ params }) {
   }
 
   return (
-    <div className="container p-2">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Student Profile</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage the skills you want to learn and improve
-        </p>
-      </div>
-
+    <>
+      <PageHeader
+        title="Student Profile"
+        description="Manage the skills you want to learn and improve"
+      />
       <StudentProfileEditForm profile={data.studentProfileById} />
-    </div>
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Calendar, User, GraduationCap, Mail, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserSkillBadge from "@/components/user-skill-badge";
-
+import { PageHeader } from "@/components/page-header";
 // GraphQL query to fetch a specific teacher profile
 const GET_PUBLIC_USER = gql`
   query PublicUserById($id: PostgresID!) {
@@ -91,21 +91,11 @@ async function TeacherProfileDetail({ id }) {
   });
 
   return (
-    <div className="container p-2 space-y-8">
-      <header className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          {user.firstName} {user.lastInitial}
-        </h1>
-        <div className="text-muted-foreground mt-1 flex items-center gap-2">
-          <Badge variant="outline">Teacher</Badge>
-          <span className="text-sm">·</span>
-          <span className="text-sm flex items-center gap-1">
-            <GraduationCap className="h-3.5 w-3.5" />
-            {user.teacherProfile.skills.length} skills
-          </span>
-        </div>
-      </header>
-      <Separator />
+    <>
+      <PageHeader
+        title={`${user.firstName} ${user.lastInitial}`}
+        description="View the teacher's profile and skills"
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Teacher Info Card - Enhanced */}
         <Card className="md:col-span-1 overflow-hidden">
@@ -242,7 +232,7 @@ async function TeacherProfileDetail({ id }) {
           </Card>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

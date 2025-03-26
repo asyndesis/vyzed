@@ -2,7 +2,7 @@ import { getClient } from "@/lib/apollo-client"; // You'll need to create this
 import { gql } from "@apollo/client";
 import { TeacherProfileEditForm } from "../../components/teacher-profile-edit-form";
 import { notFound } from "next/navigation";
-
+import { PageHeader } from "@/components/page-header";
 export const metadata = {
   title: "Teacher Profile",
   description: "Manage your learning and teaching profiles",
@@ -57,15 +57,12 @@ export default async function EditTeacherProfilePage({ params }) {
   }
 
   return (
-    <div className="container p-2">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Teacher Profile</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage the skills you can teach to others
-        </p>
-      </div>
-
+    <>
+      <PageHeader
+        title="Teacher Profile"
+        description="Manage the skills you can teach to others"
+      />
       <TeacherProfileEditForm profile={data.teacherProfileById} />
-    </div>
+    </>
   );
 }

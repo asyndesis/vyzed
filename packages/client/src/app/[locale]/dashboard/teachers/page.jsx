@@ -15,10 +15,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ClientFilterManager } from "./components/client-filter-manager";
-
+import { PageHeader } from "@/components/page-header";
 export const metadata = {
   title: "Teachers",
-  description: "Find a teacher for your child",
+  description: "Find a teacher",
 };
 
 // GraphQL query - clearly named and organized
@@ -340,14 +340,11 @@ export default async function TeachersPage({ searchParams }) {
   }
 
   return (
-    <div className="container p-2">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Find Teachers</h1>
-        <p className="text-muted-foreground">
-          Discover expert teachers to help with your learning journey
-        </p>
-      </div>
-
+    <>
+      <PageHeader
+        title="Teachers"
+        description="Find a teacher for your child"
+      />
       {/* Client-side filter manager */}
       <ClientFilterManager initialFilters={filters} />
 
@@ -363,6 +360,6 @@ export default async function TeachersPage({ searchParams }) {
           student={student}
         />
       </Suspense>
-    </div>
+    </>
   );
 }

@@ -3,8 +3,10 @@ import { gql } from "@apollo/client";
 import { Separator } from "@/components/ui/separator";
 import { StudentProfileSection } from "./components/student-profile-section";
 import { TeacherProfileSection } from "./components/teacher-profile-section";
-import { UserProfileSection } from "./components/user-profile-section";
-
+import { Button } from "@/components/ui/button";
+import { UserCircle } from "lucide-react";
+import Link from "next/link";
+import { PageHeader } from "@/components/page-header";
 export const metadata = {
   title: "Dashboard",
   description: "Manage your learning and teaching profiles",
@@ -19,20 +21,6 @@ const GET_USER_PROFILES = gql`
       lastName
       lastInitial
       email
-      userProfile {
-        id
-        bio
-        languages {
-          id
-          skillId
-          proficiency
-          skill {
-            id
-            name
-            framework
-          }
-        }
-      }
       studentProfile {
         id
         skills {
@@ -70,36 +58,30 @@ export default async function DashboardPage() {
   const user = data?.me;
   const hasStudentProfile = !!user?.studentProfile;
   const hasTeacherProfile = !!user?.teacherProfile;
-  const hasUserProfile = !!user?.userProfile;
 
   return (
-    <div className="container p-2 space-y-8">
-      {/* Header - Improved spacing and responsiveness */}
-      <header className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          Dashboard
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Manage your learning and teaching profiles
-        </p>
-      </header>
-      <Separator />
-
+    <>
+      <PageHeader
+        title="Dashboard"
+        description="Manage your learning and teaching profiles"
+        controls={
+          <Link href="/dashboard/user-profile">
+            <Button variant="outline" className="gap-2">
+              <UserCircle className="h-4 w-4" />
+              User Profile
+            </Button>
+          </Link>
+        }
+      />
       {/* Main Layout - Using flex instead of grid for better control */}
       <div className="flex flex-col xl:flex-row gap-6">
-        {/* User Profile - Takes more space */}
-        <div className="xl:w-1/2">
-          <UserProfileSection user={user} hasUserProfile={hasUserProfile} />
-        </div>
-
-        {/* Role Profiles - Takes less space, stacked vertically */}
-        <div className="xl:w-1/2 space-y-6">
+        {/* Role Profiles - Takes full width, stacked vertically */}
+        <div className="w-full space-y-6">
           {/* Student Profile Section */}
           <StudentProfileSection
             user={user}
             hasStudentProfile={hasStudentProfile}
           />
-
           {/* Teacher Profile Section */}
           <TeacherProfileSection
             user={user}
@@ -107,6 +89,6 @@ export default async function DashboardPage() {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }
