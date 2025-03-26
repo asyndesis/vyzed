@@ -58,6 +58,7 @@ export function SkillSelectorCompact({
   proficiencyLevels = [1, 2, 3, 4, 5, 6, 7],
   defaultProficiency = 3,
   icon,
+  placeholder = "Select skills...",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -244,7 +245,9 @@ export function SkillSelectorCompact({
           className="flex items-center h-10 px-3 py-2 border rounded-md relative cursor-pointer"
           onClick={openAddDialog}
         >
-          <span className="text-muted-foreground">Select skills...</span>
+          <span className="text-muted-foreground truncate overflow-hidden">
+            {placeholder}
+          </span>
           <Button
             type="button"
             variant="ghost"

@@ -179,11 +179,20 @@ function SkillSection({ skills, icon, tooltipText }) {
 }
 
 // Clean pagination component
-function Pagination({ offset, limit, total, hasMore, teaching, student }) {
+function Pagination({
+  offset,
+  limit,
+  total,
+  hasMore,
+  teaching,
+  student,
+  languages,
+}) {
   const buildUrl = (newOffset) => {
     const params = new URLSearchParams({ offset: newOffset });
     if (teaching) params.set("teaching", teaching);
     if (student) params.set("student", student);
+    if (languages) params.set("languages", languages);
     return `/dashboard/teachers?${params}`;
   };
 
@@ -224,6 +233,7 @@ async function TeachersList({
   filters = null,
   teaching,
   student,
+  languages,
 }) {
   const variables = {
     pagination: { limit, offset },
@@ -256,6 +266,7 @@ async function TeachersList({
         hasMore={pagination.hasMore}
         teaching={teaching}
         student={student}
+        languages={languages}
       />
     </div>
   );
@@ -306,6 +317,7 @@ export default async function TeachersPage({ searchParams }) {
   const limit = 10;
   const teaching = params?.teaching || "";
   const student = params?.student || "";
+  const languages = params?.languages || "";
 
   // Parse filters from URL using the cleaner format
   const filters = {};
@@ -338,12 +350,26 @@ export default async function TeachersPage({ searchParams }) {
       });
   }
 
+  // Parse languages
+  if (languages) {
+    filters.languages = languages
+      .split(",")
+      .filter(Boolean)
+      .map((item) => {
+        const [skillId, proficiency = "5"] = item.split(":");
+        return {
+          skillId,
+          proficiency: parseInt(proficiency, 10),
+        };
+      });
+  }
+
   return (
     <>
       <PageHeader title="Teachers" description="Find someone to learn with" />
       <ClientFilterManager initialFilters={filters} />
       <Suspense
-        key={`${teaching || ""}-${student || ""}-${offset}`}
+        key={`${teaching || ""}-${student || ""}-${languages || ""}-${offset}`}
         fallback={<TeachersListSkeleton />}
       >
         <TeachersList
@@ -352,6 +378,7 @@ export default async function TeachersPage({ searchParams }) {
           filters={filters}
           teaching={teaching}
           student={student}
+          languages={languages}
         />
       </Suspense>
     </>

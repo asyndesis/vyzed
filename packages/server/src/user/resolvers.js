@@ -143,6 +143,31 @@ export const userResolvers = {
           }
         }
 
+        // Add language filter if provided
+        if (filters?.languages?.length > 0) {
+          // Create conditions for language filtering
+          const languageConditions = filters.languages.map(
+            ({ skillId, proficiency }) => ({
+              userProfile: {
+                is: {
+                  languages: {
+                    some: {
+                      skillId,
+                      proficiency: { gte: Number(proficiency) },
+                    },
+                  },
+                },
+              },
+            })
+          );
+
+          if (where.AND) {
+            where.AND = [...where.AND, ...languageConditions];
+          } else {
+            where.AND = languageConditions;
+          }
+        }
+
         // Add search filter if provided
         if (filters?.search?.trim()) {
           const searchCondition = {

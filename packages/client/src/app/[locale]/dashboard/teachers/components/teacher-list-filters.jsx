@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { SkillSelectorCompact } from "@/components/skill-selector-compact";
-import { BookOpen, GraduationCap } from "lucide-react";
+import { BookOpen, GraduationCap, Globe } from "lucide-react";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { gql, useQuery } from "@apollo/client";
@@ -32,6 +32,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
     defaultValues: {
       teachingSkills: [],
       studentSkills: [],
+      languages: [],
     },
   });
 
@@ -78,6 +79,11 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
         methods.setValue("studentSkills", studentSkills);
       }
 
+      if (initialFilters?.languages?.length) {
+        const languages = initialFilters.languages.map(enhanceSkill);
+        methods.setValue("languages", languages);
+      }
+
       setInitialized(true);
     }
   }, [skillsData, initialized, initialFilters, methods]);
@@ -98,6 +104,10 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           filterType === "studentSkills"
             ? updatedSkills
             : methods.getValues("studentSkills"),
+        languages:
+          filterType === "languages"
+            ? updatedSkills
+            : methods.getValues("languages"),
       });
     }
   };
@@ -119,6 +129,10 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           filterType === "studentSkills"
             ? updatedSkills
             : methods.getValues("studentSkills"),
+        languages:
+          filterType === "languages"
+            ? updatedSkills
+            : methods.getValues("languages"),
       });
     }
   };
@@ -140,6 +154,10 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           filterType === "studentSkills"
             ? updatedSkills
             : methods.getValues("studentSkills"),
+        languages:
+          filterType === "languages"
+            ? updatedSkills
+            : methods.getValues("languages"),
       });
     }
   };
@@ -161,7 +179,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
       <Card className="mb-6">
         <CardContent className="pt-6">
           <Form {...methods}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <FormField
                 control={methods.control}
                 name="teachingSkills"
@@ -206,12 +224,40 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       onUpdateSkill={(skillId, skill) =>
                         handleUpdateSkill("studentSkills", skillId, skill)
                       }
-                      label="I can teach these skills (optional)"
-                      dialogTitle="Filter by Learning Skills"
-                      dialogDescription="Select skills students want to learn"
+                      label="I can offer these skills"
+                      dialogTitle="Skills I can offer"
+                      dialogDescription="Some teachers offer class bartering"
                       icon={<GraduationCap className="h-4 w-4 text-primary" />}
                       showProficiency={true}
                       defaultProficiency={5}
+                    />
+                  </FormItem>
+                )}
+              />
+
+              {/* Language Filter */}
+              <FormField
+                control={methods.control}
+                name="languages"
+                render={() => (
+                  <FormItem>
+                    <SkillSelectorCompact
+                      skills={methods.getValues("languages") || []}
+                      onAddSkill={(skill) => handleAddSkill("languages", skill)}
+                      onRemoveSkill={(skillId) =>
+                        handleRemoveSkill("languages", skillId)
+                      }
+                      onUpdateSkill={(skillId, skill) =>
+                        handleUpdateSkill("languages", skillId, skill)
+                      }
+                      skillCategoryId="clqwertyu00" // Language category ID
+                      label="Should speak at least"
+                      dialogTitle="Filter by Languages"
+                      dialogDescription="Select languages you want teachers to speak"
+                      icon={<Globe className="h-4 w-4 text-primary" />}
+                      showProficiency={true}
+                      defaultProficiency={5}
+                      placeholder="Select languages..."
                     />
                   </FormItem>
                 )}

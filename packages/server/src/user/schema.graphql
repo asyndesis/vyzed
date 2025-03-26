@@ -73,6 +73,8 @@ input TeacherUserFilters {
   teachingSkills: [TeacherUserSkillFilter!]
   # we need to get student skills and their proficiency level,
   studentSkills: [TeacherUserSkillFilter!]
+  # we need to get language skills and their proficiency level,
+  languages: [TeacherUserSkillFilter!]
   # we need to get the search query,
   search: String
 }

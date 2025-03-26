@@ -14,7 +14,12 @@ export function ClientFilterManager({ initialFilters }) {
 
     // Preserve existing non-filter params
     for (const [key, value] of searchParams.entries()) {
-      if (key !== "teaching" && key !== "student" && key !== "offset") {
+      if (
+        key !== "teaching" &&
+        key !== "student" &&
+        key !== "languages" &&
+        key !== "offset"
+      ) {
         params.set(key, value);
       }
     }
@@ -33,6 +38,14 @@ export function ClientFilterManager({ initialFilters }) {
         .map((skill) => `${skill.skillId}:${skill.proficiency}`)
         .join(",");
       params.set("student", student);
+    }
+
+    // Update languages param
+    if (filters.languages?.length) {
+      const languages = filters.languages
+        .map((skill) => `${skill.skillId}:${skill.proficiency}`)
+        .join(",");
+      params.set("languages", languages);
     }
 
     // Reset pagination when filters change

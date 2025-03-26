@@ -11,7 +11,7 @@ const UserSkillBadge = ({ userSkill, onClick, onRemove }) => {
       onClick={onClick}
     >
       {userSkill.skill.name}
-      <span className="ml-1 text-xs opacity-70">
+      <span className="ml-1 text-xs opacity-70 truncate overflow-hidden">
         {renderProficiency({
           proficiency: userSkill.proficiency,
           framework: userSkill.skill.framework,
