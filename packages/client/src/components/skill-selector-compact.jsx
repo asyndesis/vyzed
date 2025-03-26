@@ -239,7 +239,6 @@ export function SkillSelectorCompact({
   return (
     <div className="space-y-0">
       <FormLabel className="text-sm font-medium mb-2 block">{label}</FormLabel>
-
       {skills.length === 0 ? (
         <div
           className="flex items-center h-10 px-3 py-2 border rounded-md relative cursor-pointer"

@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { SkillSelectorCompact } from "@/components/skill-selector-compact";
-import { BookOpen, GraduationCap, Globe } from "lucide-react";
+import { BookOpen, Globe } from "lucide-react";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { gql, useQuery } from "@apollo/client";
+import { Switch } from "@/components/ui/switch";
+import { FormLabel } from "@/components/ui/form";
 
 const GET_SKILLS = gql`
   query GetSkills {
@@ -23,9 +25,35 @@ const GET_SKILLS = gql`
   }
 `;
 
+const GET_MY_PROFILE = gql`
+  query GetMyProfile {
+    me {
+      id
+      firstName
+      lastName
+      lastInitial
+      email
+      teacherProfile {
+        id
+        skills {
+          id
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const [initialized, setInitialized] = useState(false);
+  const [offerMySkills, setOfferMySkills] = useState(false);
   const { data: skillsData } = useQuery(GET_SKILLS);
+  const { data: profileData } = useQuery(GET_MY_PROFILE);
 
   // Set up form with initial values
   const methods = useForm({
@@ -162,6 +190,44 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
     }
   };
 
+  const handleToggleOfferMySkills = (checked) => {
+    setOfferMySkills(checked);
+
+    if (checked && profileData?.me?.teacherProfile?.skills) {
+      // Convert teacher profile skills to student skills format
+      const mySkills = profileData.me.teacherProfile.skills.map((skill) => ({
+        skillId: skill.skill.id,
+        proficiency: skill.proficiency,
+        skillName: skill.skill.name,
+        framework: skill.skill.framework,
+        skill: skill.skill,
+      }));
+
+      methods.setValue("studentSkills", mySkills);
+
+      if (onFilterChange) {
+        onFilterChange({
+          teachingSkills: methods.getValues("teachingSkills"),
+          studentSkills: mySkills,
+          languages: methods.getValues("languages"),
+        });
+      }
+    } else {
+      // Clear student skills when toggle is off
+      methods.setValue("studentSkills", []);
+
+      if (onFilterChange) {
+        onFilterChange({
+          teachingSkills: methods.getValues("teachingSkills"),
+          studentSkills: [],
+          languages: methods.getValues("languages"),
+        });
+      }
+    }
+  };
+
+  console.log(methods.getValues());
+
   if (!initialized) {
     return (
       <Card className="mb-6">
@@ -207,34 +273,6 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                 )}
               />
 
-              {/* Student Skills Filter */}
-              <FormField
-                control={methods.control}
-                name="studentSkills"
-                render={() => (
-                  <FormItem>
-                    <SkillSelectorCompact
-                      skills={methods.getValues("studentSkills") || []}
-                      onAddSkill={(skill) =>
-                        handleAddSkill("studentSkills", skill)
-                      }
-                      onRemoveSkill={(skillId) =>
-                        handleRemoveSkill("studentSkills", skillId)
-                      }
-                      onUpdateSkill={(skillId, skill) =>
-                        handleUpdateSkill("studentSkills", skillId, skill)
-                      }
-                      label="I can offer these skills"
-                      dialogTitle="Skills I can offer"
-                      dialogDescription="Some teachers offer class bartering"
-                      icon={<GraduationCap className="h-4 w-4 text-primary" />}
-                      showProficiency={true}
-                      defaultProficiency={5}
-                    />
-                  </FormItem>
-                )}
-              />
-
               {/* Language Filter */}
               <FormField
                 control={methods.control}
@@ -259,6 +297,48 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       defaultProficiency={5}
                       placeholder="Select languages..."
                     />
+                  </FormItem>
+                )}
+              />
+
+              {/* Student Skills section with toggle */}
+              <FormField
+                control={methods.control}
+                name="studentSkills"
+                render={() => (
+                  <FormItem>
+                    <FormLabel
+                      className="text-sm font-medium mb-2 block"
+                      htmlFor="offer-my-skills"
+                    >
+                      Teachers who barter for classes I teach
+                    </FormLabel>
+                    <Switch
+                      checked={offerMySkills}
+                      onCheckedChange={handleToggleOfferMySkills}
+                      id="offer-my-skills"
+                    />
+
+                    {/* <SkillSelectorCompact
+                        skills={methods.getValues("studentSkills") || []}
+                        onAddSkill={(skill) =>
+                          handleAddSkill("studentSkills", skill)
+                        }
+                        onRemoveSkill={(skillId) =>
+                          handleRemoveSkill("studentSkills", skillId)
+                        }
+                        onUpdateSkill={(skillId, skill) =>
+                          handleUpdateSkill("studentSkills", skillId, skill)
+                        }
+                        label="I can offer these skills"
+                        dialogTitle="Skills I can offer"
+                        dialogDescription="Some teachers offer class bartering"
+                        icon={
+                          <GraduationCap className="h-4 w-4 text-primary" />
+                        }
+                        showProficiency={true}
+                        defaultProficiency={5}
+                      /> */}
                   </FormItem>
                 )}
               />

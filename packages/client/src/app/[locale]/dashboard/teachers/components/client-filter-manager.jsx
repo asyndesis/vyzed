@@ -49,7 +49,7 @@ export function ClientFilterManager({ initialFilters }) {
     }
 
     // Reset pagination when filters change
-    params.set("offset", "0");
+    params.delete("offset");
 
     // Update URL without full navigation
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
