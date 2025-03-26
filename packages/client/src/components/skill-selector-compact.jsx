@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, X } from "lucide-react";
 import UserSkillBadge from "@/components/user-skill-badge";
 import {
   Dialog,
@@ -21,8 +21,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormLabel } from "@/components/ui/form";
-import { Loader2, Plus, Edit, X } from "lucide-react";
+import { Loader2, Plus, Edit } from "lucide-react";
 import { renderProficiency } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // GraphQL query for skill categories and skills
 const GET_SKILLS = gql`
@@ -60,6 +65,7 @@ export function SkillSelectorCompact({
   const [skillCategory, setSkillCategory] = useState(skillCategoryId || "");
   const [selectedSkillId, setSelectedSkillId] = useState("");
   const [proficiency, setProficiency] = useState(defaultProficiency);
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   // Use the skills query
   const { data: skillsData, loading: skillsLoading } = useQuery(GET_SKILLS, {
@@ -223,34 +229,106 @@ export function SkillSelectorCompact({
     }
   };
 
+  // Handle clearing all skills
+  const handleClearAll = () => {
+    skills.forEach((skill) => onRemoveSkill(skill.skillId));
+    setPopoverOpen(false);
+  };
+
   return (
     <div className="space-y-0">
-      <div className="flex items-center gap-2 mb-2">
-        <FormLabel className="text-sm font-medium mb-0 mr-1">{label}</FormLabel>
-        <div className="flex flex-wrap gap-2 items-center flex-1">
-          {skills.map((skill) => (
-            <div
-              key={skill.skillId}
-              onClick={() => openEditDialog(skill.skillId)}
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              title="Click to edit"
-            >
-              <UserSkillBadge userSkill={skill} />
-            </div>
-          ))}
+      <FormLabel className="text-sm font-medium mb-2 block">{label}</FormLabel>
 
+      {skills.length === 0 ? (
+        <div
+          className="flex items-center h-10 px-3 py-2 border rounded-md relative cursor-pointer"
+          onClick={openAddDialog}
+        >
+          <span className="text-muted-foreground">Select skills...</span>
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="rounded-full h-7 w-7 p-0"
-            onClick={openAddDialog}
+            className="ml-auto rounded-full h-7 w-7 p-0"
           >
             <PlusCircle className="h-3.5 w-3.5" />
             <span className="sr-only">Add skill</span>
           </Button>
         </div>
-      </div>
+      ) : skills.length === 1 ? (
+        <div className="flex items-center h-10 px-3 py-2 border rounded-md relative">
+          <UserSkillBadge
+            userSkill={skills[0]}
+            onClick={() => openEditDialog(skills[0].skillId)}
+            onRemove={() => onRemoveSkill(skills[0].skillId)}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="ml-auto rounded-full h-7 w-7 p-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              openAddDialog();
+            }}
+          >
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span className="sr-only">Add skill</span>
+          </Button>
+        </div>
+      ) : (
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTrigger asChild>
+            <div className="flex items-center h-10 px-3 py-2 border rounded-md cursor-pointer relative">
+              <span>{skills.length} skills selected</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="ml-auto rounded-full h-7 w-7 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openAddDialog();
+                }}
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only">Add skill</span>
+              </Button>
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-2 min-w-[250px]">
+            <div className="flex justify-between items-center mb-2 pb-1">
+              <span className="text-sm font-medium">Selected Skills</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearAll}
+                className="text-xs h-7 px-2 flex items-center"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear all
+              </Button>
+            </div>
+            <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto">
+              {skills.map((skill) => (
+                <div
+                  key={skill.skillId}
+                  onClick={() => {
+                    openEditDialog(skill.skillId);
+                    setPopoverOpen(false);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <UserSkillBadge
+                    userSkill={skill}
+                    onRemove={() => onRemoveSkill(skill.skillId)}
+                  />
+                </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
 
       <Dialog
         open={isOpen}

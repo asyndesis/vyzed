@@ -162,7 +162,6 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
         <CardContent className="pt-6">
           <Form {...methods}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* Teaching Skills Filter */}
               <FormField
                 control={methods.control}
                 name="teachingSkills"
@@ -179,7 +178,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       onUpdateSkill={(skillId, skill) =>
                         handleUpdateSkill("teachingSkills", skillId, skill)
                       }
-                      label="Teaching Skills"
+                      label="I would like to learn"
                       dialogTitle="Filter by Teaching Skills"
                       dialogDescription="Select skills you want teachers to have"
                       icon={<BookOpen className="h-4 w-4 text-primary" />}
@@ -207,7 +206,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       onUpdateSkill={(skillId, skill) =>
                         handleUpdateSkill("studentSkills", skillId, skill)
                       }
-                      label="Learning Skills"
+                      label="I can teach these skills (optional)"
                       dialogTitle="Filter by Learning Skills"
                       dialogDescription="Select skills students want to learn"
                       icon={<GraduationCap className="h-4 w-4 text-primary" />}

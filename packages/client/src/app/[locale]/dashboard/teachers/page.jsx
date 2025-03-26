@@ -249,7 +249,6 @@ async function TeachersList({
           <TeacherCard key={user.id} user={user} />
         ))}
       </div>
-
       <Pagination
         offset={offset}
         limit={limit}
@@ -341,13 +340,8 @@ export default async function TeachersPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader
-        title="Teachers"
-        description="Find a teacher for your child"
-      />
-      {/* Client-side filter manager */}
+      <PageHeader title="Teachers" description="Find someone to learn with" />
       <ClientFilterManager initialFilters={filters} />
-
       <Suspense
         key={`${teaching || ""}-${student || ""}-${offset}`}
         fallback={<TeachersListSkeleton />}
