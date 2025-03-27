@@ -1,6 +1,5 @@
 import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
-import { Separator } from "@/components/ui/separator";
 import { StudentProfileSection } from "./components/student-profile-section";
 import { TeacherProfileSection } from "./components/teacher-profile-section";
 import { Button } from "@/components/ui/button";

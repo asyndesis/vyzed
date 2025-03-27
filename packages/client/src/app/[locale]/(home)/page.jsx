@@ -4,6 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollingVerb } from "./components/scrolling-verb";
 import { MailingListForm } from "./components/MailingListForm";
 
+export const metadata = {
+  title: "Vyzed",
+  description:
+    "Vyzed is a way for students and teachers, therapists and clients, ameteurs and experts to find eachother.",
+};
+
 export default async function LandingPage() {
   const t = await getTranslations("LandingPage");
 

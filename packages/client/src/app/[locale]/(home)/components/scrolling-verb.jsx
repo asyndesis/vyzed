@@ -19,8 +19,8 @@ export function ScrollingVerb({ verbs = [] }) {
     <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] mx-1 relative z-[0]">
       {/* Container with fade effects */}
       <span className="absolute inset-0 pointer-events-none">
-        <span className="absolute top-0 left-0 right-0 h-[30%] bg-gradient-to-b from-background to-transparent z-10"></span>
-        <span className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-background to-transparent z-10"></span>
+        <span className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-background to-transparent z-10"></span>
+        <span className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-background to-transparent z-10"></span>
       </span>
 
       {/* The verb container */}
