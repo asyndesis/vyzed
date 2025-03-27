@@ -1,5 +1,17 @@
 {
-  "HomePage": {
-    "title": "Hallo walt!"
+  "LandingPage": {
+    "learningTagline": "Lernen sollte nicht teuer und einsam sein",
+    "findSomeone": "Finde jemanden zum",
+    "description": "Vyzed ist ein Weg für Schüler und Lehrer, Therapeuten und Klienten, Amateure und Experten, einander zu finden.",
+    "earlyAccess": "Früher Zugang",
+    "joinWaitingList": "Tritt der Warteliste bei",
+    "beFirstToKnow": "Sei der Erste, der erfährt, wenn wir starten.",
+    "scrollingVerb1": "lernen mit",
+    "scrollingVerb2": "unterstützen",
+    "scrollingVerb3": "wachsen mit",
+    "scrollingVerb4": "verbinden mit",
+    "scrollingVerb5": "betreuen",
+    "scrollingVerb6": "lehren",
+    "scrollingVerb7": "helfen"
   }
 }

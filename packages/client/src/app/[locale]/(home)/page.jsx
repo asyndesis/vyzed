@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, GraduationCap } from "lucide-react";
+import { Sparkles, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollingVerb } from "./components/scrolling-verb";
+import { MailingListForm } from "./components/MailingListForm";
 
 export default async function LandingPage() {
-  const t = await getTranslations("HomePage");
+  const t = await getTranslations("LandingPage");
 
   return (
     <>
@@ -34,18 +34,29 @@ export default async function LandingPage() {
                   variant="outline"
                 >
                   <GraduationCap className="h-3.5 w-3.5 mr-1.5" />
-                  <span>{`Learning shouldn't be costly and lonely`}</span>
+                  <span>{t("learningTagline")}</span>
                 </Badge>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight">
-                  <span className="md:mr-3">Find someone to</span>
+                  <span className="md:mr-3 z-[1] relative">
+                    {t("findSomeone")}
+                  </span>
                   <br />
-                  <ScrollingVerb />
+                  <ScrollingVerb
+                    verbs={[
+                      t("scrollingVerb1"),
+                      t("scrollingVerb2"),
+                      t("scrollingVerb3"),
+                      t("scrollingVerb4"),
+                      t("scrollingVerb5"),
+                      t("scrollingVerb6"),
+                      t("scrollingVerb7"),
+                    ]}
+                  />
                 </h1>
 
                 <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl font-light mx-auto md:ml-auto md:mr-0">
-                  Vyzed is a way for students and teachers, therapists and
-                  clients, mentors and mentees to find eachother.
+                  {t("description")}
                 </p>
               </div>
 
@@ -59,30 +70,17 @@ export default async function LandingPage() {
                   className="mb-6 py-1.5 px-3 text-sm font-medium bg-background/30 text-foreground border-0 rounded-full"
                 >
                   <Sparkles className="h-3.5 w-3.5 mr-1.5 text-primary" />
-                  <span>Early Access</span>
+                  <span>{t("earlyAccess")}</span>
                 </Badge>
 
                 <h2 className="text-3xl font-bold mb-3 text-foreground">
-                  Join the Waiting List
+                  {t("joinWaitingList")}
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  Be the first to know when we launch.
+                  {t("beFirstToKnow")}
                 </p>
 
-                <form className="flex flex-col gap-4">
-                  <div className="relative">
-                    <input
-                      type="email"
-                      placeholder="Enter your email"
-                      className="w-full p-4 pl-5 pr-12 border border-input/40 bg-background/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/60 transition-all"
-                    />
-                  </div>
-
-                  <Button className="w-full group bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white shadow-lg hover:shadow-primary/20 py-6 rounded-xl transition-all duration-300">
-                    <span className="font-medium">Let me know!</span>
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </form>
+                <MailingListForm />
               </div>
             </div>
           </div>

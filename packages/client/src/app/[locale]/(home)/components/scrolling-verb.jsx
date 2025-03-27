@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export function ScrollingVerb() {
-  const verbs = [
-    "learn with",
-    "support",
-    "grow with",
-    "connect with",
-    "mentor",
-    "teach",
-    "help",
-  ];
+export function ScrollingVerb({ verbs = [] }) {
   const [currentVerb, setCurrentVerb] = useState(0);
 
   useEffect(() => {
@@ -25,7 +16,7 @@ export function ScrollingVerb() {
   }, []);
 
   return (
-    <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] mx-1 relative">
+    <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] mx-1 relative z-[0]">
       {/* Container with fade effects */}
       <span className="absolute inset-0 pointer-events-none">
         <span className="absolute top-0 left-0 right-0 h-[30%] bg-gradient-to-b from-background to-transparent z-10"></span>

@@ -3,6 +3,7 @@ import { skillResolvers } from "./skill/resolvers";
 import { studentProfileResolvers } from "./studentProfile/resolvers";
 import { teacherProfileResolvers } from "./teacherProfile/resolvers";
 import { userProfileResolvers } from "./userProfile/resolvers";
+import { mailingListResolvers } from "./mailingList/resolvers";
 import { customScalars } from "./scalars";
 import { DateTimeResolver } from "graphql-scalars";
 
@@ -15,6 +16,7 @@ export const resolvers = {
   ...studentProfileResolvers,
   ...teacherProfileResolvers,
   ...userProfileResolvers,
+  ...mailingListResolvers,
 
   Query: {
     ...userResolvers.Query,
@@ -29,5 +31,6 @@ export const resolvers = {
     ...studentProfileResolvers.Mutation,
     ...teacherProfileResolvers.Mutation,
     ...userProfileResolvers.Mutation,
+    ...mailingListResolvers.Mutation,
   },
 };

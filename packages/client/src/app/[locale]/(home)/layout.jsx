@@ -1,6 +1,7 @@
 import { MobileMenuToggle } from "./components/mobile-menu-toggle";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 export default function HomeLayout({ children }) {
@@ -29,11 +30,13 @@ function Navigation() {
             {/* <NavLinks /> */}
             <div className="flex items-center gap-4">
               {/* <AuthButtons /> */}
+              <LanguageSwitcher />
               <ThemeSwitcher />
             </div>
           </div>
 
           <div className="flex md:hidden items-center gap-4">
+            <LanguageSwitcher />
             <ThemeSwitcher />
             <MobileMenuToggle>
               {/* <NavLinks mobile /> */}
