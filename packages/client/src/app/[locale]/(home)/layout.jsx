@@ -26,9 +26,9 @@ function Navigation() {
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <NavLinks />
+            {/* <NavLinks /> */}
             <div className="flex items-center gap-4">
-              <AuthButtons />
+              {/* <AuthButtons /> */}
               <ThemeSwitcher />
             </div>
           </div>
@@ -36,9 +36,9 @@ function Navigation() {
           <div className="flex md:hidden items-center gap-4">
             <ThemeSwitcher />
             <MobileMenuToggle>
-              <NavLinks mobile />
+              {/* <NavLinks mobile /> */}
               <div className="flex gap-2 pt-2">
-                <AuthButtons mobile />
+                {/* <AuthButtons mobile /> */}
               </div>
             </MobileMenuToggle>
           </div>

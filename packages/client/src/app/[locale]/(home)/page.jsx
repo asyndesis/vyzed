@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Sparkles, ArrowRight, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollingVerb } from "./components/scrolling-verb";
 
@@ -10,10 +10,20 @@ export default async function LandingPage() {
   return (
     <>
       <main className="text-right min-h-screen bg-gradient-to-b from-background to-background/90">
-        {/* Hero section with dynamic background */}
+        {/* Decorative elements */}
+        <div
+          className="absolute inset-0 -z-1"
+          style={{
+            backgroundImage: `
+                linear-gradient(to right, rgba(128, 128, 128, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(128, 128, 128, 0.03) 1px, transparent 1px),
+                radial-gradient(rgba(128, 128, 128, 0.03) 1px, transparent 1px)
+              `,
+            backgroundSize: "24px 24px, 24px 24px, 20px 20px",
+            backgroundPosition: "0 0, 0 0, 10px 10px",
+          }}
+        />
         <section className="relative py-28 md:py-36 overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] -z-10" />
           <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]" />
 
           <div className="container relative max-w-6xl mx-auto px-4">
@@ -23,7 +33,7 @@ export default async function LandingPage() {
                   className="mx-auto md:ml-auto md:mr-0 py-1.5 px-3 text-sm font-medium bg-primary/5 hover:bg-primary/10 text-primary border-0 rounded-full w-fit"
                   variant="outline"
                 >
-                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  <GraduationCap className="h-3.5 w-3.5 mr-1.5" />
                   <span>{`Learning shouldn't be costly and lonely`}</span>
                 </Badge>
 
