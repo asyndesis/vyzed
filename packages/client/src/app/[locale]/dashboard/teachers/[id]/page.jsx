@@ -56,9 +56,11 @@ const GET_PUBLIC_USER = gql`
 `;
 
 export async function generateMetadata({ params }) {
+  const { id } = await params;
+
   const { data } = await getClient().query({
     query: GET_PUBLIC_USER,
-    variables: { id: params.id },
+    variables: { id },
   });
 
   const profile = data?.publicUserById;

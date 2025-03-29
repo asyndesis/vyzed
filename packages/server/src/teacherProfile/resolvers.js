@@ -1,4 +1,7 @@
 import { prisma } from "@vyzed/prisma";
+import omitBy from "lodash/omitBy";
+import pick from "lodash/pick";
+import isNil from "lodash/isNil";
 
 export const teacherProfileResolvers = {
   TeacherProfile: {
@@ -26,7 +29,6 @@ export const teacherProfileResolvers = {
       return prisma.teacherProfile.create({
         data: {
           userId,
-
           createdBy: user?.id,
           updatedBy: user?.id,
         },
@@ -49,6 +51,10 @@ export const teacherProfileResolvers = {
         await tx.teacherProfile.update({
           where: { id },
           data: {
+            ...omitBy(
+              pick(input, ["priceAmount", "priceCurrency", "allowBarter"]),
+              isNil
+            ),
             updatedBy: user?.id,
           },
         });
@@ -102,7 +108,7 @@ export const teacherProfileResolvers = {
         }
 
         // Return the updated profile with fresh data
-        return await tx.teacherProfile.findUnique({
+        const result = await tx.teacherProfile.findUnique({
           where: { id },
           include: {
             user: true,
@@ -113,6 +119,8 @@ export const teacherProfileResolvers = {
             },
           },
         });
+
+        return result;
       });
     },
     deleteTeacherProfile: async (parent, args) => {

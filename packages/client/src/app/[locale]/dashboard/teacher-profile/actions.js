@@ -11,6 +11,9 @@ const UPDATE_TEACHER_PROFILE = gql`
   ) {
     updateTeacherProfile(id: $id, input: $input) {
       id
+      priceAmount
+      priceCurrency
+      allowBarter
       skills {
         id
         proficiency

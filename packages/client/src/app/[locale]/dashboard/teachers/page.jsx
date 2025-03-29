@@ -7,7 +7,7 @@ import { getClient } from "@/lib/apollo-client";
 import UserSkillBadge from "@/components/user-skill-badge";
 import { convert } from "html-to-text";
 import Link from "next/link";
-import { BookOpen, Globe, GraduationCap } from "lucide-react";
+import { BookOpen, ArrowLeftRight, Euro, Languages } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ClientFilterManager } from "./components/client-filter-manager";
 import { PageHeader } from "@/components/page-header";
+import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Teachers",
   description: "Find a teacher",
@@ -48,6 +49,8 @@ const GET_TEACHERS = gql`
         }
         teacherProfile {
           id
+          priceAmount
+          priceCurrency
           skills {
             id
             skill {
@@ -82,7 +85,7 @@ const GET_TEACHERS = gql`
 `;
 
 // Extracted teacher card into a separate, focused component
-function TeacherCard({ user }) {
+function TeacherCard({ user, filters }) {
   const teacherProfile = user.teacherProfile;
   const languages = user.userProfile?.languages || [];
   const studentSkills = user.studentProfile?.skills || [];
@@ -98,6 +101,11 @@ function TeacherCard({ user }) {
   // Truncate bio text if it's too long
   const truncatedBio =
     bioText.length > 150 ? bioText.substring(0, 150) + "..." : bioText;
+
+  // Format price for display
+  const formattedPrice = teacherProfile.priceAmount
+    ? `${(teacherProfile.priceAmount / 100).toFixed(2)} / hr`
+    : null;
 
   return (
     <Link href={`/dashboard/teachers/${user.id}`} className="block">
@@ -117,9 +125,22 @@ function TeacherCard({ user }) {
           </div>
           <div className="flex-1 pt-2">
             <CardHeader className="pb-3">
-              <CardTitle>
-                {user.firstName} {user.lastInitial}
-              </CardTitle>
+              <div className="flex items-start justify-between">
+                <CardTitle>
+                  {user.firstName} {user.lastInitial}
+                </CardTitle>
+                <div className="-mt-3">
+                  {formattedPrice && (
+                    <Badge
+                      variant="outline"
+                      className="flex gap-1 items-center text-lg"
+                    >
+                      <Euro className="h-3.5 w-3.5" />
+                      <span>{formattedPrice}</span>
+                    </Badge>
+                  )}
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-2">
               <SkillSection
@@ -129,17 +150,18 @@ function TeacherCard({ user }) {
               />
               <SkillSection
                 skills={languages}
-                icon={<Globe className="h-4 w-4 text-muted-foreground" />}
+                icon={<Languages className="h-4 w-4 text-muted-foreground" />}
                 tooltipText="Spoken Languages"
               />
-              <SkillSection
-                skills={studentSkills}
-                icon={
-                  <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                }
-                tooltipText="Learning Skills"
-              />
-
+              {filters.studentSkills && (
+                <SkillSection
+                  skills={studentSkills}
+                  icon={
+                    <ArrowLeftRight className="h-4 w-4 text-muted-foreground" />
+                  }
+                  tooltipText="Barters for these classes"
+                />
+              )}
               {truncatedBio && (
                 <p className="text-sm text-muted-foreground line-clamp-3">
                   {truncatedBio}
@@ -158,21 +180,19 @@ function SkillSection({ skills, icon, tooltipText }) {
   if (!skills || skills.length === 0) return null;
 
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-2">
-        <TooltipProvider>
-          <Tooltip delayDuration={100}>
-            <TooltipTrigger>{icon}</TooltipTrigger>
-            <TooltipContent>
-              <p>{tooltipText}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <div className="flex flex-wrap gap-2">
-          {skills.map((skillItem) => (
-            <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
-          ))}
-        </div>
+    <div className="flex items-center gap-2 mb-2">
+      <TooltipProvider>
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger>{icon}</TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltipText}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <div className="flex flex-wrap gap-2">
+        {skills.map((skillItem) => (
+          <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
+        ))}
       </div>
     </div>
   );
@@ -256,7 +276,7 @@ async function TeachersList({
     <div className="space-y-8">
       <div className="grid grid-cols-1 gap-6">
         {teachers.map((user) => (
-          <TeacherCard key={user.id} user={user} />
+          <TeacherCard key={user.id} user={user} filters={filters} />
         ))}
       </div>
       <Pagination
@@ -366,7 +386,7 @@ export default async function TeachersPage({ searchParams }) {
 
   return (
     <>
-      <PageHeader title="Teachers" description="Find someone to learn with" />
+      <PageHeader title="Teachers" description="Find someone who..." />
       <ClientFilterManager initialFilters={filters} />
       <Suspense
         key={`${teaching || ""}-${student || ""}-${languages || ""}-${offset}`}

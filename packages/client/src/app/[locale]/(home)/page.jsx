@@ -67,7 +67,7 @@ export default async function LandingPage() {
               </div>
 
               {/* Mailing List Signup Card */}
-              <div className="relative overflow-hidden bg-gradient-to-tr from-card/90 to-card/40 backdrop-blur-lg border border-border/30 shadow-2xl rounded-2xl p-6 sm:p-8 w-full md:w-auto max-w-md mx-auto md:mx-0 text-center">
+              <div className="relative overflow-hidden bg-gradient-to-tr from-card/90 to-card/40 backdrop-blur-lg border border-border shadow-2xl rounded-2xl p-6 sm:p-8 w-full md:w-auto max-w-md mx-auto md:mx-0 text-center">
                 <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,white)] -z-10" />
                 <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-primary/20 blur-3xl opacity-60 -z-10" />
 

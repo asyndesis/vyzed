@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { UserCircle } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+
 export const metadata = {
   title: "Dashboard",
   description: "Manage your learning and teaching profiles",

@@ -57,7 +57,6 @@ export function SkillSelectorCompact({
   showProficiency = true,
   proficiencyLevels = [1, 2, 3, 4, 5, 6, 7],
   defaultProficiency = 3,
-  icon,
   placeholder = "Select skills...",
 }) {
   const [isOpen, setIsOpen] = useState(false);

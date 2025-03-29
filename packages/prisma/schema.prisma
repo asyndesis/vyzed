@@ -52,14 +52,17 @@ model StudentProfile {
 }
 
 model TeacherProfile {
-    id        String         @id @default(cuid())
-    userId    String         @unique
-    user      User           @relation(fields: [userId], references: [id])
-    skills    TeacherSkill[] @relation("TeacherProfileToSkills")
-    createdAt DateTime       @default(now())
-    updatedAt DateTime       @updatedAt
-    createdBy String?
-    updatedBy String?
+    id            String         @id @default(cuid())
+    userId        String         @unique
+    user          User           @relation(fields: [userId], references: [id])
+    skills        TeacherSkill[] @relation("TeacherProfileToSkills")
+    priceAmount   Int            @default(0)
+    priceCurrency String         @default("EUR")
+    allowBarter   Boolean        @default(false)
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    createdBy     String?
+    updatedBy     String?
 }
 
 model UserLanguage {

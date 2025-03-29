@@ -13,6 +13,8 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
+  Euro,
+  HelpCircle,
 } from "lucide-react";
 import {
   Card,
@@ -25,6 +27,21 @@ import { Badge } from "@/components/ui/badge";
 import { SkillSelector } from "@/components/skill-selector";
 import { updateTeacherProfile } from "../actions";
 import { useRouter } from "next/navigation";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 const SKILL_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
 // Updated form schema
@@ -40,6 +57,9 @@ const profileSchema = z.object({
       isNew: z.boolean().optional(),
     })
   ),
+  allowBarter: z.boolean().optional(),
+  priceAmount: z.coerce.number().min(0).optional(),
+  priceCurrency: z.string().default("EUR"),
 });
 
 export function TeacherProfileEditForm({ profile }) {
@@ -69,6 +89,9 @@ export function TeacherProfileEditForm({ profile }) {
     resolver: zodResolver(profileSchema),
     defaultValues: {
       skills: initialSkills,
+      priceAmount: profile.priceAmount ? profile.priceAmount / 100 : 0,
+      priceCurrency: "EUR",
+      allowBarter: profile.allowBarter,
     },
   });
 
@@ -85,6 +108,9 @@ export function TeacherProfileEditForm({ profile }) {
           skillId: skill.skillId,
           proficiency: skill.proficiency,
         })),
+      priceAmount: formValues.priceAmount,
+      priceCurrency: formValues.priceCurrency,
+      allowBarter: formValues.allowBarter,
     };
 
     const initialFormValues = {
@@ -93,6 +119,9 @@ export function TeacherProfileEditForm({ profile }) {
         skillId: skill.skillId,
         proficiency: skill.proficiency,
       })),
+      priceAmount: profile.priceAmount ? profile.priceAmount / 100 : 0,
+      priceCurrency: "EUR",
+      allowBarter: profile.allowBarter,
     };
 
     // Use JSON.stringify for deep comparison
@@ -155,9 +184,15 @@ export function TeacherProfileEditForm({ profile }) {
           proficiency: skill.proficiency,
         }));
 
+      // Convert price from decimal to cents for storage
+      const priceAmountInCents = Math.round(values.priceAmount * 100);
+
       // Update profile using server action
       const result = await updateTeacherProfile(profile.id, {
         skills: skillsInput,
+        priceAmount: priceAmountInCents,
+        priceCurrency: values.priceCurrency,
+        allowBarter: values.allowBarter,
       });
 
       toast.success("Profile updated successfully");
@@ -177,10 +212,14 @@ export function TeacherProfileEditForm({ profile }) {
         // Update the initial values ref with the new data
         initialValuesRef.current = {
           skills: updatedSkills,
+          priceAmount: result.priceAmount,
         };
 
         form.reset({
           skills: updatedSkills,
+          priceAmount: result.priceAmount ? result.priceAmount / 100 : 0,
+          priceCurrency: result.priceCurrency || "EUR",
+          allowBarter: result.allowBarter,
         });
 
         // Reset the hasChanges state
@@ -202,6 +241,78 @@ export function TeacherProfileEditForm({ profile }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
+        {/* Pricing Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Euro className="h-5 w-5" />
+              Pricing
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="priceAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hourly Rate (EUR)</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        iconLeft={<Euro className="h-4 w-4" />}
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="allowBarter"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel className="flex items-center gap-2">
+                      Allow Bartering
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              When enabled, students can offer to exchange their
+                              skills or services instead of paying the hourly
+                              rate. You can accept or decline these offers
+                              individually.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      Accept skill exchanges instead of money
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
         {/* Skills Section */}
         <Card>
           <CardHeader>

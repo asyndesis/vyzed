@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { SkillSelectorCompact } from "@/components/skill-selector-compact";
-import { BookOpen, Globe } from "lucide-react";
+import { BookOpen, Languages, ArrowLeftRight } from "lucide-react";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { gql, useQuery } from "@apollo/client";
@@ -262,10 +262,14 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       onUpdateSkill={(skillId, skill) =>
                         handleUpdateSkill("teachingSkills", skillId, skill)
                       }
-                      label="I would like to learn"
+                      label={
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-muted-foreground" />
+                          Offers classes in
+                        </div>
+                      }
                       dialogTitle="Filter by Teaching Skills"
                       dialogDescription="Select skills you want teachers to have"
-                      icon={<BookOpen className="h-4 w-4 text-primary" />}
                       showProficiency={true}
                       defaultProficiency={5}
                     />
@@ -289,10 +293,14 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                         handleUpdateSkill("languages", skillId, skill)
                       }
                       skillCategoryId="clqwertyu00" // Language category ID
-                      label="Should speak at least"
+                      label={
+                        <div className="flex items-center gap-2">
+                          <Languages className="h-4 w-4 text-muted-foreground" />
+                          Can speak
+                        </div>
+                      }
                       dialogTitle="Filter by Languages"
                       dialogDescription="Select languages you want teachers to speak"
-                      icon={<Globe className="h-4 w-4 text-primary" />}
                       showProficiency={true}
                       defaultProficiency={5}
                       placeholder="Select languages..."
@@ -311,7 +319,10 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       className="text-sm font-medium mb-2 block"
                       htmlFor="offer-my-skills"
                     >
-                      Teachers who barter for classes I teach
+                      <div className="flex items-center gap-2">
+                        <ArrowLeftRight className="h-4 w-4 text-muted-foreground" />
+                        Barters for classes I teach
+                      </div>
                     </FormLabel>
                     <Switch
                       checked={offerMySkills}

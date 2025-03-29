@@ -13,6 +13,9 @@ const GET_TEACHER_PROFILE = gql`
   query GetTeacherProfile($id: PostgresID!) {
     teacherProfileById(id: $id) {
       id
+      priceAmount
+      priceCurrency
+      allowBarter
       skills {
         id
         proficiency
