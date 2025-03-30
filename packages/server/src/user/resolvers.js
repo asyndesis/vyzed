@@ -90,20 +90,19 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    publicTeacherUsers: async (_, { filters, pagination }, { prisma }) => {
+    publicTeacherUsers: async (_, { filters, pagination }) => {
       try {
         // Base condition - user must have a teacherProfile
         const where = {
           teacherProfile: { isNot: null },
         };
 
-        const addFilterCondition = (condition) => {
-          where.AND = where.AND ? [...where.AND, condition] : [condition];
-        };
+        // Use a single where.AND array for all filters
+        where.AND = [];
 
         // Add teaching skills filter if provided
         if (filters?.teachingSkills?.length > 0) {
-          const teachingSkillsCondition = {
+          where.AND.push({
             teacherProfile: {
               is: {
                 skills: {
@@ -118,13 +117,12 @@ export const userResolvers = {
                 },
               },
             },
-          };
-          addFilterCondition(teachingSkillsCondition);
+          });
         }
 
         // Add student skills filter if provided
         if (filters?.studentSkills?.length > 0) {
-          const studentSkillsCondition = {
+          where.AND.push({
             studentProfile: {
               is: {
                 skills: {
@@ -139,13 +137,12 @@ export const userResolvers = {
                 },
               },
             },
-          };
-          addFilterCondition(studentSkillsCondition);
+          });
         }
 
         // Add language filter if provided
         if (filters?.languages?.length > 0) {
-          const languageCondition = {
+          where.AND.push({
             userProfile: {
               is: {
                 languages: {
@@ -158,59 +155,50 @@ export const userResolvers = {
                 },
               },
             },
-          };
-          addFilterCondition(languageCondition);
+          });
         }
 
         // Add allowBarter filter if provided
-        if (filters?.allowBarter !== undefined) {
-          const allowBarterCondition = {
+        if (filters?.allowBarter === true) {
+          where.AND.push({
             teacherProfile: {
               is: {
-                allowBarter: filters.allowBarter,
+                allowBarter: true,
               },
             },
-          };
-          addFilterCondition(allowBarterCondition);
+          });
         }
 
         // Add search filter if provided
         if (filters?.search?.trim()) {
           const searchTerm = filters.search.trim();
-          const searchCondition = {
+          where.AND.push({
             OR: [
               { firstName: { contains: searchTerm, mode: "insensitive" } },
               { lastName: { contains: searchTerm, mode: "insensitive" } },
             ],
-          };
-          addFilterCondition(searchCondition);
+          });
+        }
+
+        // If no filters were applied, remove the empty AND array
+        if (where.AND.length === 0) {
+          delete where.AND;
         }
 
         // Set pagination parameters
         const take = pagination?.limit || 10;
         const skip = pagination?.offset || 0;
 
-        // Get total count for pagination
-        const total = await prisma.user.count({ where });
-
-        // Fetch users with profiles
-        const users = await prisma.user.findMany({
-          where,
-          take,
-          skip,
-          orderBy: { createdAt: "desc" },
-          include: {
-            teacherProfile: {
-              include: { skills: { include: { skill: true } } },
-            },
-            userProfile: {
-              include: { languages: { include: { skill: true } } },
-            },
-            studentProfile: {
-              include: { skills: { include: { skill: true } } },
-            },
-          },
-        });
+        // Run count and findMany in parallel for better performance
+        const [total, users] = await Promise.all([
+          prisma.user.count({ where }),
+          prisma.user.findMany({
+            where,
+            take,
+            skip,
+            orderBy: { createdAt: "desc" },
+          }),
+        ]);
 
         return {
           users,
