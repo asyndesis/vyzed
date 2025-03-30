@@ -11,7 +11,6 @@ import { BookOpen, ArrowLeftRight, Euro, Languages } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ClientFilterManager } from "./components/client-filter-manager";
@@ -51,6 +50,7 @@ const GET_TEACHERS = gql`
           id
           priceAmount
           priceCurrency
+          allowBarter
           skills {
             id
             skill {
@@ -181,14 +181,12 @@ function SkillSection({ skills, icon, tooltipText }) {
 
   return (
     <div className="flex items-center gap-2 mb-2">
-      <TooltipProvider>
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger>{icon}</TooltipTrigger>
-          <TooltipContent>
-            <p>{tooltipText}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>{icon}</TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipText}</p>
+        </TooltipContent>
+      </Tooltip>
       <div className="flex flex-wrap gap-2">
         {skills.map((skillItem) => (
           <UserSkillBadge key={skillItem.id} userSkill={skillItem} />
@@ -338,6 +336,7 @@ export default async function TeachersPage({ searchParams }) {
   const teaching = params?.teaching || "";
   const student = params?.student || "";
   const languages = params?.languages || "";
+  const allowBarter = !!params?.allowBarter || false;
 
   // Parse filters from URL using the cleaner format
   const filters = {};
@@ -382,6 +381,10 @@ export default async function TeachersPage({ searchParams }) {
           proficiency: parseInt(proficiency, 10),
         };
       });
+  }
+
+  if (allowBarter) {
+    filters.allowBarter = allowBarter;
   }
 
   return (

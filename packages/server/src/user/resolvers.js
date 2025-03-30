@@ -162,6 +162,18 @@ export const userResolvers = {
           addFilterCondition(languageCondition);
         }
 
+        // Add allowBarter filter if provided
+        if (filters?.allowBarter !== undefined) {
+          const allowBarterCondition = {
+            teacherProfile: {
+              is: {
+                allowBarter: filters.allowBarter,
+              },
+            },
+          };
+          addFilterCondition(allowBarterCondition);
+        }
+
         // Add search filter if provided
         if (filters?.search?.trim()) {
           const searchTerm = filters.search.trim();

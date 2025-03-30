@@ -300,7 +300,7 @@ export function UserProfileEditForm({ user }) {
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
-                    <Tiptap content={field.value} onChange={field.onChange} />
+                    <Tiptap value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

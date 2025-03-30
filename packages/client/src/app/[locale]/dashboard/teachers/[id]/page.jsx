@@ -2,7 +2,14 @@ import { gql } from "@apollo/client";
 import { getClient } from "@/lib/apollo-client";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Calendar, User, GraduationCap, Mail, Globe } from "lucide-react";
+import {
+  Calendar,
+  User,
+  GraduationCap,
+  Mail,
+  Globe,
+  ArrowLeftRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -41,6 +48,9 @@ const GET_PUBLIC_USER = gql`
       }
       teacherProfile {
         id
+        allowBarter
+        priceAmount
+        priceCurrency
         skills {
           id
           proficiency
@@ -49,6 +59,18 @@ const GET_PUBLIC_USER = gql`
             name
             framework
           }
+        }
+      }
+      studentProfile {
+        id
+        skills {
+          id
+          skill {
+            id
+            name
+            framework
+          }
+          proficiency
         }
       }
     }
@@ -184,7 +206,6 @@ async function TeacherProfileDetail({ id }) {
                       key={skillItem.id}
                       className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/10 transition-colors"
                     >
-                      <div className="font-medium">{skillItem.skill.name}</div>
                       <UserSkillBadge userSkill={skillItem} />
                     </div>
                   ))}
@@ -217,7 +238,6 @@ async function TeacherProfileDetail({ id }) {
                       key={language.id}
                       className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/10 transition-colors"
                     >
-                      <div className="font-medium">{language.skill.name}</div>
                       <UserSkillBadge userSkill={language} />
                     </div>
                   ))}
@@ -227,6 +247,45 @@ async function TeacherProfileDetail({ id }) {
                   <Globe className="h-10 w-10 text-muted-foreground mb-3" />
                   <p className="text-muted-foreground text-center">
                     No languages have been added yet.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Student Skills section - New */}
+          <Card>
+            <CardHeader className="pb-3">
+              {user.teacherProfile.allowBarter ? (
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <ArrowLeftRight className="h-5 w-5" />
+                  Skills they will barter for
+                </CardTitle>
+              ) : (
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <GraduationCap className="h-5 w-5" />
+                  Skills they are learning
+                </CardTitle>
+              )}
+            </CardHeader>
+            <CardContent>
+              {user.studentProfile?.skills &&
+              user.studentProfile.skills.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3">
+                  {user.studentProfile.skills.map((skillItem) => (
+                    <div
+                      key={skillItem.id}
+                      className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/10 transition-colors"
+                    >
+                      <UserSkillBadge userSkill={skillItem} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 bg-muted/20 rounded-lg border border-dashed">
+                  <ArrowLeftRight className="h-10 w-10 text-muted-foreground mb-3" />
+                  <p className="text-muted-foreground text-center">
+                    This teacher is not looking for skill exchanges.
                   </p>
                 </div>
               )}

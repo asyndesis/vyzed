@@ -43,7 +43,7 @@ export default async function RootLayout({ children, params }) {
               enableSystem
               disableTransitionOnChange
             >
-              <TooltipProvider>
+              <TooltipProvider delayDuration={0}>
                 <NextIntlClientProvider messages={messages}>
                   {children}
                 </NextIntlClientProvider>

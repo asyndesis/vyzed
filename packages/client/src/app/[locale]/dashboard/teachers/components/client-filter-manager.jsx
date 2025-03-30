@@ -18,6 +18,7 @@ export function ClientFilterManager({ initialFilters }) {
         key !== "teaching" &&
         key !== "student" &&
         key !== "languages" &&
+        key !== "allowBarter" &&
         key !== "offset"
       ) {
         params.set(key, value);
@@ -46,6 +47,11 @@ export function ClientFilterManager({ initialFilters }) {
         .map((skill) => `${skill.skillId}:${skill.proficiency}`)
         .join(",");
       params.set("languages", languages);
+    }
+
+    // Add allowBarter param if true
+    if (filters.allowBarter) {
+      params.set("allowBarter", "true");
     }
 
     // Reset pagination when filters change

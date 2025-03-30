@@ -3,12 +3,17 @@
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { SkillSelectorCompact } from "@/components/skill-selector-compact";
-import { BookOpen, Languages, ArrowLeftRight } from "lucide-react";
+import { BookOpen, Languages, ArrowLeftRight, HelpCircle } from "lucide-react";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { gql, useQuery } from "@apollo/client";
 import { Switch } from "@/components/ui/switch";
 import { FormLabel } from "@/components/ui/form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const GET_SKILLS = gql`
   query GetSkills {
@@ -51,7 +56,9 @@ const GET_MY_PROFILE = gql`
 
 export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const [initialized, setInitialized] = useState(false);
-  const [offerMySkills, setOfferMySkills] = useState(false);
+  const [offerMySkills, setOfferMySkills] = useState(
+    !!initialFilters?.allowBarter
+  );
   const { data: skillsData } = useQuery(GET_SKILLS);
   const { data: profileData } = useQuery(GET_MY_PROFILE);
 
@@ -61,6 +68,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
       teachingSkills: [],
       studentSkills: [],
       languages: [],
+      allowBarter: false,
     },
   });
 
@@ -112,6 +120,10 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
         methods.setValue("languages", languages);
       }
 
+      if (initialFilters?.allowBarter) {
+        methods.setValue("allowBarter", initialFilters.allowBarter);
+      }
+
       setInitialized(true);
     }
   }, [skillsData, initialized, initialFilters, methods]);
@@ -136,6 +148,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           filterType === "languages"
             ? updatedSkills
             : methods.getValues("languages"),
+        allowBarter: methods.getValues("allowBarter"),
       });
     }
   };
@@ -161,6 +174,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           filterType === "languages"
             ? updatedSkills
             : methods.getValues("languages"),
+        allowBarter: methods.getValues("allowBarter"),
       });
     }
   };
@@ -186,12 +200,14 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           filterType === "languages"
             ? updatedSkills
             : methods.getValues("languages"),
+        allowBarter: methods.getValues("allowBarter"),
       });
     }
   };
 
   const handleToggleOfferMySkills = (checked) => {
     setOfferMySkills(checked);
+    methods.setValue("allowBarter", checked);
 
     if (checked && profileData?.me?.teacherProfile?.skills) {
       // Convert teacher profile skills to student skills format
@@ -210,6 +226,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           teachingSkills: methods.getValues("teachingSkills"),
           studentSkills: mySkills,
           languages: methods.getValues("languages"),
+          allowBarter: checked,
         });
       }
     } else {
@@ -221,12 +238,11 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
           teachingSkills: methods.getValues("teachingSkills"),
           studentSkills: [],
           languages: methods.getValues("languages"),
+          allowBarter: checked,
         });
       }
     }
   };
-
-  console.log(methods.getValues());
 
   if (!initialized) {
     return (
@@ -314,42 +330,33 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                 control={methods.control}
                 name="studentSkills"
                 render={() => (
-                  <FormItem>
-                    <FormLabel
-                      className="text-sm font-medium mb-2 block"
-                      htmlFor="offer-my-skills"
-                    >
-                      <div className="flex items-center gap-2">
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel className="flex items-center gap-2">
                         <ArrowLeftRight className="h-4 w-4 text-muted-foreground" />
-                        Barters for classes I teach
+                        <span>Is interested in bartering</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              When enabled, we will show you teachers who are
+                              willing to barter their classes or sessions for
+                              your classes or sessions.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </FormLabel>
+                      <div className="text-sm text-muted-foreground">
+                        Accept class exchanges instead of money
                       </div>
-                    </FormLabel>
+                    </div>
                     <Switch
                       checked={offerMySkills}
                       onCheckedChange={handleToggleOfferMySkills}
                       id="offer-my-skills"
                     />
-
-                    {/* <SkillSelectorCompact
-                        skills={methods.getValues("studentSkills") || []}
-                        onAddSkill={(skill) =>
-                          handleAddSkill("studentSkills", skill)
-                        }
-                        onRemoveSkill={(skillId) =>
-                          handleRemoveSkill("studentSkills", skillId)
-                        }
-                        onUpdateSkill={(skillId, skill) =>
-                          handleUpdateSkill("studentSkills", skillId, skill)
-                        }
-                        label="I can offer these skills"
-                        dialogTitle="Skills I can offer"
-                        dialogDescription="Some teachers offer class bartering"
-                        icon={
-                          <GraduationCap className="h-4 w-4 text-primary" />
-                        }
-                        showProficiency={true}
-                        defaultProficiency={5}
-                      /> */}
                   </FormItem>
                 )}
               />

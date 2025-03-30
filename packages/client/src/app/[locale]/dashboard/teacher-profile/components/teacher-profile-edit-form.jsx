@@ -281,24 +281,22 @@ export function TeacherProfileEditForm({ profile }) {
                   <div className="space-y-0.5">
                     <FormLabel className="flex items-center gap-2">
                       Allow Bartering
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-xs">
-                              When enabled, students can offer to exchange their
-                              skills or services instead of paying the hourly
-                              rate. You can accept or decline these offers
-                              individually.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">
+                            When enabled, students can offer to exchange their
+                            skills or services you are interested in learning
+                            instead of paying your hourly rate. You can accept
+                            or decline these offers individually.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </FormLabel>
                     <div className="text-sm text-muted-foreground">
-                      Accept skill exchanges instead of money
+                      Accept class exchanges instead of money
                     </div>
                   </div>
                   <FormControl>

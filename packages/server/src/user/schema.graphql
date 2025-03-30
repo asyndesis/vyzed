@@ -75,6 +75,7 @@ input TeacherUserFilters {
   studentSkills: [TeacherUserSkillFilter!]
   # we need to get language skills and their proficiency level,
   languages: [TeacherUserSkillFilter!]
+  allowBarter: Boolean
   # we need to get the search query,
   search: String
 }
