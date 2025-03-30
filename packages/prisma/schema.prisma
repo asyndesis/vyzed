@@ -21,6 +21,8 @@ model User {
     userProfile    UserProfile?
     studentProfile StudentProfile?
     teacherProfile TeacherProfile?
+    taughtLessons  Lesson[]        @relation("TeacherLessons")
+    enrollments    Enrollment[]    @relation("StudentEnrollments")
     createdAt      DateTime        @default(now())
     updatedAt      DateTime        @updatedAt
     createdBy      String?
@@ -118,6 +120,7 @@ model Skill {
     createdBy     String?
     updatedBy     String?
     UserLanguage  UserLanguage[]
+    Lesson        Lesson[]
 }
 
 enum SkillFramework {
@@ -132,4 +135,68 @@ model MailingList {
     updatedAt DateTime @updatedAt
     createdBy String?
     updatedBy String?
+}
+
+enum LessonStatus {
+    SCHEDULED
+    IN_PROGRESS
+    COMPLETED
+    CANCELLED
+}
+
+enum EnrollmentStatus {
+    REQUESTED
+    CONFIRMED
+    REJECTED
+    CANCELLED
+}
+
+enum PaymentType {
+    CASH
+    BARTER
+    FREE
+    CREDIT
+}
+
+model Lesson {
+    id          String       @id @default(cuid())
+    title       String
+    description String?
+    startTime   DateTime
+    endTime     DateTime
+    teacherId   String
+    teacher     User         @relation("TeacherLessons", fields: [teacherId], references: [id])
+    skillId     String
+    skill       Skill        @relation(fields: [skillId], references: [id])
+    proficiency Int
+    maxStudents Int          @default(1)
+    status      LessonStatus @default(SCHEDULED)
+    enrollments Enrollment[] @relation("LessonEnrollments")
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    createdBy   String?
+    updatedBy   String?
+}
+
+model Enrollment {
+    id              String           @id @default(cuid())
+    lessonId        String
+    lesson          Lesson           @relation("LessonEnrollments", fields: [lessonId], references: [id], onDelete: Cascade)
+    studentId       String
+    student         User             @relation("StudentEnrollments", fields: [studentId], references: [id])
+    paymentType     PaymentType      @default(CASH)
+    paymentAmount   Int? // null if bartering
+    paymentCurrency String? // null if bartering
+    barterLessonId  String? // reference to a lesson the student provides in exchange
+    status          EnrollmentStatus @default(REQUESTED)
+    attended        Boolean          @default(false)
+    feedback        String?
+    rating          Int?
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
+    createdBy       String?
+    updatedBy       String?
+
+    @@unique([lessonId, studentId])
+    @@index([status, lessonId])
 }

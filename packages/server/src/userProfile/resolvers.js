@@ -1,8 +1,6 @@
-import { prisma } from "@vyzed/prisma";
-
 export const userProfileResolvers = {
   UserProfile: {
-    languages: async (parent) => {
+    languages: async (parent, _, { prisma }) => {
       return prisma.userLanguage.findMany({
         where: { userProfileId: parent.id },
         include: { skill: true },
@@ -10,20 +8,20 @@ export const userProfileResolvers = {
     },
   },
   Query: {
-    userProfileById: async (parent, args) => {
+    userProfileById: async (parent, args, { prisma }) => {
       const { id } = args;
       return prisma.userProfile.findUnique({ where: { id } });
     },
-    userProfileByUserId: async (parent, args) => {
+    userProfileByUserId: async (parent, args, { prisma }) => {
       const { userId } = args;
       return prisma.userProfile.findUnique({ where: { userId } });
     },
-    userProfiles: async () => {
+    userProfiles: async (parent, args, { prisma }) => {
       return prisma.userProfile.findMany();
     },
   },
   Mutation: {
-    createUserProfile: async (_, { input }, { user }) => {
+    createUserProfile: async (_, { input }, { user, prisma }) => {
       const { userId, bio, languages = [] } = input;
 
       return await prisma.$transaction(async (tx) => {
@@ -63,7 +61,7 @@ export const userProfileResolvers = {
         });
       });
     },
-    updateUserProfile: async (_, { id, input }, { user }) => {
+    updateUserProfile: async (_, { id, input }, { user, prisma }) => {
       const { bio, languages } = input;
 
       return await prisma.$transaction(async (tx) => {
@@ -131,7 +129,7 @@ export const userProfileResolvers = {
         });
       });
     },
-    deleteUserProfile: async (parent, args) => {
+    deleteUserProfile: async (parent, args, { prisma }) => {
       const { id } = args;
       await prisma.userProfile.delete({ where: { id } });
       return true;

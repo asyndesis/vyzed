@@ -1,8 +1,6 @@
-import { prisma } from "@vyzed/prisma";
-
 export const studentProfileResolvers = {
   StudentProfile: {
-    skills: async (parent) => {
+    skills: async (parent, _, { prisma }) => {
       return prisma.studentSkill.findMany({
         where: { studentProfileId: parent.id },
         include: { skill: true },
@@ -10,7 +8,7 @@ export const studentProfileResolvers = {
     },
   },
   Query: {
-    studentProfileById: async (parent, args) => {
+    studentProfileById: async (parent, args, { prisma }) => {
       const { id } = args;
       try {
         return await prisma.studentProfile.findUnique({ where: { id } });
@@ -18,7 +16,7 @@ export const studentProfileResolvers = {
         throw new Error(err.message);
       }
     },
-    studentProfileByUserId: async (parent, args) => {
+    studentProfileByUserId: async (parent, args, { prisma }) => {
       const { userId } = args;
       try {
         return await prisma.studentProfile.findUnique({ where: { userId } });
@@ -26,7 +24,7 @@ export const studentProfileResolvers = {
         throw new Error(err.message);
       }
     },
-    studentProfiles: async () => {
+    studentProfiles: async (parent, args, { prisma }) => {
       try {
         return await prisma.studentProfile.findMany();
       } catch (err) {
@@ -35,7 +33,7 @@ export const studentProfileResolvers = {
     },
   },
   Mutation: {
-    createStudentProfile: async (_, { input }, { user }) => {
+    createStudentProfile: async (_, { input }, { user, prisma }) => {
       const { userId } = input;
 
       return prisma.studentProfile.create({
@@ -54,7 +52,7 @@ export const studentProfileResolvers = {
         },
       });
     },
-    updateStudentProfile: async (_, { id, input }, { user }) => {
+    updateStudentProfile: async (_, { id, input }, { user, prisma }) => {
       const { skills } = input;
 
       // Start a transaction to handle all updates atomically
@@ -129,7 +127,7 @@ export const studentProfileResolvers = {
         });
       });
     },
-    deleteStudentProfile: async (parent, args) => {
+    deleteStudentProfile: async (parent, args, { prisma }) => {
       const { id } = args;
       try {
         await prisma.studentProfile.delete({ where: { id } });

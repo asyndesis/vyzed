@@ -1,11 +1,10 @@
-import { prisma } from "@vyzed/prisma";
 import omitBy from "lodash/omitBy";
 import pick from "lodash/pick";
 import isNil from "lodash/isNil";
 
 export const teacherProfileResolvers = {
   TeacherProfile: {
-    skills: async (parent) => {
+    skills: async (parent, _, { prisma }) => {
       return prisma.teacherSkill.findMany({
         where: { teacherProfileId: parent.id },
         include: { skill: true },
@@ -13,7 +12,7 @@ export const teacherProfileResolvers = {
     },
   },
   Query: {
-    teacherProfileById: async (parent, args) => {
+    teacherProfileById: async (parent, args, { prisma }) => {
       const { id } = args;
       try {
         return await prisma.teacherProfile.findUnique({ where: { id } });
@@ -23,7 +22,7 @@ export const teacherProfileResolvers = {
     },
   },
   Mutation: {
-    createTeacherProfile: async (_, { input }, { user }) => {
+    createTeacherProfile: async (_, { input }, { user, prisma }) => {
       const { userId } = input;
 
       return prisma.teacherProfile.create({
@@ -42,7 +41,7 @@ export const teacherProfileResolvers = {
         },
       });
     },
-    updateTeacherProfile: async (_, { id, input }, { user }) => {
+    updateTeacherProfile: async (_, { id, input }, { user, prisma }) => {
       const { skills } = input;
 
       // Start a transaction to handle all updates atomically
@@ -123,7 +122,7 @@ export const teacherProfileResolvers = {
         return result;
       });
     },
-    deleteTeacherProfile: async (parent, args) => {
+    deleteTeacherProfile: async (parent, args, { prisma }) => {
       const { id } = args;
       try {
         await prisma.teacherProfile.delete({ where: { id } });

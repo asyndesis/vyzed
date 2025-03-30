@@ -1,20 +1,18 @@
-import { prisma } from "@vyzed/prisma";
-
 export const userResolvers = {
   User: {
-    studentProfile: async (parent) => {
+    studentProfile: async (parent, _, { prisma }) => {
       return prisma.studentProfile.findUnique({
         where: { userId: parent.id },
         include: { skills: { include: { skill: true } } },
       });
     },
-    teacherProfile: async (parent) => {
+    teacherProfile: async (parent, _, { prisma }) => {
       return prisma.teacherProfile.findUnique({
         where: { userId: parent.id },
         include: { skills: { include: { skill: true } } },
       });
     },
-    userProfile: async (parent) => {
+    userProfile: async (parent, _, { prisma }) => {
       return prisma.userProfile.findUnique({
         where: { userId: parent.id },
       });
@@ -24,19 +22,19 @@ export const userResolvers = {
     },
   },
   PublicUser: {
-    studentProfile: async (parent) => {
+    studentProfile: async (parent, _, { prisma }) => {
       return prisma.studentProfile.findUnique({
         where: { userId: parent.id },
         include: { skills: { include: { skill: true } } },
       });
     },
-    teacherProfile: async (parent) => {
+    teacherProfile: async (parent, _, { prisma }) => {
       return prisma.teacherProfile.findUnique({
         where: { userId: parent.id },
         include: { skills: { include: { skill: true } } },
       });
     },
-    userProfile: async (parent) => {
+    userProfile: async (parent, _, { prisma }) => {
       return prisma.userProfile.findUnique({
         where: { userId: parent.id },
       });
@@ -49,7 +47,7 @@ export const userResolvers = {
     me: async (parent, args, context) => {
       return context?.user;
     },
-    userById: async (parent, args) => {
+    userById: async (parent, args, { prisma }) => {
       const { id } = args;
       try {
         return await prisma.user.findUnique({ where: { id } });
@@ -57,7 +55,7 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    userByAuthId: async (parent, args) => {
+    userByAuthId: async (parent, args, { prisma }) => {
       const { authId } = args;
       try {
         return await prisma.user.findUnique({ where: { authId } });
@@ -65,7 +63,7 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    checkUserExistsByAuthId: async (parent, args) => {
+    checkUserExistsByAuthId: async (parent, args, { prisma }) => {
       const { authId } = args;
       try {
         const user = await prisma.user.findUnique({ where: { authId } });
@@ -74,14 +72,14 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    users: async () => {
+    users: async (parent, args, { prisma }) => {
       try {
         return await prisma.user.findMany();
       } catch (err) {
         throw new Error(err.message);
       }
     },
-    publicUserById: async (_, { id }) => {
+    publicUserById: async (_, { id }, { prisma }) => {
       try {
         return await prisma.user.findUnique({
           where: { id },
@@ -90,7 +88,7 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    publicTeacherUsers: async (_, { filters, pagination }) => {
+    publicTeacherUsers: async (_, { filters, pagination }, { prisma }) => {
       try {
         // Base condition - user must have a teacherProfile
         const where = {
@@ -216,7 +214,7 @@ export const userResolvers = {
     },
   },
   Mutation: {
-    createUser: async (parent, args, { user }) => {
+    createUser: async (parent, args, { user, prisma }) => {
       const { input } = args;
       try {
         const existingUser = await prisma.user.findUnique({
@@ -239,7 +237,7 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    createMyUser: async (parent, args, { auth }) => {
+    createMyUser: async (parent, args, { auth, prisma }) => {
       const { input } = args;
       const { userId: authId } = auth;
       try {
@@ -264,7 +262,7 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    updateUser: async (parent, args, { user }) => {
+    updateUser: async (parent, args, { user, prisma }) => {
       const { id, input } = args;
       const { authId } = user || {};
       try {
@@ -280,7 +278,7 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    deleteUser: async (parent, args) => {
+    deleteUser: async (parent, args, { prisma }) => {
       const { id } = args;
       try {
         await prisma.user.delete({ where: { id } });

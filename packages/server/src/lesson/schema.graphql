@@ -1,0 +1,91 @@
+# Type Definitions
+type Lesson {
+  id: PostgresID!
+  title: String!
+  description: String
+  startTime: DateTime!
+  endTime: DateTime!
+  teacherId: PostgresID!
+  teacher: User!
+  skillId: PostgresID!
+  skill: Skill!
+  proficiency: Int!
+  maxStudents: Int!
+  status: LessonStatus!
+  enrollments: [Enrollment!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+type Enrollment {
+  id: PostgresID!
+  lessonId: PostgresID!
+  lesson: Lesson!
+  studentId: PostgresID!
+  student: User!
+  paymentType: PaymentType!
+  paymentAmount: Int
+  paymentCurrency: String
+  barterLessonId: PostgresID
+  status: EnrollmentStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# Enums
+enum LessonStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EnrollmentStatus {
+  REQUESTED
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+enum PaymentType {
+  CASH
+  BARTER
+  FREE
+  CREDIT
+}
+
+# Input Types
+input RequestLessonInput {
+  title: String!
+  description: String
+  startTime: DateTime!
+  endTime: DateTime!
+  teacherId: PostgresID!
+  skillId: PostgresID!
+  proficiency: Int!
+  paymentType: PaymentType!
+  paymentAmount: Int
+  paymentCurrency: String
+  barterLessonId: PostgresID
+}
+
+# Queries
+extend type Query {
+  # Student queries
+  myRequestedLessons: [Lesson!]!
+
+  # Teacher queries
+  myPendingLessonRequests: [Lesson!]!
+}
+
+# Mutations
+extend type Mutation {
+  # Student actions
+  requestLesson(input: RequestLessonInput!): Lesson!
+
+  # Teacher actions
+  approveLessonRequest(lessonId: PostgresID!): Lesson!
+  rejectLessonRequest(lessonId: PostgresID!): Lesson!
+}

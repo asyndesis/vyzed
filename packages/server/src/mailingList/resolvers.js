@@ -1,8 +1,6 @@
-import { prisma } from "@vyzed/prisma";
-
 export const mailingListResolvers = {
   Mutation: {
-    addToMailingList: async (parent, args, context) => {
+    addToMailingList: async (parent, args, { prisma, user }) => {
       const { input } = args;
       try {
         // Check if the email already exists in the mailing list
@@ -16,7 +14,7 @@ export const mailingListResolvers = {
         }
 
         // Get the user ID if the user is authenticated
-        const userId = context?.user?.id;
+        const userId = user?.id;
 
         // Create a new entry in the mailing list
         await prisma.mailingList.create({
