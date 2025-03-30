@@ -133,24 +133,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
     const currentSkills = methods.getValues(filterType) || [];
     const updatedSkills = [...currentSkills, skill];
     methods.setValue(filterType, updatedSkills);
-
-    if (onFilterChange) {
-      onFilterChange({
-        teachingSkills:
-          filterType === "teachingSkills"
-            ? updatedSkills
-            : methods.getValues("teachingSkills"),
-        studentSkills:
-          filterType === "studentSkills"
-            ? updatedSkills
-            : methods.getValues("studentSkills"),
-        languages:
-          filterType === "languages"
-            ? updatedSkills
-            : methods.getValues("languages"),
-        allowBarter: methods.getValues("allowBarter"),
-      });
-    }
+    notifyFilterChange(filterType, updatedSkills);
   };
 
   const handleUpdateSkill = (filterType, skillId, updatedSkill) => {
@@ -159,24 +142,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
       skill.skillId === skillId ? updatedSkill : skill
     );
     methods.setValue(filterType, updatedSkills);
-
-    if (onFilterChange) {
-      onFilterChange({
-        teachingSkills:
-          filterType === "teachingSkills"
-            ? updatedSkills
-            : methods.getValues("teachingSkills"),
-        studentSkills:
-          filterType === "studentSkills"
-            ? updatedSkills
-            : methods.getValues("studentSkills"),
-        languages:
-          filterType === "languages"
-            ? updatedSkills
-            : methods.getValues("languages"),
-        allowBarter: methods.getValues("allowBarter"),
-      });
-    }
+    notifyFilterChange(filterType, updatedSkills);
   };
 
   const handleRemoveSkill = (filterType, skillId) => {
@@ -185,63 +151,57 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
       (skill) => skill.skillId !== skillId
     );
     methods.setValue(filterType, updatedSkills);
-
-    if (onFilterChange) {
-      onFilterChange({
-        teachingSkills:
-          filterType === "teachingSkills"
-            ? updatedSkills
-            : methods.getValues("teachingSkills"),
-        studentSkills:
-          filterType === "studentSkills"
-            ? updatedSkills
-            : methods.getValues("studentSkills"),
-        languages:
-          filterType === "languages"
-            ? updatedSkills
-            : methods.getValues("languages"),
-        allowBarter: methods.getValues("allowBarter"),
-      });
-    }
+    notifyFilterChange(filterType, updatedSkills);
   };
 
   const handleToggleOfferMySkills = (checked) => {
     setOfferMySkills(checked);
     methods.setValue("allowBarter", checked);
 
+    let studentSkills = [];
     if (checked && profileData?.me?.teacherProfile?.skills) {
       // Convert teacher profile skills to student skills format
-      const mySkills = profileData.me.teacherProfile.skills.map((skill) => ({
+      studentSkills = profileData.me.teacherProfile.skills.map((skill) => ({
         skillId: skill.skill.id,
         proficiency: skill.proficiency,
         skillName: skill.skill.name,
         framework: skill.skill.framework,
         skill: skill.skill,
       }));
-
-      methods.setValue("studentSkills", mySkills);
-
-      if (onFilterChange) {
-        onFilterChange({
-          teachingSkills: methods.getValues("teachingSkills"),
-          studentSkills: mySkills,
-          languages: methods.getValues("languages"),
-          allowBarter: checked,
-        });
-      }
-    } else {
-      // Clear student skills when toggle is off
-      methods.setValue("studentSkills", []);
-
-      if (onFilterChange) {
-        onFilterChange({
-          teachingSkills: methods.getValues("teachingSkills"),
-          studentSkills: [],
-          languages: methods.getValues("languages"),
-          allowBarter: checked,
-        });
-      }
     }
+
+    methods.setValue("studentSkills", studentSkills);
+    notifyFilterChange("studentSkills", studentSkills, checked);
+  };
+
+  // Helper function to avoid repeating the same pattern
+  const notifyFilterChange = (
+    filterType,
+    updatedSkills,
+    barterOverride = undefined
+  ) => {
+    if (!onFilterChange) return;
+
+    const allowBarter =
+      barterOverride !== undefined
+        ? barterOverride
+        : methods.getValues("allowBarter");
+
+    onFilterChange({
+      teachingSkills:
+        filterType === "teachingSkills"
+          ? updatedSkills
+          : methods.getValues("teachingSkills"),
+      studentSkills:
+        filterType === "studentSkills"
+          ? updatedSkills
+          : methods.getValues("studentSkills"),
+      languages:
+        filterType === "languages"
+          ? updatedSkills
+          : methods.getValues("languages"),
+      allowBarter,
+    });
   };
 
   if (!initialized) {

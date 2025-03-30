@@ -374,9 +374,10 @@ function ProfileDetailSkeleton() {
 }
 
 export default async function TeacherProfilePage({ params }) {
+  const { id } = await params;
   return (
     <Suspense fallback={<ProfileDetailSkeleton />}>
-      <TeacherProfileDetail id={params.id} />
+      <TeacherProfileDetail id={id} />
     </Suspense>
   );
 }

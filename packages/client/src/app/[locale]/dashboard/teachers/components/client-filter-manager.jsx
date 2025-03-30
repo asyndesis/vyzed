@@ -13,43 +13,47 @@ export function ClientFilterManager({ initialFilters }) {
     const params = new URLSearchParams();
 
     // Preserve existing non-filter params
+    const filterKeys = [
+      "teaching",
+      "student",
+      "languages",
+      "allowBarter",
+      "offset",
+    ];
     for (const [key, value] of searchParams.entries()) {
-      if (
-        key !== "teaching" &&
-        key !== "student" &&
-        key !== "languages" &&
-        key !== "allowBarter" &&
-        key !== "offset"
-      ) {
+      if (!filterKeys.includes(key)) {
         params.set(key, value);
       }
     }
 
-    // Update teaching skills param
+    // Add filter params if they exist
     if (filters.teachingSkills?.length) {
-      const teaching = filters.teachingSkills
-        .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-        .join(",");
-      params.set("teaching", teaching);
+      params.set(
+        "teaching",
+        filters.teachingSkills
+          .map((skill) => `${skill.skillId}:${skill.proficiency}`)
+          .join(",")
+      );
     }
 
-    // Update student skills param
     if (filters.studentSkills?.length) {
-      const student = filters.studentSkills
-        .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-        .join(",");
-      params.set("student", student);
+      params.set(
+        "student",
+        filters.studentSkills
+          .map((skill) => `${skill.skillId}:${skill.proficiency}`)
+          .join(",")
+      );
     }
 
-    // Update languages param
     if (filters.languages?.length) {
-      const languages = filters.languages
-        .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-        .join(",");
-      params.set("languages", languages);
+      params.set(
+        "languages",
+        filters.languages
+          .map((skill) => `${skill.skillId}:${skill.proficiency}`)
+          .join(",")
+      );
     }
 
-    // Add allowBarter param if true
     if (filters.allowBarter) {
       params.set("allowBarter", "true");
     }
