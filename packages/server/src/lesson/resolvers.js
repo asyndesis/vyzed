@@ -88,10 +88,10 @@ export const lessonResolvers = {
         return lesson;
       });
     },
-    approveLesson: async (_, { id }, { user, prisma }) => {
+    approveLesson: async (_, { lessonId }, { user, prisma }) => {
       // Get the lesson
       const lesson = await prisma.lesson.findUnique({
-        where: { id },
+        where: { id: lessonId },
       });
 
       if (!lesson) {
@@ -112,10 +112,10 @@ export const lessonResolvers = {
 
       return lesson;
     },
-    rejectLesson: async (_, { id }, { user, prisma }) => {
+    rejectLesson: async (_, { lessonId }, { user, prisma }) => {
       // Get the lesson
       const lesson = await prisma.lesson.findUnique({
-        where: { id },
+        where: { id: lessonId },
         include: { enrollments: true },
       });
 

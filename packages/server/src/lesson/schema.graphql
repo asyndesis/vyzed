@@ -83,6 +83,6 @@ extend type Mutation {
   requestLesson(input: RequestLessonInput!): Lesson!
 
   # Teacher actions
-  approveLesson(id: PostgresID!): Lesson!
-  rejectLesson(id: PostgresID!): Lesson!
+  approveLesson(lessonId: PostgresID!): Lesson!
+  rejectLesson(lessonId: PostgresID!): Lesson!
 }
