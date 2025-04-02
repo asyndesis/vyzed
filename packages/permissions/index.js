@@ -30,6 +30,12 @@ const PERMISSIONS = {
       update: true,
       delete: true,
     },
+    lesson: {
+      view: true,
+      create: true,
+      update: true,
+      delete: true,
+    },
   },
   [ROLES.user]: {
     user: {
@@ -40,21 +46,27 @@ const PERMISSIONS = {
     },
     studentProfile: {
       view: true,
-      create: (me, studentProfile) => studentProfile.userId === me.id,
+      create: true,
       update: (me, studentProfile) => studentProfile.userId === me.id,
       delete: (me, studentProfile) => studentProfile.userId === me.id,
     },
     teacherProfile: {
       view: true,
-      create: (me, teacherProfile) => teacherProfile.userId === me.id,
+      create: true,
       update: (me, teacherProfile) => teacherProfile.userId === me.id,
       delete: (me, teacherProfile) => teacherProfile.userId === me.id,
     },
     userProfile: {
       view: true,
-      create: (me, userProfile) => userProfile.userId === me.id,
+      create: true,
       update: (me, userProfile) => userProfile.userId === me.id,
       delete: (me, userProfile) => userProfile.userId === me.id,
+    },
+    lesson: {
+      view: true,
+      create: true,
+      approve: (me, lesson) => lesson.teacherId === me.id,
+      reject: (me, lesson) => lesson.teacherId === me.id,
     },
   },
 };

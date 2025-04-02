@@ -19,7 +19,6 @@ input UpdateStudentProfileInput {
 type Query {
   studentProfiles: [StudentProfile!]!
   studentProfileById(id: PostgresID!): StudentProfile
-  studentProfileByUserId(userId: String!): StudentProfile
 }
 
 type Mutation {

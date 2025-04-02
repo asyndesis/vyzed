@@ -16,14 +16,6 @@ export const studentProfileResolvers = {
         throw new Error(err.message);
       }
     },
-    studentProfileByUserId: async (parent, args, { prisma }) => {
-      const { userId } = args;
-      try {
-        return await prisma.studentProfile.findUnique({ where: { userId } });
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
     studentProfiles: async (parent, args, { prisma }) => {
       try {
         return await prisma.studentProfile.findMany();

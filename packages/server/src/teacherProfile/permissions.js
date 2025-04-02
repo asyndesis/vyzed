@@ -1,32 +1,15 @@
-import { and, or } from "graphql-shield";
-import {
-  isAdmin,
-  isAuthed,
-  canViewResource,
-  canCreateResource,
-  canUpdateResource,
-  canDeleteResource,
-} from "../rules";
-
+import { canPerformAction } from "../rules";
+import { and } from "graphql-shield";
 export const teacherProfilePermissions = {
   Query: {
-    teacherProfileById: and(
-      isAuthed,
-      or(isAdmin, canViewResource("teacherProfile"))
-    ),
+    teacherProfileById: canPerformAction("teacherProfile", "view"),
   },
   Mutation: {
     createTeacherProfile: and(
-      isAuthed,
-      or(isAdmin, canCreateResource("teacherProfile"))
+      canPerformAction("user", "update", "input.userId"),
+      canPerformAction("teacherProfile", "create")
     ),
-    updateTeacherProfile: and(
-      isAuthed,
-      or(isAdmin, canUpdateResource("teacherProfile"))
-    ),
-    deleteTeacherProfile: and(
-      isAuthed,
-      or(isAdmin, canDeleteResource("teacherProfile"))
-    ),
+    updateTeacherProfile: canPerformAction("teacherProfile", "update"),
+    deleteTeacherProfile: canPerformAction("teacherProfile", "delete"),
   },
 };

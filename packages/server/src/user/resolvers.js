@@ -237,9 +237,8 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    createMyUser: async (parent, args, { auth, prisma }) => {
+    createMyUser: async (parent, args, { prisma }) => {
       const { input } = args;
-      const { userId: authId } = auth;
       try {
         const existingUser = await prisma.user.findUnique({
           where: { email: input.email },
@@ -249,14 +248,23 @@ export const userResolvers = {
           throw new Error("User already exists.");
         }
 
-        const newUser = await prisma.user.create({
-          data: {
-            ...input,
-            createdBy: authId,
-            updatedBy: authId,
-            roles: ["user"],
-          },
+        const newUser = await prisma.$transaction(async (tx) => {
+          const user = await tx.user.create({
+            data: {
+              ...input,
+              roles: ["user"],
+            },
+          });
+
+          return tx.user.update({
+            where: { id: user.id },
+            data: {
+              createdBy: user.id,
+              updatedBy: user.id,
+            },
+          });
         });
+
         return newUser;
       } catch (err) {
         throw new Error(err.message);
@@ -264,13 +272,13 @@ export const userResolvers = {
     },
     updateUser: async (parent, args, { user, prisma }) => {
       const { id, input } = args;
-      const { authId } = user || {};
+
       try {
         const updatedUser = await prisma.user.update({
           where: { id },
           data: {
             ...input,
-            updatedBy: authId,
+            updatedBy: user?.id,
           },
         });
         return updatedUser;

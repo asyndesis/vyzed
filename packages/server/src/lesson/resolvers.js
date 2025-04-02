@@ -29,7 +29,7 @@ export const lessonResolvers = {
     },
   },
   Query: {
-    myRequestedLessons: async (_, __, { user, prisma }) => {
+    myLessonsAsStudent: async (_, __, { user, prisma }) => {
       return prisma.lesson.findMany({
         where: {
           enrollments: {
@@ -41,15 +41,10 @@ export const lessonResolvers = {
         orderBy: { createdAt: "desc" },
       });
     },
-    myPendingLessonRequests: async (_, __, { user, prisma }) => {
+    myLessonsAsTeacher: async (_, __, { user, prisma }) => {
       return prisma.lesson.findMany({
         where: {
           teacherId: user.id,
-          enrollments: {
-            some: {
-              status: "REQUESTED",
-            },
-          },
         },
         orderBy: { createdAt: "desc" },
       });
@@ -93,22 +88,20 @@ export const lessonResolvers = {
         return lesson;
       });
     },
-    approveLessonRequest: async (_, { lessonId }, { user, prisma }) => {
+    approveLesson: async (_, { id }, { user, prisma }) => {
       // Get the lesson
       const lesson = await prisma.lesson.findUnique({
-        where: { id: lessonId },
-        include: { enrollments: true },
+        where: { id },
       });
 
-      // Verify this is the teacher's lesson
-      if (lesson.teacherId !== user.id) {
-        throw new Error("You can only approve your own lesson requests");
+      if (!lesson) {
+        throw new Error("Lesson not found");
       }
 
       // Update the enrollment status to CONFIRMED
       await prisma.enrollment.updateMany({
         where: {
-          lessonId,
+          lessonId: lesson.id,
           status: "REQUESTED",
         },
         data: {
@@ -117,26 +110,23 @@ export const lessonResolvers = {
         },
       });
 
-      return prisma.lesson.findUnique({
-        where: { id: lessonId },
-      });
+      return lesson;
     },
-    rejectLessonRequest: async (_, { lessonId }, { user, prisma }) => {
+    rejectLesson: async (_, { id }, { user, prisma }) => {
       // Get the lesson
       const lesson = await prisma.lesson.findUnique({
-        where: { id: lessonId },
+        where: { id },
         include: { enrollments: true },
       });
 
-      // Verify this is the teacher's lesson
-      if (lesson.teacherId !== user.id) {
-        throw new Error("You can only reject your own lesson requests");
+      if (!lesson) {
+        throw new Error("Lesson not found");
       }
 
       // Update the enrollment status to REJECTED
       await prisma.enrollment.updateMany({
         where: {
-          lessonId,
+          lessonId: lesson.id,
           status: "REQUESTED",
         },
         data: {
@@ -147,7 +137,7 @@ export const lessonResolvers = {
 
       // Update the lesson status to CANCELLED
       await prisma.lesson.update({
-        where: { id: lessonId },
+        where: { id: lesson.id },
         data: {
           status: "CANCELLED",
           updatedBy: user.id,
@@ -155,7 +145,7 @@ export const lessonResolvers = {
       });
 
       return prisma.lesson.findUnique({
-        where: { id: lessonId },
+        where: { id: lesson.id },
       });
     },
   },

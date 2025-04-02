@@ -24,7 +24,6 @@ input UpdateTeacherProfileInput {
 
 extend type Query {
   teacherProfileById(id: PostgresID!): TeacherProfile
-  teacherProfileByUserId(userId: PostgresID!): TeacherProfile
 }
 
 extend type Mutation {

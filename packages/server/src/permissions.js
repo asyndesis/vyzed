@@ -6,6 +6,7 @@ import { studentProfilePermissions } from "./studentProfile/permissions";
 import { teacherProfilePermissions } from "./teacherProfile/permissions";
 import { userProfilePermissions } from "./userProfile/permissions";
 import { mailingListPermissions } from "./mailingList/permissions";
+import { lessonPermissions } from "./lesson/permissions";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -18,7 +19,7 @@ export const permissions = shield(
     ...teacherProfilePermissions,
     ...userProfilePermissions,
     ...mailingListPermissions,
-
+    ...lessonPermissions,
     Query: {
       "*": isAuthed,
       ...userPermissions.Query,
@@ -26,6 +27,7 @@ export const permissions = shield(
       ...studentProfilePermissions.Query,
       ...teacherProfilePermissions.Query,
       ...userProfilePermissions.Query,
+      ...lessonPermissions.Query,
     },
     Mutation: {
       "*": isAuthed,
@@ -35,6 +37,7 @@ export const permissions = shield(
       ...teacherProfilePermissions.Mutation,
       ...userProfilePermissions.Mutation,
       ...mailingListPermissions.Mutation,
+      ...lessonPermissions.Mutation,
     },
   },
   {

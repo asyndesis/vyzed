@@ -32,7 +32,7 @@ model User {
 model UserProfile {
     id        String         @id @default(cuid())
     userId    String         @unique
-    user      User           @relation(fields: [userId], references: [id])
+    user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     bio       String?
     languages UserLanguage[] @relation("UserProfileToLanguages")
 
@@ -45,7 +45,7 @@ model UserProfile {
 model StudentProfile {
     id        String         @id @default(cuid())
     userId    String         @unique
-    user      User           @relation(fields: [userId], references: [id])
+    user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     skills    StudentSkill[] @relation("StudentProfileToSkills")
     createdAt DateTime       @default(now())
     updatedAt DateTime       @updatedAt
@@ -56,7 +56,7 @@ model StudentProfile {
 model TeacherProfile {
     id            String         @id @default(cuid())
     userId        String         @unique
-    user          User           @relation(fields: [userId], references: [id])
+    user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
     skills        TeacherSkill[] @relation("TeacherProfileToSkills")
     priceAmount   Int            @default(0)
     priceCurrency String         @default("EUR")
@@ -165,7 +165,7 @@ model Lesson {
     startTime   DateTime
     endTime     DateTime
     teacherId   String
-    teacher     User         @relation("TeacherLessons", fields: [teacherId], references: [id])
+    teacher     User         @relation("TeacherLessons", fields: [teacherId], references: [id], onDelete: Cascade)
     skillId     String
     skill       Skill        @relation(fields: [skillId], references: [id])
     proficiency Int
@@ -183,7 +183,7 @@ model Enrollment {
     lessonId        String
     lesson          Lesson           @relation("LessonEnrollments", fields: [lessonId], references: [id], onDelete: Cascade)
     studentId       String
-    student         User             @relation("StudentEnrollments", fields: [studentId], references: [id])
+    student         User             @relation("StudentEnrollments", fields: [studentId], references: [id], onDelete: Cascade)
     paymentType     PaymentType      @default(CASH)
     paymentAmount   Int? // null if bartering
     paymentCurrency String? // null if bartering

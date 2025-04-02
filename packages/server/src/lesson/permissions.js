@@ -1,13 +1,13 @@
-import { isAuthed } from "../rules";
+import { isAuthed, canPerformAction } from "../rules";
 
 export const lessonPermissions = {
   Query: {
-    myRequestedLessons: isAuthed,
-    myPendingLessonRequests: isAuthed,
+    myLessonsAsStudent: isAuthed,
+    myLessonsAsTeacher: isAuthed,
   },
   Mutation: {
     requestLesson: isAuthed,
-    approveLessonRequest: isAuthed,
-    rejectLessonRequest: isAuthed,
+    approveLesson: canPerformAction("lesson", "approve"),
+    rejectLesson: canPerformAction("lesson", "reject"),
   },
 };
