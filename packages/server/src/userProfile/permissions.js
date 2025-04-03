@@ -8,11 +8,6 @@ export const userProfilePermissions = {
     userProfiles: and(isAuthed, isAdmin),
   },
   Mutation: {
-    createUserProfile: and(
-      canPerformAction("userProfile", "create"),
-      canPerformAction("user", "update", "input.userId")
-    ),
     updateUserProfile: canPerformAction("userProfile", "update"),
-    deleteUserProfile: canPerformAction("userProfile", "update"),
   },
 };

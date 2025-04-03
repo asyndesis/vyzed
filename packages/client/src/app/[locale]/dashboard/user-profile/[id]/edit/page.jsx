@@ -1,6 +1,6 @@
 import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
-import { UserProfileEditForm } from "./components/user-profile-edit-form";
+import { UserProfileEditForm } from "../../components/user-profile-edit-form";
 import { PageHeader } from "@/components/page-header";
 export const metadata = {
   title: "User Profile",
@@ -8,8 +8,8 @@ export const metadata = {
 };
 
 const GET_USER_PROFILE = gql`
-  query GetUserProfile {
-    me {
+  query GetUserProfileById($id: PostgresID!) {
+    userById(id: $id) {
       id
       firstName
       lastName
@@ -33,12 +33,15 @@ const GET_USER_PROFILE = gql`
   }
 `;
 
-export default async function UserProfilePage() {
+export default async function UserProfilePage({ params }) {
+  const { id } = await params;
+
   const { data } = await getClient().query({
     query: GET_USER_PROFILE,
+    variables: { id },
   });
 
-  const user = data?.me;
+  const user = data?.userById;
 
   return (
     <>

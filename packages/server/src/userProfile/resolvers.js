@@ -21,46 +21,6 @@ export const userProfileResolvers = {
     },
   },
   Mutation: {
-    createUserProfile: async (_, { input }, { user, prisma }) => {
-      const { userId, bio, languages = [] } = input;
-
-      return await prisma.$transaction(async (tx) => {
-        const userProfile = await tx.userProfile.create({
-          data: {
-            userId,
-            bio,
-            createdBy: user?.id,
-            updatedBy: user?.id,
-          },
-        });
-
-        if (languages && languages.length > 0) {
-          for (const lang of languages) {
-            await tx.userLanguage.create({
-              data: {
-                userProfileId: userProfile.id,
-                skillId: lang.skillId,
-                proficiency: lang.proficiency,
-                createdBy: user?.id,
-                updatedBy: user?.id,
-              },
-            });
-          }
-        }
-
-        return await tx.userProfile.findUnique({
-          where: { id: userProfile.id },
-          include: {
-            user: true,
-            languages: {
-              include: {
-                skill: true,
-              },
-            },
-          },
-        });
-      });
-    },
     updateUserProfile: async (_, { id, input }, { user, prisma }) => {
       const { bio, languages } = input;
 
@@ -128,11 +88,6 @@ export const userProfileResolvers = {
           },
         });
       });
-    },
-    deleteUserProfile: async (parent, args, { prisma }) => {
-      const { id } = args;
-      await prisma.userProfile.delete({ where: { id } });
-      return true;
     },
   },
 };

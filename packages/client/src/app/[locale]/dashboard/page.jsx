@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { UserCircle } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { UserProfileSection } from "./components/user-profile-section";
 
 export const metadata = {
   title: "Dashboard",
@@ -21,6 +22,19 @@ const GET_USER_PROFILES = gql`
       lastName
       lastInitial
       email
+      userProfile {
+        id
+        bio
+        languages {
+          id
+          proficiency
+          skill {
+            id
+            name
+            framework
+          }
+        }
+      }
       studentProfile {
         id
         skills {
@@ -56,37 +70,23 @@ export default async function DashboardPage() {
   });
 
   const user = data?.me;
-  const hasStudentProfile = !!user?.studentProfile;
-  const hasTeacherProfile = !!user?.teacherProfile;
 
   return (
     <>
       <PageHeader
         title="Dashboard"
         description="Manage your learning and teaching profiles"
-        controls={
-          <Link href="/dashboard/user-profile">
-            <Button variant="outline" className="gap-2">
-              <UserCircle className="h-4 w-4" />
-              User Profile
-            </Button>
-          </Link>
-        }
       />
       {/* Main Layout - Using flex instead of grid for better control */}
       <div className="flex flex-col xl:flex-row gap-6">
         {/* Role Profiles - Takes full width, stacked vertically */}
         <div className="w-full space-y-6">
+          {/* User Profile Section */}
+          <UserProfileSection user={user} />
           {/* Student Profile Section */}
-          <StudentProfileSection
-            user={user}
-            hasStudentProfile={hasStudentProfile}
-          />
+          <StudentProfileSection user={user} />
           {/* Teacher Profile Section */}
-          <TeacherProfileSection
-            user={user}
-            hasTeacherProfile={hasTeacherProfile}
-          />
+          <TeacherProfileSection user={user} />
         </div>
       </div>
     </>

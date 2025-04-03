@@ -1,9 +1,16 @@
-import { isAdmin, isAuthed, isClerkAuthed, isPublic } from "../rules";
+import { or } from "graphql-shield";
+import {
+  canPerformAction,
+  isAdmin,
+  isAuthed,
+  isClerkAuthed,
+  isPublic,
+} from "../rules";
 
 export const userPermissions = {
   Query: {
     me: isAuthed,
-    userById: isAdmin,
+    userById: or(isAdmin, canPerformAction("user", "view")),
     userByAuthId: isAdmin,
     users: isAdmin,
     checkUserExistsByAuthId: isAuthed,

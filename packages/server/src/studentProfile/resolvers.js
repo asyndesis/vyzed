@@ -25,25 +25,6 @@ export const studentProfileResolvers = {
     },
   },
   Mutation: {
-    createStudentProfile: async (_, { input }, { user, prisma }) => {
-      const { userId } = input;
-
-      return prisma.studentProfile.create({
-        data: {
-          userId,
-          createdBy: user?.id,
-          updatedBy: user?.id,
-        },
-        include: {
-          user: true,
-          skills: {
-            include: {
-              skill: true,
-            },
-          },
-        },
-      });
-    },
     updateStudentProfile: async (_, { id, input }, { user, prisma }) => {
       const { skills } = input;
 
@@ -118,15 +99,6 @@ export const studentProfileResolvers = {
           },
         });
       });
-    },
-    deleteStudentProfile: async (parent, args, { prisma }) => {
-      const { id } = args;
-      try {
-        await prisma.studentProfile.delete({ where: { id } });
-        return true;
-      } catch (err) {
-        throw new Error(err.message);
-      }
     },
   },
 };

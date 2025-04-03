@@ -8,10 +8,6 @@ type StudentProfile {
   updatedBy: PostgresID
 }
 
-input CreateStudentProfileInput {
-  userId: String!
-}
-
 input UpdateStudentProfileInput {
   skills: [StudentSkillInput!]
 }
@@ -22,10 +18,8 @@ type Query {
 }
 
 type Mutation {
-  createStudentProfile(input: CreateStudentProfileInput!): StudentProfile!
   updateStudentProfile(
     id: PostgresID!
     input: UpdateStudentProfileInput!
   ): StudentProfile!
-  deleteStudentProfile(id: PostgresID!): Boolean!
 }

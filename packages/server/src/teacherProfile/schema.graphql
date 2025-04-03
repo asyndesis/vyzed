@@ -11,10 +11,6 @@ type TeacherProfile {
   updatedBy: PostgresID
 }
 
-input CreateTeacherProfileInput {
-  userId: PostgresID!
-}
-
 input UpdateTeacherProfileInput {
   skills: [TeacherSkillInput!]
   priceAmount: Int
@@ -27,10 +23,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  createTeacherProfile(input: CreateTeacherProfileInput!): TeacherProfile!
   updateTeacherProfile(
     id: PostgresID!
     input: UpdateTeacherProfileInput!
   ): TeacherProfile!
-  deleteTeacherProfile(id: PostgresID!): Boolean!
 }

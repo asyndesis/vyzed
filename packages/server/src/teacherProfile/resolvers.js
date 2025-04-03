@@ -22,25 +22,6 @@ export const teacherProfileResolvers = {
     },
   },
   Mutation: {
-    createTeacherProfile: async (_, { input }, { user, prisma }) => {
-      const { userId } = input;
-
-      return prisma.teacherProfile.create({
-        data: {
-          userId,
-          createdBy: user?.id,
-          updatedBy: user?.id,
-        },
-        include: {
-          user: true,
-          skills: {
-            include: {
-              skill: true,
-            },
-          },
-        },
-      });
-    },
     updateTeacherProfile: async (_, { id, input }, { user, prisma }) => {
       const { skills } = input;
 
@@ -121,15 +102,6 @@ export const teacherProfileResolvers = {
 
         return result;
       });
-    },
-    deleteTeacherProfile: async (parent, args, { prisma }) => {
-      const { id } = args;
-      try {
-        await prisma.teacherProfile.delete({ where: { id } });
-        return true;
-      } catch (err) {
-        throw new Error(err.message);
-      }
     },
   },
 };

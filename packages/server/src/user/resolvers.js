@@ -249,10 +249,36 @@ export const userResolvers = {
         }
 
         const newUser = await prisma.$transaction(async (tx) => {
+          // Create base user
           const user = await tx.user.create({
             data: {
               ...input,
               roles: ["user"],
+            },
+          });
+
+          // Create profiles
+          await tx.userProfile.create({
+            data: {
+              userId: user.id,
+              createdBy: user.id,
+              updatedBy: user.id,
+            },
+          });
+
+          await tx.studentProfile.create({
+            data: {
+              userId: user.id,
+              createdBy: user.id,
+              updatedBy: user.id,
+            },
+          });
+
+          await tx.teacherProfile.create({
+            data: {
+              userId: user.id,
+              createdBy: user.id,
+              updatedBy: user.id,
             },
           });
 

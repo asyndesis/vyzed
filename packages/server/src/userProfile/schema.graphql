@@ -9,12 +9,6 @@ type UserProfile {
   updatedBy: PostgresID
 }
 
-input CreateUserProfileInput {
-  userId: PostgresID!
-  bio: String
-  languages: [UserLanguageInput!]
-}
-
 input UpdateUserProfileInput {
   bio: String
   languages: [UserLanguageInput!]
@@ -27,10 +21,8 @@ type Query {
 }
 
 type Mutation {
-  createUserProfile(input: CreateUserProfileInput!): UserProfile!
   updateUserProfile(
     id: PostgresID!
     input: UpdateUserProfileInput!
   ): UserProfile!
-  deleteUserProfile(id: PostgresID!): Boolean!
 }
