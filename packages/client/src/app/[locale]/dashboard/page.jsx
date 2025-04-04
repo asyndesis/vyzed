@@ -1,16 +1,10 @@
 import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
-import { StudentProfileSection } from "./components/student-profile-section";
-import { TeacherProfileSection } from "./components/teacher-profile-section";
-import { Button } from "@/components/ui/button";
-import { UserCircle } from "lucide-react";
-import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { UserProfileSection } from "./components/user-profile-section";
-
+import { DashboardProfileCards } from "./components/dashboard-profile-cards";
 export const metadata = {
   title: "Dashboard",
-  description: "Manage your learning and teaching profiles",
+  description: "Your dashboard",
 };
 
 // GraphQL query to fetch user profile data
@@ -77,16 +71,17 @@ export default async function DashboardPage() {
         title="Dashboard"
         description="Manage your learning and teaching profiles"
       />
-      {/* Main Layout - Using flex instead of grid for better control */}
-      <div className="flex flex-col xl:flex-row gap-6">
-        {/* Role Profiles - Takes full width, stacked vertically */}
-        <div className="w-full space-y-6">
-          {/* User Profile Section */}
-          <UserProfileSection user={user} />
-          {/* Student Profile Section */}
-          <StudentProfileSection user={user} />
-          {/* Teacher Profile Section */}
-          <TeacherProfileSection user={user} />
+      {/* Main Layout with sidebar */}
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Main content area */}
+        <div className="flex-1">
+          {/* Your main dashboard content goes here */}
+          <div>body goes here</div>
+        </div>
+
+        {/* Sidebar with simple profile cards */}
+        <div className="w-full md:w-72 space-y-4">
+          <DashboardProfileCards user={user} />
         </div>
       </div>
     </>
