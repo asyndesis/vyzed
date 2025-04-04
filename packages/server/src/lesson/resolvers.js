@@ -51,9 +51,9 @@ export const lessonResolvers = {
     },
   },
   Mutation: {
+    // Student requests a lesson
     requestLesson: async (_, { input }, { user, prisma }) => {
-      // Use a transaction to create both the lesson and enrollment
-      return prisma.$transaction(async (tx) => {
+      return await prisma.$transaction(async (tx) => {
         // First create the lesson
         const lesson = await tx.lesson.create({
           data: {
@@ -64,7 +64,7 @@ export const lessonResolvers = {
             teacherId: input.teacherId,
             skillId: input.skillId,
             proficiency: input.proficiency,
-            status: "SCHEDULED",
+            status: "REQUESTED",
             createdBy: user.id,
             updatedBy: user.id,
           },
@@ -78,7 +78,6 @@ export const lessonResolvers = {
             paymentType: input.paymentType,
             paymentAmount: input.paymentAmount,
             paymentCurrency: input.paymentCurrency,
-            barterLessonId: input.barterLessonId,
             status: "REQUESTED",
             createdBy: user.id,
             updatedBy: user.id,
@@ -89,7 +88,6 @@ export const lessonResolvers = {
       });
     },
     approveLesson: async (_, { lessonId }, { user, prisma }) => {
-      // Get the lesson
       const lesson = await prisma.lesson.findUnique({
         where: { id: lessonId },
       });
@@ -97,6 +95,18 @@ export const lessonResolvers = {
       if (!lesson) {
         throw new Error("Lesson not found");
       }
+
+      // Update the lesson status to CONFIRMED
+      await prisma.lesson.update({
+        where: {
+          id: lesson.id,
+          status: "REQUESTED",
+        },
+        data: {
+          status: "CONFIRMED",
+          updatedBy: user.id,
+        },
+      });
 
       // Update the enrollment status to CONFIRMED
       await prisma.enrollment.updateMany({
@@ -113,7 +123,6 @@ export const lessonResolvers = {
       return lesson;
     },
     rejectLesson: async (_, { lessonId }, { user, prisma }) => {
-      // Get the lesson
       const lesson = await prisma.lesson.findUnique({
         where: { id: lessonId },
         include: { enrollments: true },

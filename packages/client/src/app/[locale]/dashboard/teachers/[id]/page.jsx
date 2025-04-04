@@ -10,7 +10,6 @@ import {
   Globe,
   ArrowLeftRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import {
@@ -24,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserSkillBadge from "@/components/user-skill-badge";
 import { PageHeader } from "@/components/page-header";
+import { RequestLessonButton } from "../components/request-lesson-button";
 // GraphQL query to fetch a specific teacher profile
 const GET_PUBLIC_USER = gql`
   query PublicUserById($id: PostgresID!) {
@@ -158,7 +158,7 @@ async function TeacherProfileDetail({ id }) {
             </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full">Contact Teacher</Button>
+            <RequestLessonButton user={user} />
           </CardFooter>
         </Card>
 

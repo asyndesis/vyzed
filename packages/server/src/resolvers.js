@@ -6,7 +6,7 @@ import { userProfileResolvers } from "./userProfile/resolvers";
 import { mailingListResolvers } from "./mailingList/resolvers";
 import { customScalars } from "./scalars";
 import { DateTimeResolver } from "graphql-scalars";
-
+import { lessonResolvers } from "./lesson/resolvers";
 export const resolvers = {
   // Add custom scalars
   PostgresID: customScalars.PostgresID,
@@ -17,13 +17,14 @@ export const resolvers = {
   ...teacherProfileResolvers,
   ...userProfileResolvers,
   ...mailingListResolvers,
-
+  ...lessonResolvers,
   Query: {
     ...userResolvers.Query,
     ...skillResolvers.Query,
     ...studentProfileResolvers.Query,
     ...teacherProfileResolvers.Query,
     ...userProfileResolvers.Query,
+    ...lessonResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -32,5 +33,6 @@ export const resolvers = {
     ...teacherProfileResolvers.Mutation,
     ...userProfileResolvers.Mutation,
     ...mailingListResolvers.Mutation,
+    ...lessonResolvers.Mutation,
   },
 };

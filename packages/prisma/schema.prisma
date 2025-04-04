@@ -138,9 +138,9 @@ model MailingList {
 }
 
 enum LessonStatus {
-    SCHEDULED
-    IN_PROGRESS
-    COMPLETED
+    REQUESTED
+    CONFIRMED
+    REJECTED
     CANCELLED
 }
 
@@ -170,7 +170,7 @@ model Lesson {
     skill       Skill        @relation(fields: [skillId], references: [id])
     proficiency Int
     maxStudents Int          @default(1)
-    status      LessonStatus @default(SCHEDULED)
+    status      LessonStatus @default(REQUESTED)
     enrollments Enrollment[] @relation("LessonEnrollments")
     createdAt   DateTime     @default(now())
     updatedAt   DateTime     @updatedAt
