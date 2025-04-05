@@ -6,7 +6,7 @@ type Lesson {
   startTime: DateTime!
   endTime: DateTime!
   teacherId: PostgresID!
-  teacher: User!
+  teacher: PublicUser!
   skillId: PostgresID!
   skill: Skill!
   proficiency: Int!
@@ -24,7 +24,7 @@ type Enrollment {
   lessonId: PostgresID!
   lesson: Lesson!
   studentId: PostgresID!
-  student: User!
+  student: PublicUser!
   paymentType: PaymentType!
   paymentAmount: Int
   paymentCurrency: String
@@ -36,9 +36,9 @@ type Enrollment {
 
 # Enums
 enum LessonStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
+  REQUESTED
+  CONFIRMED
+  REJECTED
   CANCELLED
 }
 

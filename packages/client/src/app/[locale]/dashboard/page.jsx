@@ -2,6 +2,8 @@ import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
 import { PageHeader } from "@/components/page-header";
 import { DashboardProfileCards } from "./components/dashboard-profile-cards";
+import { MyLessons } from "./components/my-lessons";
+
 export const metadata = {
   title: "Dashboard",
   description: "Your dashboard",
@@ -76,7 +78,7 @@ export default async function DashboardPage() {
         {/* Main content area */}
         <div className="flex-1">
           {/* Your main dashboard content goes here */}
-          <div>body goes here</div>
+          <MyLessons />
         </div>
 
         {/* Sidebar with simple profile cards */}

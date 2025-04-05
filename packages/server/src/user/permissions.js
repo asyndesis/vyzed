@@ -21,4 +21,10 @@ export const userPermissions = {
     createUser: isAdmin,
     createMyUser: isClerkAuthed,
   },
+  User: {
+    lastName: canPerformAction("user", "view"),
+    email: canPerformAction("user", "view"),
+    authId: canPerformAction("user", "view"),
+    roles: canPerformAction("user", "view"),
+  },
 };
