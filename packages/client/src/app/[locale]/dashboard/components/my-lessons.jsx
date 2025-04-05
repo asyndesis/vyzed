@@ -21,13 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { LessonStatus } from "@vyzed/constants/lesson";
+import { LessonStatus } from "@vyzed/prisma/enums";
 const GET_MY_LESSONS = gql`
   query GetMyLessons {
     myLessonsAsTeacher {
       id
-      title
-      description
       startTime
       endTime
       status
@@ -35,6 +33,7 @@ const GET_MY_LESSONS = gql`
       skill {
         id
         name
+        framework
       }
       enrollments {
         id
@@ -47,8 +46,6 @@ const GET_MY_LESSONS = gql`
     }
     myLessonsAsStudent {
       id
-      title
-      description
       startTime
       endTime
       status
@@ -56,6 +53,7 @@ const GET_MY_LESSONS = gql`
       skill {
         id
         name
+        framework
       }
       teacher {
         firstName
@@ -224,7 +222,6 @@ function LessonsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
               <TableHead>Skill</TableHead>
               <TableHead>Date & Time</TableHead>
               <TableHead>{isTeacher ? "Students" : "Teacher"}</TableHead>
@@ -235,7 +232,7 @@ function LessonsTable({
             {filteredLessons.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={4}
                   className="text-center h-24 text-muted-foreground"
                 >
                   No lessons match your filters
@@ -244,20 +241,13 @@ function LessonsTable({
             ) : (
               filteredLessons.map((lesson) => (
                 <TableRow key={lesson.id}>
-                  <TableCell className="font-medium">
-                    <div>{lesson.title}</div>
-                    {lesson.description && (
-                      <div className="text-xs text-muted-foreground line-clamp-1">
-                        {lesson.description}
-                      </div>
-                    )}
-                  </TableCell>
                   <TableCell>
                     <div className="inline-block">
                       <UserSkillBadge
                         userSkill={{
                           skill: lesson.skill,
                           proficiency: lesson.proficiency,
+                          framework: lesson.skill.framework,
                         }}
                       />
                     </div>

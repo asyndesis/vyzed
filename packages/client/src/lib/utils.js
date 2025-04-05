@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { SkillFramework } from "@vyzed/constants/skill";
+import { SkillFramework } from "@vyzed/prisma/enums";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));

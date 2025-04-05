@@ -17,7 +17,8 @@
     "prisma:generate": "npm run -w @vyzed/prisma generate",
     "prisma:push": "npm run -w @vyzed/prisma push",
     "prisma:studio": "npm run -w @vyzed/prisma studio",
-    "prisma:seed": "npm run -w @vyzed/prisma seed"
+    "prisma:seed": "npm run -w @vyzed/prisma seed",
+    "prisma:generate:enums": "npm run -w @vyzed/prisma generate:enums"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.7.8",

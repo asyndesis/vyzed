@@ -1,3 +1,5 @@
+import { LessonStatus } from "@vyzed/prisma/enums";
+
 export const lessonResolvers = {
   Lesson: {
     teacher: async (parent, _, { prisma }) => {
@@ -54,17 +56,18 @@ export const lessonResolvers = {
     // Student requests a lesson
     requestLesson: async (_, { input }, { user, prisma }) => {
       return await prisma.$transaction(async (tx) => {
+        const endDateTime = new Date(input.startTime);
+        endDateTime.setMinutes(endDateTime.getMinutes() + 60);
+
         // First create the lesson
         const lesson = await tx.lesson.create({
           data: {
-            title: input.title,
-            description: input.description,
             startTime: input.startTime,
-            endTime: input.endTime,
+            endTime: endDateTime,
             teacherId: input.teacherId,
             skillId: input.skillId,
             proficiency: input.proficiency,
-            status: "REQUESTED",
+            status: LessonStatus.REQUESTED,
             createdBy: user.id,
             updatedBy: user.id,
           },
@@ -78,7 +81,7 @@ export const lessonResolvers = {
             paymentType: input.paymentType,
             paymentAmount: input.paymentAmount,
             paymentCurrency: input.paymentCurrency,
-            status: "REQUESTED",
+            status: LessonStatus.REQUESTED,
             createdBy: user.id,
             updatedBy: user.id,
           },
@@ -100,10 +103,10 @@ export const lessonResolvers = {
       await prisma.lesson.update({
         where: {
           id: lesson.id,
-          status: "REQUESTED",
+          status: LessonStatus.REQUESTED,
         },
         data: {
-          status: "CONFIRMED",
+          status: LessonStatus.CONFIRMED,
           updatedBy: user.id,
         },
       });
@@ -112,10 +115,10 @@ export const lessonResolvers = {
       await prisma.enrollment.updateMany({
         where: {
           lessonId: lesson.id,
-          status: "REQUESTED",
+          status: LessonStatus.REQUESTED,
         },
         data: {
-          status: "CONFIRMED",
+          status: LessonStatus.CONFIRMED,
           updatedBy: user.id,
         },
       });
@@ -136,10 +139,10 @@ export const lessonResolvers = {
       await prisma.enrollment.updateMany({
         where: {
           lessonId: lesson.id,
-          status: "REQUESTED",
+          status: LessonStatus.REQUESTED,
         },
         data: {
-          status: "REJECTED",
+          status: LessonStatus.REJECTED,
           updatedBy: user.id,
         },
       });
@@ -148,7 +151,7 @@ export const lessonResolvers = {
       await prisma.lesson.update({
         where: { id: lesson.id },
         data: {
-          status: "CANCELLED",
+          status: LessonStatus.CANCELLED,
           updatedBy: user.id,
         },
       });

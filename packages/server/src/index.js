@@ -15,7 +15,7 @@ import { resolvers } from "./resolvers";
 import { permissions } from "./permissions";
 import dotenv from "dotenv";
 import { prisma } from "@vyzed/prisma";
-import { enumTypeDefs } from "./enums";
+import { enumTypeDefs } from "@vyzed/prisma/enumTypeDefs";
 
 dotenv.config();
 

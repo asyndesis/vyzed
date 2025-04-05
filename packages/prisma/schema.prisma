@@ -153,8 +153,6 @@ enum PaymentType {
 
 model Lesson {
     id          String       @id @default(cuid())
-    title       String
-    description String?
     startTime   DateTime
     endTime     DateTime
     teacherId   String

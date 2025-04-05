@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { gql, useMutation } from "@apollo/client";
 import {
@@ -19,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -38,7 +37,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, renderProficiency } from "@/lib/utils";
+import { SkillFramework, PaymentType } from "@vyzed/prisma/enums";
 
 const REQUEST_LESSON = gql`
   mutation RequestLesson($input: RequestLessonInput!) {
@@ -49,51 +49,67 @@ const REQUEST_LESSON = gql`
 `;
 
 const formSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Please provide more details"),
   skillId: z.string().min(1, "Please select a skill"),
-  proficiency: z.coerce.number().min(1).max(5),
-  paymentType: z.enum(["CASH", "BARTER"]),
+  proficiency: z.coerce.number().min(1).max(7),
+  paymentType: z.nativeEnum(PaymentType),
   startDate: z.date(),
   startTime: z.string(),
-  duration: z.coerce.number().min(15, "Minimum lesson is 15 minutes"),
 });
 
 export function RequestLessonButton({ user }) {
   const [open, setOpen] = useState(false);
   const [requestLesson, { loading }] = useMutation(REQUEST_LESSON);
+  const [selectedSkillFramework, setSelectedSkillFramework] = useState(
+    SkillFramework.DEFAULT
+  );
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
       skillId: "",
       proficiency: 3,
-      paymentType: "CASH",
+      paymentType: PaymentType.CASH,
       startDate: new Date(),
       startTime: "10:00",
-      duration: 60,
     },
   });
+
+  // Watch for changes to skillId to update the framework
+  const watchedSkillId = form.watch("skillId");
+
+  useEffect(() => {
+    if (watchedSkillId) {
+      const selectedSkill = user.teacherProfile.skills.find(
+        (skill) => skill.skill.id === watchedSkillId
+      );
+
+      if (selectedSkill && selectedSkill.skill.framework) {
+        setSelectedSkillFramework(selectedSkill.skill.framework);
+      } else {
+        setSelectedSkillFramework(SkillFramework.DEFAULT);
+      }
+    }
+  }, [watchedSkillId, user.teacherProfile.skills]);
+
+  // Generate proficiency levels for dropdown based on the selected skill's framework
+  const proficiencyLevels = [1, 2, 3, 4, 5, 6, 7].map((level) => ({
+    value: level,
+    label: renderProficiency({
+      proficiency: level,
+      framework: selectedSkillFramework,
+    }),
+  }));
 
   const handleSubmit = async (values) => {
     const startDateTime = new Date(values.startDate);
     const [hours, minutes] = values.startTime.split(":").map(Number);
     startDateTime.setHours(hours, minutes, 0);
 
-    // Calculate end time based on duration (in minutes)
-    const endDateTime = new Date(startDateTime);
-    endDateTime.setMinutes(startDateTime.getMinutes() + values.duration);
-
     try {
       await requestLesson({
         variables: {
           input: {
-            title: values.title,
-            description: values.description,
             startTime: startDateTime,
-            endTime: endDateTime,
             teacherId: user.id,
             skillId: values.skillId,
             proficiency: values.proficiency,
@@ -123,37 +139,6 @@ export function RequestLessonButton({ user }) {
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lesson Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. JavaScript Basics" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="What would you like to learn in this lesson?"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -218,20 +203,6 @@ export function RequestLessonButton({ user }) {
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Duration (minutes)</FormLabel>
-                    <FormControl>
-                      <Input type="number" min={15} step={15} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="skillId"
                 render={({ field }) => (
                   <FormItem>
@@ -257,41 +228,31 @@ export function RequestLessonButton({ user }) {
                   </FormItem>
                 )}
               />
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="proficiency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your Proficiency (1-5)</FormLabel>
-                    <FormControl>
-                      <Input type="number" min={1} max={5} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="paymentType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Payment Type</FormLabel>
+                    <FormLabel>Your Proficiency</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value.toString()}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select payment" />
+                          <SelectValue placeholder="Select proficiency" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="CASH">Cash</SelectItem>
-                        <SelectItem value="BARTER">Skill Exchange</SelectItem>
+                        {proficiencyLevels.map((level) => (
+                          <SelectItem
+                            key={level.value}
+                            value={level.value.toString()}
+                          >
+                            {level.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -299,6 +260,33 @@ export function RequestLessonButton({ user }) {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="paymentType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Payment Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select payment" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={PaymentType.CASH}>Cash</SelectItem>
+                      <SelectItem value={PaymentType.BARTER}>
+                        Skill Exchange
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter>
               <Button type="submit" disabled={loading}>

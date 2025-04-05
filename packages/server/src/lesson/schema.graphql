@@ -1,8 +1,6 @@
 # Type Definitions
 type Lesson {
   id: PostgresID!
-  title: String!
-  description: String
   startTime: DateTime!
   endTime: DateTime!
   teacherId: PostgresID!
@@ -34,27 +32,9 @@ type Enrollment {
   updatedAt: DateTime!
 }
 
-# Enums
-enum LessonStatus {
-  REQUESTED
-  CONFIRMED
-  REJECTED
-  CANCELLED
-}
-
-enum PaymentType {
-  CASH
-  BARTER
-  FREE
-  CREDIT
-}
-
 # Input Types
 input RequestLessonInput {
-  title: String!
-  description: String
   startTime: DateTime!
-  endTime: DateTime!
   teacherId: PostgresID!
   skillId: PostgresID!
   proficiency: Int!
@@ -74,7 +54,6 @@ extend type Query {
 extend type Mutation {
   # Student actions
   requestLesson(input: RequestLessonInput!): Lesson!
-
   # Teacher actions
   approveLesson(lessonId: PostgresID!): Lesson!
   rejectLesson(lessonId: PostgresID!): Lesson!
