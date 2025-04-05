@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-
+import { LessonStatus } from "@vyzed/constants/lesson";
 const GET_MY_LESSONS = gql`
   query GetMyLessons {
     myLessonsAsTeacher {
@@ -316,17 +316,14 @@ function LessonsTable({
 
 function getStatusColor(status) {
   switch (status) {
-    case "SCHEDULED":
-    case "CONFIRMED":
+    case LessonStatus.CONFIRMED:
       return "bg-green-100 text-green-800";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-800";
-    case "COMPLETED":
+    case LessonStatus.COMPLETED:
       return "bg-purple-100 text-purple-800";
-    case "CANCELLED":
-    case "REJECTED":
+    case LessonStatus.CANCELLED:
+    case LessonStatus.REJECTED:
       return "bg-red-100 text-red-800";
-    case "REQUESTED":
+    case LessonStatus.REQUESTED:
       return "bg-yellow-100 text-yellow-800";
     default:
       return "bg-gray-100 text-gray-800";

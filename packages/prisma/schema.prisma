@@ -144,13 +144,6 @@ enum LessonStatus {
     CANCELLED
 }
 
-enum EnrollmentStatus {
-    REQUESTED
-    CONFIRMED
-    REJECTED
-    CANCELLED
-}
-
 enum PaymentType {
     CASH
     BARTER
@@ -179,21 +172,21 @@ model Lesson {
 }
 
 model Enrollment {
-    id              String           @id @default(cuid())
+    id              String       @id @default(cuid())
     lessonId        String
-    lesson          Lesson           @relation("LessonEnrollments", fields: [lessonId], references: [id], onDelete: Cascade)
+    lesson          Lesson       @relation("LessonEnrollments", fields: [lessonId], references: [id], onDelete: Cascade)
     studentId       String
-    student         User             @relation("StudentEnrollments", fields: [studentId], references: [id], onDelete: Cascade)
-    paymentType     PaymentType      @default(CASH)
+    student         User         @relation("StudentEnrollments", fields: [studentId], references: [id], onDelete: Cascade)
+    paymentType     PaymentType  @default(CASH)
     paymentAmount   Int? // null if bartering
     paymentCurrency String? // null if bartering
     barterLessonId  String? // reference to a lesson the student provides in exchange
-    status          EnrollmentStatus @default(REQUESTED)
-    attended        Boolean          @default(false)
+    status          LessonStatus @default(REQUESTED)
+    attended        Boolean      @default(false)
     feedback        String?
     rating          Int?
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
     createdBy       String?
     updatedBy       String?
 

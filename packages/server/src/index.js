@@ -15,6 +15,7 @@ import { resolvers } from "./resolvers";
 import { permissions } from "./permissions";
 import dotenv from "dotenv";
 import { prisma } from "@vyzed/prisma";
+import { enumTypeDefs } from "./enums";
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ app.use(clerkMiddleware());
 
 // https://www.apollographql.com/docs/apollo-server/api/express-middleware
 const schema = makeExecutableSchema({
-  typeDefs: [...scalarTypeDefs, ...typeDefs],
+  typeDefs: [...enumTypeDefs, ...scalarTypeDefs, ...typeDefs],
   resolvers: { ...scalarResolvers, ...resolvers },
 });
 const schemaWithMiddleware = applyMiddleware(schema, permissions);

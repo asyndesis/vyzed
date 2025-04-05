@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { SkillFramework } from "@vyzed/constants/skill";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -21,7 +22,7 @@ export const renderProficiency = ({ proficiency, framework }) => {
     4: "Upper Intermediate",
     5: "Advanced",
     6: "Proficient",
-    7: framework === "CEFR" ? "Native" : "Master",
+    7: framework === SkillFramework.CEFR ? "Native" : "Master",
   };
 
   // CEFR annotations
@@ -41,7 +42,7 @@ export const renderProficiency = ({ proficiency, framework }) => {
   if (!baseLabel) return "";
 
   // If framework is CEFR and we have a corresponding annotation, add it
-  if (framework === "CEFR" && cefrAnnotations[proficiencyLevel]) {
+  if (framework === SkillFramework.CEFR && cefrAnnotations[proficiencyLevel]) {
     return `${baseLabel} (${cefrAnnotations[proficiencyLevel]})`;
   }
 

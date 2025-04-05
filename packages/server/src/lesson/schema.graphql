@@ -29,20 +29,13 @@ type Enrollment {
   paymentAmount: Int
   paymentCurrency: String
   barterLessonId: PostgresID
-  status: EnrollmentStatus!
+  status: LessonStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 # Enums
 enum LessonStatus {
-  REQUESTED
-  CONFIRMED
-  REJECTED
-  CANCELLED
-}
-
-enum EnrollmentStatus {
   REQUESTED
   CONFIRMED
   REJECTED
