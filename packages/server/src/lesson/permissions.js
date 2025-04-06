@@ -7,7 +7,6 @@ export const lessonPermissions = {
   },
   Mutation: {
     requestLesson: isAuthed,
-    approveLesson: canPerformAction("lesson", "approve", "lessonId"),
-    rejectLesson: canPerformAction("lesson", "reject", "lessonId"),
+    changeLessonStatus: canPerformAction("lesson", "changeStatus", "lessonId"),
   },
 };

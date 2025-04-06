@@ -65,8 +65,7 @@ const PERMISSIONS = {
     lesson: {
       view: true,
       create: true,
-      approve: (me, lesson) => lesson.teacherId === me.id,
-      reject: (me, lesson) => lesson.teacherId === me.id,
+      changeStatus: (me, lesson) => lesson.teacherId === me.id,
     },
   },
 };

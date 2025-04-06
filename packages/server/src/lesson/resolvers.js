@@ -31,23 +31,65 @@ export const lessonResolvers = {
     },
   },
   Query: {
-    myLessonsAsStudent: async (_, __, { user, prisma }) => {
-      return prisma.lesson.findMany({
-        where: {
-          enrollments: {
-            some: {
-              studentId: user.id,
-            },
+    myLessonsAsStudent: async (_, { filter }, { user, prisma }) => {
+      // Build where clause with filters
+      const where = {
+        enrollments: {
+          some: {
+            studentId: user.id,
           },
         },
+      };
+
+      // Apply status filter if provided
+      if (filter?.status) {
+        where.status = filter.status;
+      }
+
+      // Apply date range filters if provided
+      if (filter?.startDateFrom || filter?.startDateTo) {
+        where.startTime = {};
+
+        if (filter?.startDateFrom) {
+          where.startTime.gte = new Date(filter.startDateFrom);
+        }
+
+        if (filter?.startDateTo) {
+          where.startTime.lte = new Date(filter.startDateTo);
+        }
+      }
+
+      return prisma.lesson.findMany({
+        where,
         orderBy: { createdAt: "desc" },
       });
     },
-    myLessonsAsTeacher: async (_, __, { user, prisma }) => {
+    myLessonsAsTeacher: async (_, { filter }, { user, prisma }) => {
+      // Build where clause with filters
+      const where = {
+        teacherId: user.id,
+      };
+
+      // Apply status filter if provided
+      if (filter?.status) {
+        where.status = filter.status;
+      }
+
+      // Apply date range filters if provided
+      if (filter?.startDateFrom || filter?.startDateTo) {
+        where.startTime = {};
+
+        if (filter?.startDateFrom) {
+          where.startTime.gte = new Date(filter.startDateFrom);
+        }
+
+        if (filter?.startDateTo) {
+          where.startTime.lte = new Date(filter.startDateTo);
+        }
+      }
+
       return prisma.lesson.findMany({
-        where: {
-          teacherId: user.id,
-        },
+        where,
         orderBy: { createdAt: "desc" },
       });
     },
@@ -90,42 +132,11 @@ export const lessonResolvers = {
         return lesson;
       });
     },
-    approveLesson: async (_, { lessonId }, { user, prisma }) => {
-      const lesson = await prisma.lesson.findUnique({
-        where: { id: lessonId },
-      });
+    // New consolidated changeLessonStatus mutation
+    changeLessonStatus: async (_, { input }, { user, prisma }) => {
+      const { lessonId, status } = input;
 
-      if (!lesson) {
-        throw new Error("Lesson not found");
-      }
-
-      // Update the lesson status to CONFIRMED
-      await prisma.lesson.update({
-        where: {
-          id: lesson.id,
-          status: LessonStatus.REQUESTED,
-        },
-        data: {
-          status: LessonStatus.CONFIRMED,
-          updatedBy: user.id,
-        },
-      });
-
-      // Update the enrollment status to CONFIRMED
-      await prisma.enrollment.updateMany({
-        where: {
-          lessonId: lesson.id,
-          status: LessonStatus.REQUESTED,
-        },
-        data: {
-          status: LessonStatus.CONFIRMED,
-          updatedBy: user.id,
-        },
-      });
-
-      return lesson;
-    },
-    rejectLesson: async (_, { lessonId }, { user, prisma }) => {
+      // Get the lesson with enrollments
       const lesson = await prisma.lesson.findUnique({
         where: { id: lessonId },
         include: { enrollments: true },
@@ -135,29 +146,71 @@ export const lessonResolvers = {
         throw new Error("Lesson not found");
       }
 
-      // Update the enrollment status to REJECTED
-      await prisma.enrollment.updateMany({
-        where: {
-          lessonId: lesson.id,
-          status: LessonStatus.REQUESTED,
-        },
-        data: {
-          status: LessonStatus.REJECTED,
-          updatedBy: user.id,
-        },
-      });
+      // Check permissions - only teacher can change status
+      if (lesson.teacherId !== user.id) {
+        throw new Error(
+          "You don't have permission to change this lesson's status"
+        );
+      }
 
-      // Update the lesson status to CANCELLED
-      await prisma.lesson.update({
-        where: { id: lesson.id },
-        data: {
-          status: LessonStatus.CANCELLED,
-          updatedBy: user.id,
-        },
-      });
+      // Define valid transitions
+      const validTransitions = {
+        [LessonStatus.REQUESTED]: [
+          LessonStatus.CONFIRMED,
+          LessonStatus.CANCELLED,
+        ],
+        [LessonStatus.CONFIRMED]: [
+          LessonStatus.COMPLETED,
+          LessonStatus.CANCELLED,
+        ],
+        [LessonStatus.COMPLETED]: [],
+        [LessonStatus.CANCELLED]: [],
+        [LessonStatus.REJECTED]: [],
+      };
 
+      // Check if transition is valid
+      if (!validTransitions[lesson.status].includes(status)) {
+        throw new Error(
+          `Cannot change lesson from ${lesson.status} to ${status}`
+        );
+      }
+
+      // Determine the appropriate enrollment status
+      let enrollmentStatus = status;
+      if (
+        status === LessonStatus.CANCELLED &&
+        lesson.status === LessonStatus.REQUESTED
+      ) {
+        enrollmentStatus = LessonStatus.REJECTED;
+      }
+
+      // Perform updates in a transaction
+      await prisma.$transaction([
+        // Update enrollments
+        prisma.enrollment.updateMany({
+          where: {
+            lessonId,
+            status: lesson.status,
+          },
+          data: {
+            status: enrollmentStatus,
+            updatedBy: user.id,
+          },
+        }),
+
+        // Update lesson
+        prisma.lesson.update({
+          where: { id: lessonId },
+          data: {
+            status,
+            updatedBy: user.id,
+          },
+        }),
+      ]);
+
+      // Return the updated lesson
       return prisma.lesson.findUnique({
-        where: { id: lesson.id },
+        where: { id: lessonId },
       });
     },
   },

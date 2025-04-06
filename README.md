@@ -41,7 +41,7 @@ PORT=4000
 ```bash
 # Install packages
 npm install
-# Generates types defs for ORM
+# Generates types defs for ORM / also generates enums for app
 npm run prisma:generate
 # Run the API
 npm run server:dev

@@ -44,10 +44,23 @@ input RequestLessonInput {
   barterLessonId: PostgresID
 }
 
+# Input for changing lesson status
+input ChangeLessonStatusInput {
+  lessonId: PostgresID!
+  status: LessonStatus!
+}
+
+# Filter input for lessons
+input LessonFilterInput {
+  status: LessonStatus
+  startDateFrom: DateTime
+  startDateTo: DateTime
+}
+
 # Queries
 extend type Query {
-  myLessonsAsStudent: [Lesson!]!
-  myLessonsAsTeacher: [Lesson!]!
+  myLessonsAsStudent(filter: LessonFilterInput): [Lesson!]!
+  myLessonsAsTeacher(filter: LessonFilterInput): [Lesson!]!
 }
 
 # Mutations
@@ -55,6 +68,5 @@ extend type Mutation {
   # Student actions
   requestLesson(input: RequestLessonInput!): Lesson!
   # Teacher actions
-  approveLesson(lessonId: PostgresID!): Lesson!
-  rejectLesson(lessonId: PostgresID!): Lesson!
+  changeLessonStatus(input: ChangeLessonStatusInput!): Lesson!
 }

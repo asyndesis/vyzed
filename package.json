@@ -14,11 +14,10 @@
     "prisma:migrate:dev": "npm run -w @vyzed/prisma migrate:dev",
     "prisma:migrate:deploy": "npm run -w @vyzed/prisma migrate:deploy",
     "prisma:migrate:reset": "npm run -w @vyzed/prisma migrate:reset",
-    "prisma:generate": "npm run -w @vyzed/prisma generate",
+    "prisma:generate": "npm run -w @vyzed/prisma generate && npm run -w @vyzed/prisma generate:enums",
     "prisma:push": "npm run -w @vyzed/prisma push",
     "prisma:studio": "npm run -w @vyzed/prisma studio",
-    "prisma:seed": "npm run -w @vyzed/prisma seed",
-    "prisma:generate:enums": "npm run -w @vyzed/prisma generate:enums"
+    "prisma:seed": "npm run -w @vyzed/prisma seed"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.7.8",

@@ -6,12 +6,12 @@ const UserSkillBadge = ({ userSkill, onClick, onRemove }) => {
   return (
     <Badge
       key={userSkill.id}
-      variant="secondary"
+      variant="outline"
       className={`flex items-center gap-1 ${onClick ? "cursor-pointer" : ""}`}
       onClick={onClick}
     >
       {userSkill.skill.name}
-      <span className="ml-1 text-xs opacity-70 truncate overflow-hidden">
+      <span className="ml-1 opacity-50 truncate overflow-hidden">
         {renderProficiency({
           proficiency: userSkill.proficiency,
           framework: userSkill.skill.framework,

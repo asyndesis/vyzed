@@ -1,6 +1,6 @@
 "use client";
 import { useQuery, gql } from "@apollo/client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, createContext, useContext } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Clock, Loader2 } from "lucide-react";
 import UserSkillBadge from "@/components/user-skill-badge";
@@ -21,10 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
 import { LessonStatus } from "@vyzed/prisma/enums";
+import { LessonDetailModal } from "./lesson-detail-modal";
+import { StatusBadge } from "@/components/status-badge";
+
 const GET_MY_LESSONS = gql`
-  query GetMyLessons {
-    myLessonsAsTeacher {
+  query GetMyLessons($filter: LessonFilterInput) {
+    myLessonsAsTeacher(filter: $filter) {
       id
       startTime
       endTime
@@ -38,142 +42,271 @@ const GET_MY_LESSONS = gql`
       enrollments {
         id
         status
+        paymentType
+        paymentAmount
+        paymentCurrency
+        barterLessonId
         student {
           firstName
           lastInitial
         }
       }
     }
-    myLessonsAsStudent {
+    myLessonsAsStudent(filter: $filter) {
       id
       startTime
       endTime
       status
       proficiency
+      teacher {
+        firstName
+        lastInitial
+      }
       skill {
         id
         name
         framework
       }
-      teacher {
-        firstName
-        lastInitial
+      enrollments {
+        id
+        status
+        paymentType
+        paymentAmount
+        paymentCurrency
+        barterLessonId
       }
     }
   }
 `;
 
+// Create a context for filter state
+const LessonFiltersContext = createContext();
+
+// Custom hook to use the filter context
+function useLessonFilters() {
+  const context = useContext(LessonFiltersContext);
+  if (!context) {
+    throw new Error(
+      "useLessonFilters must be used within a LessonFiltersProvider"
+    );
+  }
+  return context;
+}
+
 export function MyLessons() {
-  const { loading, error, data } = useQuery(GET_MY_LESSONS, {
-    fetchPolicy: "network-only",
+  // State for filters
+  const [statusFilter, setStatusFilter] = useState(null);
+  const [timeframeFilter, setTimeframeFilter] = useState("upcoming"); // "upcoming" or "past"
+  const [skillFilter, setSkillFilter] = useState("all"); // Client-side filter
+  const [activeTab, setActiveTab] = useState("teacher");
+
+  // Prepare GraphQL filter variables
+  const filterVariables = useMemo(() => {
+    const filter = {};
+
+    // Add status filter if selected
+    if (statusFilter) {
+      filter.status = statusFilter;
+    }
+
+    // Add date filters based on timeframe
+    const now = new Date();
+    if (timeframeFilter === "upcoming") {
+      filter.startDateFrom = now;
+    } else if (timeframeFilter === "past") {
+      filter.startDateTo = now;
+    }
+
+    return { filter };
+  }, [statusFilter, timeframeFilter]);
+
+  // Query with filters
+  const { loading, error, data, refetch } = useQuery(GET_MY_LESSONS, {
+    variables: filterVariables,
+    fetchPolicy: "cache-and-network",
   });
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [skillFilter, setSkillFilter] = useState("all");
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-48">
-        <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading your lessons...</p>
-        </div>
-      </div>
-    );
-  }
+  // Refetch when filters change
+  useEffect(() => {
+    refetch(filterVariables);
+  }, [filterVariables, refetch]);
 
-  if (error) {
-    return (
-      <Alert variant="destructive" className="my-4">
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          There was a problem loading your lessons: {error.message}
-        </AlertDescription>
-      </Alert>
-    );
-  }
+  // Extract unique skills from data
+  const allSkills = useMemo(() => {
+    if (!data) return [];
 
-  const teacherLessons = data?.myLessonsAsTeacher || [];
-  const studentLessons = data?.myLessonsAsStudent || [];
+    const teacherLessons = data?.myLessonsAsTeacher || [];
+    const studentLessons = data?.myLessonsAsStudent || [];
 
-  // Extract unique skills and statuses for filters
-  const allSkills = [
-    ...new Map([
-      ...teacherLessons.map((lesson) => [lesson.skill.id, lesson.skill]),
-      ...studentLessons.map((lesson) => [lesson.skill.id, lesson.skill]),
-    ]).values(),
-  ];
+    return [
+      ...new Map([
+        ...teacherLessons.map((lesson) => [lesson.skill.id, lesson.skill]),
+        ...studentLessons.map((lesson) => [lesson.skill.id, lesson.skill]),
+      ]).values(),
+    ];
+  }, [data]);
 
-  const allStatuses = [
-    ...new Set([
-      ...teacherLessons.map((lesson) => lesson.status),
-      ...studentLessons.map((lesson) => lesson.status),
-    ]),
-  ];
+  // Context value (removed allStatuses)
+  const filterContextValue = {
+    statusFilter,
+    setStatusFilter,
+    timeframeFilter,
+    setTimeframeFilter,
+    skillFilter,
+    setSkillFilter,
+    allSkills,
+  };
 
   return (
-    <Tabs defaultValue="teacher" className="w-full">
-      <TabsList className="mb-4">
-        <TabsTrigger value="teacher">
-          Teaching ({teacherLessons.length})
-        </TabsTrigger>
-        <TabsTrigger value="student">
-          Learning ({studentLessons.length})
-        </TabsTrigger>
-      </TabsList>
+    <LessonFiltersContext.Provider value={filterContextValue}>
+      <div className="space-y-4">
+        {/* Filters at the top of the page */}
+        <FiltersUI />
 
-      <TabsContent value="teacher">
-        <LessonsTable
-          lessons={teacherLessons}
-          isTeacher={true}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          skillFilter={skillFilter}
-          setSkillFilter={setSkillFilter}
-          allSkills={allSkills}
-          allStatuses={allStatuses}
-        />
-      </TabsContent>
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="teacher">
+              Teaching{" "}
+              {loading ? "" : `(${data?.myLessonsAsTeacher?.length || 0})`}
+            </TabsTrigger>
+            <TabsTrigger value="student">
+              Learning{" "}
+              {loading ? "" : `(${data?.myLessonsAsStudent?.length || 0})`}
+            </TabsTrigger>
+          </TabsList>
 
-      <TabsContent value="student">
-        <LessonsTable
-          lessons={studentLessons}
-          isTeacher={false}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          skillFilter={skillFilter}
-          setSkillFilter={setSkillFilter}
-          allSkills={allSkills}
-          allStatuses={allStatuses}
-        />
-      </TabsContent>
-    </Tabs>
+          {loading ? (
+            <div className="flex justify-center items-center h-48">
+              <div className="flex flex-col items-center space-y-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground">Loading your lessons...</p>
+              </div>
+            </div>
+          ) : error ? (
+            <Alert variant="destructive" className="my-4">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                There was a problem loading your lessons: {error.message}
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <>
+              <TabsContent value="teacher">
+                <LessonsTable
+                  lessons={data?.myLessonsAsTeacher || []}
+                  isTeacher={true}
+                />
+              </TabsContent>
+              <TabsContent value="student">
+                <LessonsTable
+                  lessons={data?.myLessonsAsStudent || []}
+                  isTeacher={false}
+                />
+              </TabsContent>
+            </>
+          )}
+        </Tabs>
+      </div>
+    </LessonFiltersContext.Provider>
   );
 }
 
-function LessonsTable({
-  lessons,
-  isTeacher,
-  statusFilter,
-  setStatusFilter,
-  skillFilter,
-  setSkillFilter,
-  allSkills,
-  allStatuses,
-}) {
-  // Apply filters
+// Separate component for the filters UI
+function FiltersUI() {
+  const {
+    statusFilter,
+    setStatusFilter,
+    timeframeFilter,
+    setTimeframeFilter,
+    skillFilter,
+    setSkillFilter,
+    allSkills,
+  } = useLessonFilters();
+
+  // Use all enum values directly from LessonStatus
+  const statusOptions = Object.values(LessonStatus);
+
+  return (
+    <div className="flex justify-end mb-4">
+      <div className="flex gap-2">
+        <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue>
+              {timeframeFilter === "upcoming"
+                ? "Upcoming Lessons"
+                : timeframeFilter === "past"
+                  ? "Past Lessons"
+                  : "All Lessons"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="upcoming">Upcoming Lessons</SelectItem>
+            <SelectItem value="past">Past Lessons</SelectItem>
+            <SelectItem value="all">All Lessons</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={statusFilter || "all"}
+          onValueChange={(value) =>
+            setStatusFilter(value === "all" ? null : value)
+          }
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue>
+              {statusFilter ? (
+                <StatusBadge status={statusFilter} />
+              ) : (
+                "All Statuses"
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
+            {statusOptions.map((status) => (
+              <SelectItem key={status} value={status}>
+                <StatusBadge status={status} />
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={skillFilter} onValueChange={setSkillFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue>
+              {skillFilter === "all"
+                ? "All Skills"
+                : allSkills.find((skill) => skill.id === skillFilter)?.name ||
+                  "Select skill"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Skills</SelectItem>
+            {allSkills.map((skill) => (
+              <SelectItem key={skill.id} value={skill.id}>
+                {skill.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+}
+
+// Table component that doesn't need filter props anymore
+function LessonsTable({ lessons, isTeacher }) {
+  const { skillFilter } = useLessonFilters();
+  const [selectedLesson, setSelectedLesson] = useState(null);
+
+  // Apply client-side skill filter
   const filteredLessons = useMemo(() => {
     return lessons.filter((lesson) => {
-      // Status filter
-      const matchesStatus =
-        statusFilter === "all" || lesson.status === statusFilter;
-
-      // Skill filter
-      const matchesSkill =
-        skillFilter === "all" || lesson.skill.id === skillFilter;
-
-      return matchesStatus && matchesSkill;
+      // Skill filter is applied client-side
+      return skillFilter === "all" || lesson.skill.id === skillFilter;
     });
-  }, [lessons, statusFilter, skillFilter]);
+  }, [lessons, skillFilter]);
 
   if (lessons.length === 0) {
     return (
@@ -185,39 +318,7 @@ function LessonsTable({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        <div className="flex gap-2">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              {allStatuses.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={skillFilter} onValueChange={setSkillFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by skill" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Skills</SelectItem>
-              {allSkills.map((skill) => (
-                <SelectItem key={skill.id} value={skill.id}>
-                  {skill.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
+    <>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -240,7 +341,11 @@ function LessonsTable({
               </TableRow>
             ) : (
               filteredLessons.map((lesson) => (
-                <TableRow key={lesson.id}>
+                <TableRow
+                  key={lesson.id}
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => setSelectedLesson(lesson)}
+                >
                   <TableCell>
                     <div className="inline-block">
                       <UserSkillBadge
@@ -288,11 +393,7 @@ function LessonsTable({
                     )}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${getStatusColor(lesson.status)}`}
-                    >
-                      {lesson.status}
-                    </span>
+                    <StatusBadge status={lesson.status} />
                   </TableCell>
                 </TableRow>
               ))
@@ -300,22 +401,16 @@ function LessonsTable({
           </TableBody>
         </Table>
       </div>
-    </div>
-  );
-}
 
-function getStatusColor(status) {
-  switch (status) {
-    case LessonStatus.CONFIRMED:
-      return "bg-green-100 text-green-800";
-    case LessonStatus.COMPLETED:
-      return "bg-purple-100 text-purple-800";
-    case LessonStatus.CANCELLED:
-    case LessonStatus.REJECTED:
-      return "bg-red-100 text-red-800";
-    case LessonStatus.REQUESTED:
-      return "bg-yellow-100 text-yellow-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
+      {/* Lesson Detail Modal */}
+      {selectedLesson && (
+        <LessonDetailModal
+          lesson={selectedLesson}
+          isOpen={!!selectedLesson}
+          onClose={() => setSelectedLesson(null)}
+          isTeacher={isTeacher}
+        />
+      )}
+    </>
+  );
 }

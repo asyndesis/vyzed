@@ -142,6 +142,7 @@ enum LessonStatus {
     CONFIRMED
     REJECTED
     CANCELLED
+    COMPLETED
 }
 
 enum PaymentType {
