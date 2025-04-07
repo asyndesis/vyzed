@@ -2,14 +2,7 @@
 import { useQuery, gql } from "@apollo/client";
 import { useState, useMemo, useEffect, createContext, useContext } from "react";
 import { format } from "date-fns";
-import {
-  CalendarIcon,
-  Clock,
-  Loader2,
-  DollarSign,
-  Check,
-  ArrowUpDown,
-} from "lucide-react";
+import { CalendarIcon, Clock, Loader2, ArrowUpDown } from "lucide-react";
 import UserSkillBadge from "@/components/user-skill-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -28,8 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { LessonStatus, PaymentType } from "@vyzed/prisma/enums";
+import { LessonStatus } from "@vyzed/prisma/enums";
 import { StatusBadge } from "@/components/status-badge";
 import {
   flexRender,
@@ -38,6 +30,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import { PaymentStatusBadge } from "../components/payment-status-badge";
+import { TeacherLessonModal } from "./teacher-lesson-modal";
 
 // GraphQL query for lessons
 const GET_MY_LESSONS = gql`
@@ -65,6 +59,7 @@ const GET_MY_LESSONS = gql`
         student {
           firstName
           lastInitial
+          imageUrl
         }
       }
     }
@@ -77,6 +72,7 @@ const GET_MY_LESSONS = gql`
       teacher {
         firstName
         lastInitial
+        imageUrl
       }
       skill {
         id
@@ -109,44 +105,6 @@ function useLessonFilters() {
     );
   }
   return context;
-}
-
-// Payment status badge component
-function PaymentStatusBadge({ enrollment }) {
-  if (!enrollment || enrollment.paymentType === PaymentType.FREE) {
-    return <Badge variant="success">Free</Badge>;
-  }
-
-  const bothConfirmed =
-    enrollment.teacherPaymentAt && enrollment.studentPaymentAt;
-
-  // Payment fully confirmed
-  if (bothConfirmed) {
-    return (
-      <Badge variant="success" className="flex items-center">
-        <Check className="h-3.5 w-3.5 mr-1.5" />
-        Payment Complete
-      </Badge>
-    );
-  }
-
-  // Partially confirmed
-  if (enrollment.teacherPaymentAt || enrollment.studentPaymentAt) {
-    return (
-      <Badge variant="outline" className="flex items-center">
-        <Clock className="h-3.5 w-3.5 mr-1.5" />
-        Verification Pending
-      </Badge>
-    );
-  }
-
-  // No confirmation
-  return (
-    <Badge variant="warning" className="flex items-center">
-      <DollarSign className="h-3.5 w-3.5 mr-1.5" />
-      Payment Pending
-    </Badge>
-  );
 }
 
 // Column definitions for TanStack Table
@@ -399,8 +357,8 @@ function FiltersUI() {
   );
 }
 
-// Table component using TanStack Table
-function SortableTable({ data, columns }) {
+// Modify the SortableTable component to handle row clicks
+function SortableTable({ data, columns, onRowClick }) {
   const [sorting, setSorting] = useState([{ id: "startTime", desc: false }]);
 
   const table = useReactTable({
@@ -436,7 +394,11 @@ function SortableTable({ data, columns }) {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} className="hover:bg-gray-50">
+              <TableRow
+                key={row.id}
+                className="hover:bg-gray-50 cursor-pointer"
+                onClick={() => onRowClick && onRowClick(row.original)}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -457,10 +419,26 @@ function SortableTable({ data, columns }) {
   );
 }
 
-// Lessons table component
-function LessonsTable({ lessons, mode }) {
+// Modify the LessonsTable component to track selectedLessonId instead of selectedLesson
+function LessonsTable({ lessons, mode, onUpdate }) {
   const { skillFilter } = useLessonFilters();
   const isTeacherMode = mode === "teacher";
+  const [selectedLessonId, setSelectedLessonId] = useState(null);
+
+  // Get the fresh lesson data based on the selected ID
+  const selectedLesson = lessons.find(
+    (lesson) => lesson.id === selectedLessonId
+  );
+
+  // Handle row click
+  const handleRowClick = (lesson) => {
+    setSelectedLessonId(lesson.id);
+  };
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setSelectedLessonId(null);
+  };
 
   // Apply client-side skill filter
   const filteredLessons = useMemo(
@@ -482,7 +460,32 @@ function LessonsTable({ lessons, mode }) {
     );
   }
 
-  return <SortableTable data={filteredLessons} columns={columns} />;
+  return (
+    <>
+      <SortableTable
+        data={filteredLessons}
+        columns={columns}
+        onRowClick={handleRowClick}
+      />
+      {/* Teacher Modal */}
+      {isTeacherMode && selectedLesson && (
+        <TeacherLessonModal
+          lesson={selectedLesson}
+          open={!!selectedLesson}
+          onClose={handleModalClose}
+          onUpdate={onUpdate}
+        />
+      )}
+      {/* We'll add the student modal later */}
+      {!isTeacherMode && selectedLessonId && (
+        <div>
+          {/* Student modal will go here in future */}
+          {/* Temp: close the selection so it doesn't stay open */}
+          {setSelectedLessonId(null)}
+        </div>
+      )}
+    </>
+  );
 }
 
 // Main component
@@ -543,6 +546,10 @@ export function MyLessons() {
     allSkills,
   };
 
+  const handleLessonUpdated = () => {
+    refetch(filterVariables);
+  };
+
   return (
     <LessonFiltersContext.Provider value={filterContextValue}>
       <div className="space-y-4">
@@ -580,12 +587,14 @@ export function MyLessons() {
                 <LessonsTable
                   lessons={data?.myLessonsAsTeacher || []}
                   mode="teacher"
+                  onUpdate={handleLessonUpdated}
                 />
               </TabsContent>
               <TabsContent value="student">
                 <LessonsTable
                   lessons={data?.myLessonsAsStudent || []}
                   mode="student"
+                  onUpdate={handleLessonUpdated}
                 />
               </TabsContent>
             </>

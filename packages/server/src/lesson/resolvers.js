@@ -151,8 +151,8 @@ export const lessonResolvers = {
         return lesson;
       });
     },
-    changeLessonStatus: async (_, { input }, { user, prisma }) => {
-      const { lessonId, status } = input;
+    changeLessonStatus: async (_, args, { user, prisma }) => {
+      const { lessonId, status } = args;
 
       // Get the lesson with enrollments
       const lesson = await prisma.lesson.findUnique({
@@ -168,8 +168,8 @@ export const lessonResolvers = {
       const validTransitions = {
         [REQUESTED]: [CONFIRMED, CANCELLED],
         [CONFIRMED]: [COMPLETED, CANCELLED],
-        [COMPLETED]: [],
-        [CANCELLED]: [],
+        [COMPLETED]: [REQUESTED],
+        [CANCELLED]: [REQUESTED],
       };
 
       // Check if transition is valid
@@ -207,8 +207,8 @@ export const lessonResolvers = {
       });
     },
     // Student can change the status of their enrollment
-    changeEnrollmentStatus: async (_, { input }, { user, prisma }) => {
-      const { enrollmentId, status } = input;
+    changeEnrollmentStatus: async (_, args, { user, prisma }) => {
+      const { enrollmentId, status } = args;
 
       const enrollment = await prisma.enrollment.findUnique({
         where: { id: enrollmentId },

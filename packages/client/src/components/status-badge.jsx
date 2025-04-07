@@ -7,7 +7,7 @@ function getStatusVariant(status) {
     case LessonStatus.COMPLETED:
       return "success";
     case LessonStatus.CONFIRMED:
-      return "secondary";
+      return "primary";
     case LessonStatus.CANCELLED:
     case LessonStatus.REJECTED:
       return "destructive";

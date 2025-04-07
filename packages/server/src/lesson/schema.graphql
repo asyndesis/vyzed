@@ -47,12 +47,6 @@ input RequestLessonInput {
   barterLessonId: PostgresID
 }
 
-# Input for changing lesson status
-input ChangeLessonStatusInput {
-  lessonId: PostgresID!
-  status: LessonStatus!
-}
-
 # Filter input for lessons
 input LessonFilterInput {
   status: LessonStatus
@@ -68,6 +62,7 @@ extend type Query {
 
 # Mutations
 extend type Mutation {
+  # Both student and teacher can update the payment status
   updateEnrollmentPaymentStatus(
     enrollmentId: PostgresID!
     isPaid: Boolean!
@@ -79,6 +74,6 @@ extend type Mutation {
     status: LessonStatus!
   ): Enrollment!
   # Teacher actions
-  changeLessonStatus(input: ChangeLessonStatusInput!): Lesson!
+  changeLessonStatus(lessonId: PostgresID!, status: LessonStatus!): Lesson!
   cancelEnrollment(enrollmentId: PostgresID!): Enrollment!
 }
