@@ -11,22 +11,23 @@ datasource db {
 }
 
 model User {
-    id             String          @id @default(cuid())
-    email          String          @unique
-    firstName      String?
-    lastName       String?
-    imageUrl       String?
-    roles          String[]        @default([])
-    authId         String          @unique
-    userProfile    UserProfile?
-    studentProfile StudentProfile?
-    teacherProfile TeacherProfile?
-    taughtLessons  Lesson[]        @relation("TeacherLessons")
-    enrollments    Enrollment[]    @relation("StudentEnrollments")
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
-    createdBy      String?
-    updatedBy      String?
+    id                String          @id @default(cuid())
+    email             String          @unique
+    firstName         String?
+    lastName          String?
+    imageUrl          String?
+    roles             String[]        @default([])
+    authId            String          @unique
+    userProfile       UserProfile?
+    studentProfile    StudentProfile?
+    teacherProfile    TeacherProfile?
+    taughtLessons     Lesson[]        @relation("TeacherLessons")
+    enrollments       Enrollment[]    @relation("StudentEnrollments")
+    taughtEnrollments Enrollment[]    @relation("TeacherEnrollments")
+    createdAt         DateTime        @default(now())
+    updatedAt         DateTime        @updatedAt
+    createdBy         String?
+    updatedBy         String?
 }
 
 model UserProfile {
@@ -140,7 +141,6 @@ model MailingList {
 enum LessonStatus {
     REQUESTED
     CONFIRMED
-    REJECTED
     CANCELLED
     COMPLETED
 }
@@ -171,23 +171,25 @@ model Lesson {
 }
 
 model Enrollment {
-    id              String       @id @default(cuid())
-    lessonId        String
-    lesson          Lesson       @relation("LessonEnrollments", fields: [lessonId], references: [id], onDelete: Cascade)
-    studentId       String
-    student         User         @relation("StudentEnrollments", fields: [studentId], references: [id], onDelete: Cascade)
-    paymentType     PaymentType  @default(CASH)
-    paymentAmount   Int? // null if bartering
-    paymentCurrency String? // null if bartering
-    barterLessonId  String? // reference to a lesson the student provides in exchange
-    status          LessonStatus @default(REQUESTED)
-    attended        Boolean      @default(false)
-    feedback        String?
-    rating          Int?
-    createdAt       DateTime     @default(now())
-    updatedAt       DateTime     @updatedAt
-    createdBy       String?
-    updatedBy       String?
+    id               String       @id @default(cuid())
+    lessonId         String
+    lesson           Lesson       @relation("LessonEnrollments", fields: [lessonId], references: [id], onDelete: Cascade)
+    studentId        String
+    teacherId        String
+    student          User         @relation("StudentEnrollments", fields: [studentId], references: [id], onDelete: Cascade)
+    teacher          User         @relation("TeacherEnrollments", fields: [teacherId], references: [id], onDelete: Cascade)
+    paymentType      PaymentType  @default(CASH)
+    paymentAmount    Int? // null if bartering
+    paymentCurrency  String? // null if bartering
+    barterLessonId   String? // reference to a lesson the student provides in exchange
+    status           LessonStatus @default(REQUESTED)
+    teacherPaymentAt DateTime?
+    studentPaymentAt DateTime?
+    attended         Boolean      @default(false)
+    createdAt        DateTime     @default(now())
+    updatedAt        DateTime     @updatedAt
+    createdBy        String?
+    updatedBy        String?
 
     @@unique([lessonId, studentId])
     @@index([status, lessonId])

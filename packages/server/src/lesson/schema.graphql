@@ -28,6 +28,9 @@ type Enrollment {
   paymentCurrency: String
   barterLessonId: PostgresID
   status: LessonStatus!
+  teacherPaymentAt: DateTime
+  studentPaymentAt: DateTime
+  attended: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -65,8 +68,17 @@ extend type Query {
 
 # Mutations
 extend type Mutation {
+  updateEnrollmentPaymentStatus(
+    enrollmentId: PostgresID!
+    isPaid: Boolean!
+  ): Enrollment!
   # Student actions
   requestLesson(input: RequestLessonInput!): Lesson!
+  changeEnrollmentStatus(
+    enrollmentId: PostgresID!
+    status: LessonStatus!
+  ): Enrollment!
   # Teacher actions
   changeLessonStatus(input: ChangeLessonStatusInput!): Lesson!
+  cancelEnrollment(enrollmentId: PostgresID!): Enrollment!
 }

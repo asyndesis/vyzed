@@ -36,6 +36,12 @@ const PERMISSIONS = {
       update: true,
       delete: true,
     },
+    enrollment: {
+      view: true,
+      create: true,
+      update: true,
+      delete: true,
+    },
   },
   [ROLES.user]: {
     user: {
@@ -63,9 +69,15 @@ const PERMISSIONS = {
       delete: (me, userProfile) => userProfile.userId === me.id,
     },
     lesson: {
-      view: true,
+      view: (me, lesson) => lesson.teacherId === me.id,
       create: true,
-      changeStatus: (me, lesson) => lesson.teacherId === me.id,
+      update: (me, lesson) => lesson.teacherId === me.id,
+    },
+    enrollment: {
+      view: (me, enrollment) => enrollment.studentId === me.id,
+      create: true,
+      update: (me, enrollment) =>
+        [enrollment.studentId, enrollment.teacherId].includes(me.id),
     },
   },
 };

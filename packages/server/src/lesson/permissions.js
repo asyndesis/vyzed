@@ -7,6 +7,17 @@ export const lessonPermissions = {
   },
   Mutation: {
     requestLesson: isAuthed,
-    changeLessonStatus: canPerformAction("lesson", "changeStatus", "lessonId"),
+    changeLessonStatus: canPerformAction("lesson", "update", "lessonId"),
+    changeEnrollmentStatus: canPerformAction(
+      "enrollment",
+      "update",
+      "enrollmentId"
+    ),
+    updateEnrollmentPaymentStatus: canPerformAction(
+      "enrollment",
+      "update",
+      "enrollmentId"
+    ),
+    cancelEnrollment: canPerformAction("enrollment", "update", "enrollmentId"),
   },
 };

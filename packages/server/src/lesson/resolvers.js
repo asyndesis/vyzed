@@ -1,5 +1,8 @@
 import { LessonStatus } from "@vyzed/prisma/enums";
 
+const { CONFIRMED, COMPLETED, CANCELLED, REQUESTED } = LessonStatus;
+
+// Note, permissions in this file are handled in the permissions.js file
 export const lessonResolvers = {
   Lesson: {
     teacher: async (parent, _, { prisma }) => {
@@ -12,10 +15,21 @@ export const lessonResolvers = {
         where: { id: parent.skillId },
       });
     },
-    enrollments: async (parent, _, { prisma }) => {
-      return prisma.enrollment.findMany({
-        where: { lessonId: parent.id },
-      });
+    enrollments: async (parent, _, { prisma, user }) => {
+      if (parent?.teacherId === user.id) {
+        // Teacher can see all enrollments for their own lessons
+        return prisma.enrollment.findMany({
+          where: { lessonId: parent.id },
+        });
+      } else {
+        // For students or any other user, only return their own enrollment
+        return prisma.enrollment.findMany({
+          where: {
+            lessonId: parent.id,
+            studentId: user.id,
+          },
+        });
+      }
     },
   },
   Enrollment: {
@@ -59,10 +73,14 @@ export const lessonResolvers = {
         }
       }
 
-      return prisma.lesson.findMany({
+      // Return lessons but with a custom resolver for enrollments
+      const lessons = await prisma.lesson.findMany({
         where,
         orderBy: { createdAt: "desc" },
+        // Don't include enrollments here, will be handled by resolver
       });
+
+      return lessons;
     },
     myLessonsAsTeacher: async (_, { filter }, { user, prisma }) => {
       // Build where clause with filters
@@ -120,6 +138,7 @@ export const lessonResolvers = {
           data: {
             lessonId: lesson.id,
             studentId: user.id,
+            teacherId: input.teacherId,
             paymentType: input.paymentType,
             paymentAmount: input.paymentAmount,
             paymentCurrency: input.paymentCurrency,
@@ -132,7 +151,6 @@ export const lessonResolvers = {
         return lesson;
       });
     },
-    // New consolidated changeLessonStatus mutation
     changeLessonStatus: async (_, { input }, { user, prisma }) => {
       const { lessonId, status } = input;
 
@@ -146,26 +164,12 @@ export const lessonResolvers = {
         throw new Error("Lesson not found");
       }
 
-      // Check permissions - only teacher can change status
-      if (lesson.teacherId !== user.id) {
-        throw new Error(
-          "You don't have permission to change this lesson's status"
-        );
-      }
-
       // Define valid transitions
       const validTransitions = {
-        [LessonStatus.REQUESTED]: [
-          LessonStatus.CONFIRMED,
-          LessonStatus.CANCELLED,
-        ],
-        [LessonStatus.CONFIRMED]: [
-          LessonStatus.COMPLETED,
-          LessonStatus.CANCELLED,
-        ],
-        [LessonStatus.COMPLETED]: [],
-        [LessonStatus.CANCELLED]: [],
-        [LessonStatus.REJECTED]: [],
+        [REQUESTED]: [CONFIRMED, CANCELLED],
+        [CONFIRMED]: [COMPLETED, CANCELLED],
+        [COMPLETED]: [],
+        [CANCELLED]: [],
       };
 
       // Check if transition is valid
@@ -175,25 +179,14 @@ export const lessonResolvers = {
         );
       }
 
-      // Determine the appropriate enrollment status
-      let enrollmentStatus = status;
-      if (
-        status === LessonStatus.CANCELLED &&
-        lesson.status === LessonStatus.REQUESTED
-      ) {
-        enrollmentStatus = LessonStatus.REJECTED;
-      }
-
       // Perform updates in a transaction
       await prisma.$transaction([
-        // Update enrollments
         prisma.enrollment.updateMany({
           where: {
             lessonId,
-            status: lesson.status,
           },
           data: {
-            status: enrollmentStatus,
+            status,
             updatedBy: user.id,
           },
         }),
@@ -211,6 +204,80 @@ export const lessonResolvers = {
       // Return the updated lesson
       return prisma.lesson.findUnique({
         where: { id: lessonId },
+      });
+    },
+    // Student can change the status of their enrollment
+    changeEnrollmentStatus: async (_, { input }, { user, prisma }) => {
+      const { enrollmentId, status } = input;
+
+      const enrollment = await prisma.enrollment.findUnique({
+        where: { id: enrollmentId },
+      });
+
+      if (!enrollment) {
+        throw new Error("Enrollment not found");
+      }
+
+      return prisma.enrollment.update({
+        where: { id: enrollmentId },
+        data: {
+          status,
+          updatedBy: user.id,
+        },
+      });
+    },
+    // Both student and teacher can confirm the payment
+    updateEnrollmentPaymentStatus: async (
+      _,
+      { enrollmentId, isPaid },
+      { user, prisma }
+    ) => {
+      const enrollment = await prisma.enrollment.findUnique({
+        where: { id: enrollmentId },
+      });
+
+      const isTeacher = enrollment.teacherId === user.id;
+      const isStudent = enrollment.studentId === user.id;
+      const paidDate = isPaid ? new Date() : null;
+
+      if (!enrollment) {
+        throw new Error("Enrollment not found");
+      }
+
+      return prisma.enrollment.update({
+        where: { id: enrollmentId },
+        data: {
+          ...(isTeacher && {
+            teacherPaymentAt: paidDate,
+          }),
+          ...(isStudent && {
+            studentPaymentAt: paidDate,
+          }),
+          updatedBy: user.id,
+        },
+      });
+    },
+    cancelEnrollment: async (_, { enrollmentId }, { user, prisma }) => {
+      const enrollment = await prisma.enrollment.findUnique({
+        where: { id: enrollmentId },
+      });
+
+      if (!enrollment) {
+        throw new Error("Enrollment not found");
+      }
+
+      // Check if the enrollment is already cancelled
+      if (enrollment.status === LessonStatus.CANCELLED) {
+        throw new Error("Enrollment is already cancelled");
+      }
+
+      // Update the enrollment to cancelled
+      return prisma.enrollment.update({
+        where: { id: enrollmentId },
+        data: {
+          status: LessonStatus.CANCELLED,
+          updatedBy: user.id,
+        },
       });
     },
   },

@@ -10,7 +10,6 @@ export const SkillFramework = {
 export const LessonStatus = {
   REQUESTED: 'REQUESTED',
   CONFIRMED: 'CONFIRMED',
-  REJECTED: 'REJECTED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED',
 };

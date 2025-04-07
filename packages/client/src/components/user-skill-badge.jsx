@@ -2,12 +2,12 @@ import { Badge } from "@/components/ui/badge";
 import { renderProficiency } from "@/lib/utils";
 import { X } from "lucide-react";
 
-const UserSkillBadge = ({ userSkill, onClick, onRemove }) => {
+const UserSkillBadge = ({ userSkill, onClick, onRemove, className }) => {
   return (
     <Badge
       key={userSkill.id}
       variant="outline"
-      className={`flex items-center gap-1 ${onClick ? "cursor-pointer" : ""}`}
+      className={`flex items-center gap-1 ${onClick ? "cursor-pointer" : ""} ${className} w-fit`}
       onClick={onClick}
     >
       {userSkill.skill.name}
