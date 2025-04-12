@@ -1,6 +1,8 @@
 import { LessonStatus } from "@vyzed/prisma/enums";
-
-const { CONFIRMED, COMPLETED, CANCELLED, REQUESTED } = LessonStatus;
+import {
+  VALID_LESSON_STATUS_TRANSITIONS,
+  VALID_ENROLLMENT_STATUS_TRANSITIONS,
+} from "@vyzed/constants/lessons";
 
 // Note, permissions in this file are handled in the permissions.js file
 export const lessonResolvers = {
@@ -164,16 +166,8 @@ export const lessonResolvers = {
         throw new Error("Lesson not found");
       }
 
-      // Define valid transitions
-      const validTransitions = {
-        [REQUESTED]: [CONFIRMED, CANCELLED],
-        [CONFIRMED]: [COMPLETED, CANCELLED],
-        [COMPLETED]: [REQUESTED],
-        [CANCELLED]: [REQUESTED],
-      };
-
-      // Check if transition is valid
-      if (!validTransitions[lesson.status].includes(status)) {
+      // Check if transition is valid using the constant
+      if (!VALID_LESSON_STATUS_TRANSITIONS[lesson.status]?.includes(status)) {
         throw new Error(
           `Cannot change lesson from ${lesson.status} to ${status}`
         );
@@ -210,20 +204,54 @@ export const lessonResolvers = {
     changeEnrollmentStatus: async (_, args, { user, prisma }) => {
       const { enrollmentId, status } = args;
 
-      const enrollment = await prisma.enrollment.findUnique({
-        where: { id: enrollmentId },
-      });
+      return await prisma.$transaction(async (tx) => {
+        const enrollment = await tx.enrollment.findUnique({
+          where: { id: enrollmentId },
+        });
 
-      if (!enrollment) {
-        throw new Error("Enrollment not found");
-      }
+        if (!enrollment) {
+          throw new Error("Enrollment not found");
+        }
 
-      return prisma.enrollment.update({
-        where: { id: enrollmentId },
-        data: {
-          status,
-          updatedBy: user.id,
-        },
+        // Check if transition is valid
+        if (
+          !VALID_ENROLLMENT_STATUS_TRANSITIONS[enrollment.status]?.includes(
+            status
+          )
+        ) {
+          throw new Error(
+            `Cannot change enrollment from ${enrollment.status} to ${status}`
+          );
+        }
+
+        // If the enrollment is the only one for the lesson, update the lesson status
+        const otherEnrollmentsCount = await tx.enrollment.count({
+          where: {
+            lessonId: enrollment.lessonId,
+            id: { not: enrollmentId },
+          },
+        });
+
+        if (otherEnrollmentsCount === 0) {
+          await tx.lesson.update({
+            where: { id: enrollment.lessonId },
+            data: {
+              status,
+              updatedBy: user.id,
+            },
+          });
+        }
+
+        // Update the enrollment status
+        const updatedEnrollment = await tx.enrollment.update({
+          where: { id: enrollmentId },
+          data: {
+            status,
+            updatedBy: user.id,
+          },
+        });
+
+        return updatedEnrollment;
       });
     },
     // Both student and teacher can confirm the payment
@@ -253,29 +281,6 @@ export const lessonResolvers = {
           ...(isStudent && {
             studentPaymentAt: paidDate,
           }),
-          updatedBy: user.id,
-        },
-      });
-    },
-    cancelEnrollment: async (_, { enrollmentId }, { user, prisma }) => {
-      const enrollment = await prisma.enrollment.findUnique({
-        where: { id: enrollmentId },
-      });
-
-      if (!enrollment) {
-        throw new Error("Enrollment not found");
-      }
-
-      // Check if the enrollment is already cancelled
-      if (enrollment.status === LessonStatus.CANCELLED) {
-        throw new Error("Enrollment is already cancelled");
-      }
-
-      // Update the enrollment to cancelled
-      return prisma.enrollment.update({
-        where: { id: enrollmentId },
-        data: {
-          status: LessonStatus.CANCELLED,
           updatedBy: user.id,
         },
       });

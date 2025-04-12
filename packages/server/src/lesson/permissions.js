@@ -18,6 +18,5 @@ export const lessonPermissions = {
       "update",
       "enrollmentId"
     ),
-    cancelEnrollment: canPerformAction("enrollment", "update", "enrollmentId"),
   },
 };

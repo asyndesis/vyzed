@@ -32,6 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { PaymentStatusBadge } from "../components/payment-status-badge";
 import { TeacherLessonModal } from "./teacher-lesson-modal";
+import { StudentEnrollmentModal } from "./student-enrollment-modal";
 
 // GraphQL query for lessons
 const GET_MY_LESSONS = gql`
@@ -476,13 +477,14 @@ function LessonsTable({ lessons, mode, onUpdate }) {
           onUpdate={onUpdate}
         />
       )}
-      {/* We'll add the student modal later */}
-      {!isTeacherMode && selectedLessonId && (
-        <div>
-          {/* Student modal will go here in future */}
-          {/* Temp: close the selection so it doesn't stay open */}
-          {setSelectedLessonId(null)}
-        </div>
+      {/* Student Modal */}
+      {!isTeacherMode && selectedLesson && (
+        <StudentEnrollmentModal
+          lesson={selectedLesson}
+          open={!!selectedLesson}
+          onClose={handleModalClose}
+          onUpdate={onUpdate}
+        />
       )}
     </>
   );

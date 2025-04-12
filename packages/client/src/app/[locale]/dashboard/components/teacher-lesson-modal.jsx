@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PaymentStatusBadge } from "./payment-status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { VALID_LESSON_STATUS_TRANSITIONS } from "@vyzed/constants/lessons";
 
 // GraphQL Mutations
 const CHANGE_LESSON_STATUS = gql`
@@ -114,26 +115,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
   const currentStatus = lesson.status;
   const isPastLesson = new Date(lesson.endTime) < new Date();
 
-  // Get valid transitions based on API logic
-  // From resolver.js: validTransitions = {
-  //   [REQUESTED]: [CONFIRMED, CANCELLED],
-  //   [CONFIRMED]: [COMPLETED, CANCELLED],
-  //   [COMPLETED]: [REQUESTED],
-  //   [CANCELLED]: [REQUESTED],
-  // };
-  const validTransitions =
-    {
-      [LessonStatus.REQUESTED]: [
-        LessonStatus.CONFIRMED,
-        LessonStatus.CANCELLED,
-      ],
-      [LessonStatus.CONFIRMED]: [
-        LessonStatus.COMPLETED,
-        LessonStatus.CANCELLED,
-      ],
-      [LessonStatus.COMPLETED]: [LessonStatus.REQUESTED],
-      [LessonStatus.CANCELLED]: [LessonStatus.REQUESTED],
-    }[currentStatus] || [];
+  const validTransitions = VALID_LESSON_STATUS_TRANSITIONS[currentStatus] || [];
 
   // Check if there are unpaid enrollments that would prevent completing
   const enrollments = lesson.enrollments || [];
