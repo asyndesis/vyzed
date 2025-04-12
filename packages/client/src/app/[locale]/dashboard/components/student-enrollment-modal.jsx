@@ -11,6 +11,7 @@ import {
   AlertCircleIcon,
   ArrowRightIcon,
   SendHorizonal as RequestIcon,
+  Loader2,
 } from "lucide-react";
 import { gql, useMutation } from "@apollo/client";
 import { Button } from "@/components/ui/button";
@@ -72,9 +73,8 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
   // Status change mutation
   const [changeEnrollmentStatus] = useMutation(CHANGE_ENROLLMENT_STATUS, {
     onCompleted: () => {
-      setIsLoading(false);
       onUpdate?.();
-      // Keep modal open
+      onClose();
     },
     onError: (error) => {
       console.error("Error changing enrollment status:", error);
@@ -87,8 +87,8 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
     UPDATE_ENROLLMENT_PAYMENT_STATUS,
     {
       onCompleted: () => {
-        setProcessingPayment(false);
         onUpdate?.();
+        onClose();
       },
       onError: (error) => {
         console.error("Error updating payment status:", error);
@@ -164,31 +164,30 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
         </DialogHeader>
 
         <div className="px-6 py-5 space-y-6 max-h-[calc(85vh-220px)] overflow-y-auto">
-          {/* Skill Information */}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">
-              Skill
-            </h3>
-            <UserSkillBadge
-              className="w-fit"
-              userSkill={{
-                skill: lesson.skill,
-                proficiency: lesson.proficiency,
-                framework: lesson.skill?.framework,
-              }}
-            />
-          </div>
+          {/* Core Lesson Details Section */}
+          <div className="space-y-4">
+            {/* Skill Information - No Separator After */}
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Skill
+              </h3>
+              <UserSkillBadge
+                className="w-fit"
+                userSkill={{
+                  skill: lesson.skill,
+                  proficiency: lesson.proficiency,
+                  framework: lesson.skill?.framework,
+                }}
+              />
+            </div>
 
-          <Separator />
-
-          {/* Teacher Information */}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">
-              Teacher
-            </h3>
-            <Card className="overflow-hidden">
-              <CardHeader className="py-3 px-4 bg-background border-b flex flex-row items-center space-y-0 gap-3">
-                <Avatar className="h-8 w-8 border">
+            {/* Teacher Information - Removed Card, No Separator After */}
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Teacher
+              </h3>
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-9 w-9 border">
                   <AvatarImage src={lesson.teacher?.imageUrl} />
                   <AvatarFallback className="text-xs bg-primary/10 text-primary">
                     {getInitials(
@@ -197,53 +196,47 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
                     )}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <CardTitle className="text-sm font-semibold">
-                    {lesson.teacher?.firstName} {lesson.teacher?.lastInitial}
-                  </CardTitle>
+                <div className="text-sm font-medium">
+                  {lesson.teacher?.firstName} {lesson.teacher?.lastInitial}
                 </div>
-              </CardHeader>
-            </Card>
-          </div>
-
-          <Separator />
-
-          {/* Date & Time */}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">
-              Date & Time
-            </h3>
-            <div className="space-y-2.5 bg-muted/20 rounded-md p-3 border">
-              <div className="flex items-center text-sm">
-                <CalendarIcon className="h-4 w-4 mr-3 text-primary/70" />
-                <span className="font-medium">
-                  {format(new Date(lesson.startTime), "EEEE, MMMM d, yyyy")}
-                </span>
               </div>
-              <div className="flex items-center text-sm">
-                <ClockIcon className="h-4 w-4 mr-3 text-primary/70" />
-                <span className="font-medium">
-                  {format(new Date(lesson.startTime), "h:mm a")} –{" "}
-                  {format(new Date(lesson.endTime), "h:mm a")}
-                </span>
-              </div>
-              {isPastLesson && (
-                <div className="mt-2">
-                  <Badge
-                    variant="outline"
-                    className="bg-amber-50 text-amber-700 border-amber-200"
-                  >
-                    <AlertCircleIcon className="h-3 w-3 mr-1" />
-                    Past lesson
-                  </Badge>
+            </div>
+
+            {/* Date & Time - Removed bordered box, No Separator After */}
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Date & Time
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm">
+                  <CalendarIcon className="h-4 w-4 mr-3 text-primary/70" />
+                  <span className="font-medium">
+                    {format(new Date(lesson.startTime), "EEEE, MMMM d, yyyy")}
+                  </span>
                 </div>
-              )}
+                <div className="flex items-center text-sm">
+                  <ClockIcon className="h-4 w-4 mr-3 text-primary/70" />
+                  <span className="font-medium">
+                    {format(new Date(lesson.startTime), "h:mm a")} –{" "}
+                    {format(new Date(lesson.endTime), "h:mm a")}
+                  </span>
+                </div>
+                {isPastLesson && (
+                  <div className="mt-2">
+                    <Badge
+                      variant="outline"
+                      className="bg-amber-50 text-amber-700 border-amber-200"
+                    >
+                      <AlertCircleIcon className="h-3 w-3 mr-1" />
+                      Past lesson
+                    </Badge>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-
-          <Separator />
-
-          {/* Payment Information */}
+          <Separator /> {/* Separator before Payment section */}
+          {/* Payment Information - Kept Card Structure */}
           {enrollment.paymentType !== PaymentType.FREE && (
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-3">
@@ -267,7 +260,7 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
                   </div>
                   <PaymentStatusBadge enrollment={enrollment} />
                 </CardHeader>
-                <CardContent className="p-4 bg-muted/10">
+                <CardContent className="p-3 bg-muted/10">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between pt-1">
                       <div className="text-sm text-muted-foreground">
@@ -297,7 +290,10 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
                       className="w-full mt-1"
                     >
                       {processingPayment ? (
-                        "Processing..."
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                          Processing...
+                        </>
                       ) : enrollment.studentPaymentAt ? (
                         <>
                           <XCircleIcon className="h-3.5 w-3.5 mr-1.5" />
@@ -336,7 +332,11 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
               disabled={isLoading}
               className={cn("w-full", isLoading && "opacity-70")}
             >
-              <XCircleIcon className="h-4 w-4 mr-2" />
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <XCircleIcon className="h-4 w-4 mr-2" />
+              )}
               {isLoading ? "Processing..." : "Cancel Enrollment"}
             </Button>
           )}
@@ -349,7 +349,11 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
               disabled={isLoading}
               className={cn("w-full", isLoading && "opacity-70")}
             >
-              <RequestIcon className="h-4 w-4 mr-2" />
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RequestIcon className="h-4 w-4 mr-2" />
+              )}
               {isLoading ? "Processing..." : "Re-request Lesson"}
             </Button>
           )}

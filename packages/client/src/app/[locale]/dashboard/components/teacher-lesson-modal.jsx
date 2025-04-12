@@ -11,6 +11,7 @@ import {
   AlertCircleIcon,
   UsersIcon,
   ArrowRightIcon,
+  Loader2,
 } from "lucide-react";
 import { gql, useMutation } from "@apollo/client";
 import { Button } from "@/components/ui/button";
@@ -66,8 +67,8 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
   // Status change mutation
   const [changeLessonStatus] = useMutation(CHANGE_LESSON_STATUS, {
     onCompleted: () => {
-      setIsLoading(false);
       onUpdate?.();
+      onClose();
     },
     onError: (error) => {
       console.error("Error changing lesson status:", error);
@@ -78,8 +79,8 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
   // Payment update mutation
   const [updateEnrollmentPaymentStatus] = useMutation(UPDATE_PAYMENT_STATUS, {
     onCompleted: () => {
-      setProcessingPaymentId(null);
       onUpdate?.();
+      onClose();
     },
     onError: (error) => {
       console.error("Error updating payment status:", error);
@@ -151,59 +152,58 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
         </DialogHeader>
 
         <div className="px-6 py-5 space-y-6 max-h-[calc(85vh-220px)] overflow-y-auto">
-          {/* Skill Information */}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">
-              Skill
-            </h3>
-            <UserSkillBadge
-              className="w-fit"
-              userSkill={{
-                skill: lesson.skill,
-                proficiency: lesson.proficiency,
-                framework: lesson.skill?.framework,
-              }}
-            />
-          </div>
+          {/* Core Lesson Details Section */}
+          <div className="space-y-4">
+            {/* Skill Information - No Separator After */}
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Skill
+              </h3>
+              <UserSkillBadge
+                className="w-fit"
+                userSkill={{
+                  skill: lesson.skill,
+                  proficiency: lesson.proficiency,
+                  framework: lesson.skill?.framework,
+                }}
+              />
+            </div>
 
-          <Separator />
-
-          {/* Date & Time */}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">
-              Date & Time
-            </h3>
-            <div className="space-y-2.5 bg-muted/20 rounded-md p-3 border">
-              <div className="flex items-center text-sm">
-                <CalendarIcon className="h-4 w-4 mr-3 text-primary/70" />
-                <span className="font-medium">
-                  {format(new Date(lesson.startTime), "EEEE, MMMM d, yyyy")}
-                </span>
-              </div>
-              <div className="flex items-center text-sm">
-                <ClockIcon className="h-4 w-4 mr-3 text-primary/70" />
-                <span className="font-medium">
-                  {format(new Date(lesson.startTime), "h:mm a")} –{" "}
-                  {format(new Date(lesson.endTime), "h:mm a")}
-                </span>
-              </div>
-              {isPastLesson && (
-                <div className="mt-2">
-                  <Badge
-                    variant="outline"
-                    className="bg-amber-50 text-amber-700 border-amber-200"
-                  >
-                    <AlertCircleIcon className="h-3 w-3 mr-1" />
-                    Past lesson
-                  </Badge>
+            {/* Date & Time - Removed bordered box, No Separator After */}
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Date & Time
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm">
+                  <CalendarIcon className="h-4 w-4 mr-3 text-primary/70" />
+                  <span className="font-medium">
+                    {format(new Date(lesson.startTime), "EEEE, MMMM d, yyyy")}
+                  </span>
                 </div>
-              )}
+                <div className="flex items-center text-sm">
+                  <ClockIcon className="h-4 w-4 mr-3 text-primary/70" />
+                  <span className="font-medium">
+                    {format(new Date(lesson.startTime), "h:mm a")} –{" "}
+                    {format(new Date(lesson.endTime), "h:mm a")}
+                  </span>
+                </div>
+                {isPastLesson && (
+                  <div className="mt-2">
+                    <Badge
+                      variant="outline"
+                      className="bg-amber-50 text-amber-700 border-amber-200"
+                    >
+                      <AlertCircleIcon className="h-3 w-3 mr-1" />
+                      Past lesson
+                    </Badge>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-
-          <Separator />
-
-          {/* Student Information */}
+          <Separator /> {/* Separator before Student section */}
+          {/* Student Information - Refactored List */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-muted-foreground">
@@ -219,106 +219,114 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
             </div>
 
             {enrollments.length > 0 ? (
-              <div className="space-y-4">
+              <div className="border rounded-md divide-y divide-border bg-background">
                 {enrollments.map((enrollment) => (
-                  <Card key={enrollment.id} className="overflow-hidden">
-                    <CardHeader className="py-3 px-4 bg-background border-b flex flex-row items-center space-y-0 gap-3">
-                      <Avatar className="h-8 w-8 border">
-                        <AvatarImage src={enrollment.student?.imageUrl} />
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                          {getInitials(
-                            enrollment.student?.firstName,
-                            enrollment.student?.lastInitial
-                          )}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-sm font-semibold">
-                          {enrollment.student?.firstName}{" "}
-                          {enrollment.student?.lastInitial}
-                        </CardTitle>
-                        {enrollment.paymentType !== PaymentType.FREE && (
-                          <p className="text-xs text-muted-foreground flex items-center mt-0.5">
-                            <BanknoteIcon className="h-3 w-3 mr-1" />
-                            {enrollment.paymentType}
-                            {enrollment.paymentAmount && (
-                              <span className="ml-1">
-                                · {enrollment.paymentAmount}{" "}
-                                {enrollment.paymentCurrency}
-                              </span>
+                  <div key={enrollment.id} className="p-4">
+                    {/* Student Header Info */}
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div className="flex items-center gap-3 flex-grow">
+                        <Avatar className="h-8 w-8 border flex-shrink-0">
+                          <AvatarImage src={enrollment.student?.imageUrl} />
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {getInitials(
+                              enrollment.student?.firstName,
+                              enrollment.student?.lastInitial
                             )}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-semibold">
+                            {enrollment.student?.firstName}{" "}
+                            {enrollment.student?.lastInitial}
                           </p>
-                        )}
-                      </div>
-                      <div className="ml-auto">
-                        <StatusBadge status={enrollment.status} size="sm" />
-                      </div>
-                    </CardHeader>
-                    <CardContent className="p-4 bg-muted/10">
-                      {/* Payment section for paid lessons */}
-                      {enrollment.paymentType !== PaymentType.FREE ? (
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">
-                              Payment Status
-                            </span>
-                            <PaymentStatusBadge enrollment={enrollment} />
-                          </div>
-
-                          <div className="flex items-center justify-between pt-1">
-                            <div className="text-sm text-muted-foreground">
-                              {enrollment.teacherPaymentAt ? (
-                                <span className="text-green-600 flex items-center">
-                                  <CheckCircleIcon className="h-3.5 w-3.5 mr-1.5" />
-                                  You confirmed
-                                </span>
-                              ) : (
-                                <span className="text-muted-foreground flex items-center">
-                                  <ArrowRightIcon className="h-3.5 w-3.5 mr-1.5" />
-                                  Your confirmation needed
+                          {enrollment.paymentType !== PaymentType.FREE && (
+                            <p className="text-xs text-muted-foreground flex items-center mt-0.5">
+                              <BanknoteIcon className="h-3 w-3 mr-1 flex-shrink-0" />
+                              {enrollment.paymentType}
+                              {enrollment.paymentAmount && (
+                                <span className="ml-1">
+                                  · {enrollment.paymentAmount}{" "}
+                                  {enrollment.paymentCurrency}
                                 </span>
                               )}
-                            </div>
-                          </div>
-
-                          <Button
-                            size="sm"
-                            variant={
-                              enrollment.teacherPaymentAt
-                                ? "outline"
-                                : "default"
-                            }
-                            onClick={() =>
-                              handlePaymentUpdate(
-                                enrollment.id,
-                                !enrollment.teacherPaymentAt
-                              )
-                            }
-                            disabled={processingPaymentId === enrollment.id}
-                            className="w-full mt-1"
-                          >
-                            {processingPaymentId === enrollment.id ? (
-                              "Processing..."
-                            ) : enrollment.teacherPaymentAt ? (
-                              <>
-                                <XCircleIcon className="h-3.5 w-3.5 mr-1.5" />
-                                Mark as Unpaid
-                              </>
-                            ) : (
-                              <>
-                                <DollarSignIcon className="h-3.5 w-3.5 mr-1.5" />
-                                Confirm Payment
-                              </>
-                            )}
-                          </Button>
+                            </p>
+                          )}
+                          {enrollment.paymentType === PaymentType.FREE && (
+                            <Badge
+                              variant="outline"
+                              size="sm"
+                              className="mt-1 bg-blue-50 text-blue-700 border-blue-200"
+                            >
+                              Free lesson
+                            </Badge>
+                          )}
                         </div>
-                      ) : (
-                        <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                          Free lesson
-                        </Badge>
-                      )}
-                    </CardContent>
-                  </Card>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <StatusBadge status={enrollment.status} size="sm" />
+                      </div>
+                    </div>
+
+                    {/* Payment Section (if not free) */}
+                    {enrollment.paymentType !== PaymentType.FREE && (
+                      <div className="space-y-3 pt-3 border-t border-dashed">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">
+                            Payment Status
+                          </span>
+                          <PaymentStatusBadge enrollment={enrollment} />
+                        </div>
+
+                        <div className="flex items-center justify-between pt-1">
+                          <div className="text-sm text-muted-foreground">
+                            {enrollment.teacherPaymentAt ? (
+                              <span className="text-green-600 flex items-center">
+                                <CheckCircleIcon className="h-3.5 w-3.5 mr-1.5" />
+                                You confirmed
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground flex items-center">
+                                <ArrowRightIcon className="h-3.5 w-3.5 mr-1.5" />
+                                Your confirmation needed
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <Button
+                          size="sm"
+                          variant={
+                            enrollment.teacherPaymentAt ? "outline" : "default"
+                          }
+                          onClick={() =>
+                            handlePaymentUpdate(
+                              enrollment.id,
+                              !enrollment.teacherPaymentAt
+                            )
+                          }
+                          disabled={processingPaymentId === enrollment.id}
+                          className="w-full mt-1"
+                        >
+                          {processingPaymentId === enrollment.id ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : enrollment.teacherPaymentAt ? (
+                            <>
+                              <XCircleIcon className="h-3.5 w-3.5 mr-1.5" />
+                              Mark as Unpaid
+                            </>
+                          ) : (
+                            <>
+                              <DollarSignIcon className="h-3.5 w-3.5 mr-1.5" />
+                              Confirm Payment
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
@@ -340,7 +348,11 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                   disabled={isLoading}
                   className={cn("flex-1", isLoading && "opacity-70")}
                 >
-                  <XCircleIcon className="h-4 w-4 mr-2" />
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <XCircleIcon className="h-4 w-4 mr-2" />
+                  )}
                   {isLoading ? "Processing..." : "Cancel"}
                 </Button>
               )}
@@ -351,7 +363,11 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                   disabled={isLoading}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
-                  <CheckCircleIcon className="h-4 w-4 mr-2" />
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <CheckCircleIcon className="h-4 w-4 mr-2" />
+                  )}
                   {isLoading ? "Processing..." : "Approve"}
                 </Button>
               )}
@@ -364,7 +380,11 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                     isLoading && "opacity-70"
                   )}
                 >
-                  <CheckCircleIcon className="h-4 w-4 mr-2" />
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <CheckCircleIcon className="h-4 w-4 mr-2" />
+                  )}
                   {isLoading ? "Processing..." : "Complete"}
                 </Button>
               )}
@@ -375,7 +395,11 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                   disabled={isLoading}
                   className="flex-1"
                 >
-                  <ArrowRightIcon className="h-4 w-4 mr-2" />
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <ArrowRightIcon className="h-4 w-4 mr-2" />
+                  )}
                   {isLoading ? "Processing..." : "Reopen"}
                 </Button>
               )}

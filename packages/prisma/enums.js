@@ -12,6 +12,7 @@ export const LessonStatus = {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED',
+  REVISED: 'REVISED',
 };
 
 export const PaymentType = {
