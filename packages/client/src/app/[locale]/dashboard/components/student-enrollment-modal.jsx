@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import {
   CalendarIcon,
   ClockIcon,
-  CheckCircleIcon,
+  CheckCircleIcon as CheckIcon,
   XCircleIcon,
   BanknoteIcon,
   DollarSignIcon,
@@ -121,17 +121,19 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
     });
   };
 
-  // Current enrollment status
-  const currentStatus = enrollment.status;
+  // Use enrollment status for student context
+  const currentStudentStatus = enrollment.status;
   const isPastLesson = new Date(lesson.endTime) < new Date();
 
   // Determine valid actions for the student based on transitions
-  const canCancel = VALID_ENROLLMENT_STATUS_TRANSITIONS[
-    currentStatus
-  ]?.includes(LessonStatus.CANCELLED);
-  const canRequestAgain = VALID_ENROLLMENT_STATUS_TRANSITIONS[
-    currentStatus
-  ]?.includes(LessonStatus.REQUESTED);
+  const allowedTransitions =
+    VALID_ENROLLMENT_STATUS_TRANSITIONS[currentStudentStatus] || [];
+
+  const canCancel = allowedTransitions.includes(LessonStatus.CANCELLED);
+  const canRequestAgain = allowedTransitions.includes(LessonStatus.REQUESTED);
+  const canConfirmRevision = allowedTransitions.includes(
+    LessonStatus.CONFIRMED
+  );
 
   // Format initials for avatar
   const getInitials = (firstName, lastInitial) => {
@@ -147,19 +149,21 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
               Lesson Details
             </DialogTitle>
             <div className="mr-6">
-              <StatusBadge status={currentStatus} />
+              <StatusBadge status={currentStudentStatus} />
             </div>
           </div>
           <DialogDescription className="text-sm text-muted-foreground mt-1.5">
-            {currentStatus === LessonStatus.REQUESTED
-              ? "Your request is pending teacher approval"
-              : currentStatus === LessonStatus.CONFIRMED
-                ? "This lesson is confirmed and scheduled"
-                : currentStatus === LessonStatus.CANCELLED
-                  ? "This lesson has been cancelled"
-                  : currentStatus === LessonStatus.COMPLETED
-                    ? "This lesson has been completed"
-                    : "View your lesson details"}
+            {currentStudentStatus === LessonStatus.REQUESTED
+              ? "Your request is pending teacher approval."
+              : currentStudentStatus === LessonStatus.CONFIRMED
+                ? "This lesson is confirmed and scheduled."
+                : currentStudentStatus === LessonStatus.CANCELLED
+                  ? "This lesson enrollment has been cancelled."
+                  : currentStudentStatus === LessonStatus.COMPLETED
+                    ? "This lesson has been completed."
+                    : currentStudentStatus === LessonStatus.REVISED
+                      ? "The teacher proposed changes. Please review and confirm or cancel."
+                      : "View your lesson details."}
           </DialogDescription>
         </DialogHeader>
 
@@ -266,7 +270,7 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
                       <div className="text-sm text-muted-foreground">
                         {enrollment.studentPaymentAt ? (
                           <span className="text-green-600 flex items-center">
-                            <CheckCircleIcon className="h-3.5 w-3.5 mr-1.5" />
+                            <CheckIcon className="h-3.5 w-3.5 mr-1.5" />
                             You confirmed payment
                           </span>
                         ) : (
@@ -324,42 +328,87 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
         </div>
 
         <DialogFooter className="px-6 py-4 border-t bg-muted/20 flex flex-col sm:flex-row sm:justify-between gap-2">
-          {/* Show Cancel button if applicable */}
-          {canCancel && (
-            <Button
-              variant="destructive"
-              onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
-              disabled={isLoading}
-              className={cn("w-full", isLoading && "opacity-70")}
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <XCircleIcon className="h-4 w-4 mr-2" />
+          {/* Actions for REVISED state */}
+          {currentStudentStatus === LessonStatus.REVISED && (
+            <>
+              {/* Cancel/Reject Revision Button */}
+              {canCancel && (
+                <Button
+                  variant="destructive"
+                  onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
+                  disabled={isLoading}
+                  className={cn("w-full", isLoading && "opacity-70")}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <XCircleIcon className="h-4 w-4 mr-2" />
+                  )}
+                  {isLoading ? "Processing..." : "Cancel Lesson"}
+                </Button>
               )}
-              {isLoading ? "Processing..." : "Cancel Enrollment"}
-            </Button>
+              {/* Confirm Revision Button */}
+              {canConfirmRevision && (
+                <Button
+                  onClick={() => handleStatusChange(LessonStatus.CONFIRMED)}
+                  disabled={isLoading}
+                  className={cn(
+                    "w-full bg-green-600 hover:bg-green-700 text-white",
+                    isLoading && "opacity-70"
+                  )}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <CheckIcon className="h-4 w-4 mr-2" />
+                  )}
+                  {isLoading ? "Processing..." : "Confirm Changes"}
+                </Button>
+              )}
+            </>
           )}
 
-          {/* Show Re-request button if applicable */}
-          {canRequestAgain && (
-            <Button
-              variant="default"
-              onClick={() => handleStatusChange(LessonStatus.REQUESTED)}
-              disabled={isLoading}
-              className={cn("w-full", isLoading && "opacity-70")}
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <RequestIcon className="h-4 w-4 mr-2" />
+          {/* Other state actions (only show if not REVISED) */}
+          {currentStudentStatus !== LessonStatus.REVISED && (
+            <>
+              {/* Show Cancel button if applicable (for REQUESTED/CONFIRMED) */}
+              {canCancel && (
+                <Button
+                  variant="destructive"
+                  onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
+                  disabled={isLoading}
+                  className={cn("w-full", isLoading && "opacity-70")}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <XCircleIcon className="h-4 w-4 mr-2" />
+                  )}
+                  {isLoading ? "Processing..." : "Cancel Enrollment"}
+                </Button>
               )}
-              {isLoading ? "Processing..." : "Re-request Lesson"}
-            </Button>
+
+              {/* Show Re-request button if applicable (for CANCELLED) */}
+              {canRequestAgain && (
+                <Button
+                  variant="default"
+                  onClick={() => handleStatusChange(LessonStatus.REQUESTED)}
+                  disabled={isLoading}
+                  className={cn("w-full", isLoading && "opacity-70")}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <RequestIcon className="h-4 w-4 mr-2" />
+                  )}
+                  {isLoading ? "Processing..." : "Re-request Lesson"}
+                </Button>
+              )}
+            </>
           )}
 
-          {/* Show Close button only if no other primary action is available */}
-          {!canCancel && !canRequestAgain && (
+          {/* Fallback Close button only if no actions available for the current state */}
+          {!canCancel && !canRequestAgain && !canConfirmRevision && (
             <Button onClick={onClose} className="w-full" variant="outline">
               Close
             </Button>

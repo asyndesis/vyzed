@@ -358,7 +358,7 @@ function FiltersUI() {
   );
 }
 
-// Modify the SortableTable component to handle row clicks
+// Modify the SortableTable component to handle row clicks and dark mode hover
 function SortableTable({ data, columns, onRowClick }) {
   const [sorting, setSorting] = useState([{ id: "startTime", desc: false }]);
 
@@ -397,7 +397,7 @@ function SortableTable({ data, columns, onRowClick }) {
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                className="hover:bg-gray-50 cursor-pointer"
+                className="cursor-pointer hover:bg-muted/50 dark:hover:bg-muted/50"
                 onClick={() => onRowClick && onRowClick(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (

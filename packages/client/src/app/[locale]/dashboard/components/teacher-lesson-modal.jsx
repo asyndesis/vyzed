@@ -31,9 +31,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PaymentStatusBadge } from "./payment-status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VALID_LESSON_STATUS_TRANSITIONS } from "@vyzed/constants/lessons";
-
+import { toast } from "sonner";
 // GraphQL Mutations
 const CHANGE_LESSON_STATUS = gql`
   mutation ChangeLessonStatus($lessonId: PostgresID!, $status: LessonStatus!) {
@@ -71,7 +70,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
       onClose();
     },
     onError: (error) => {
-      console.error("Error changing lesson status:", error);
+      toast.error(error.message);
       setIsLoading(false);
     },
   });
@@ -80,11 +79,13 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
   const [updateEnrollmentPaymentStatus] = useMutation(UPDATE_PAYMENT_STATUS, {
     onCompleted: () => {
       onUpdate?.();
-      onClose();
+      setProcessingPaymentId(null);
+      setIsLoading(false);
     },
     onError: (error) => {
-      console.error("Error updating payment status:", error);
+      toast.error(error.message);
       setProcessingPaymentId(null);
+      setIsLoading(false);
     },
   });
 
@@ -112,11 +113,13 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
     });
   };
 
-  // Current lesson status
-  const currentStatus = lesson.status;
+  // Use lesson status for teacher context
+  const currentLessonStatus = lesson.status;
   const isPastLesson = new Date(lesson.endTime) < new Date();
 
-  const validTransitions = VALID_LESSON_STATUS_TRANSITIONS[currentStatus] || [];
+  // Determine valid actions for the teacher based on transitions
+  const allowedTransitions =
+    VALID_LESSON_STATUS_TRANSITIONS[currentLessonStatus] || [];
 
   // Check if there are unpaid enrollments that would prevent completing
   const enrollments = lesson.enrollments || [];
@@ -135,19 +138,22 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
               Lesson Details
             </DialogTitle>
             <div className="mr-6">
-              <StatusBadge status={lesson.status} />
+              {/* Use lesson status */}
+              <StatusBadge status={currentLessonStatus} />
             </div>
           </div>
           <DialogDescription className="text-sm text-muted-foreground mt-1.5">
-            {currentStatus === LessonStatus.REQUESTED
-              ? "This lesson is waiting for your approval"
-              : currentStatus === LessonStatus.CONFIRMED
-                ? "This lesson has been confirmed and scheduled"
-                : currentStatus === LessonStatus.CANCELLED
-                  ? "This lesson has been cancelled"
-                  : currentStatus === LessonStatus.COMPLETED
-                    ? "This lesson has been completed"
-                    : "Manage your lesson details"}
+            {currentLessonStatus === LessonStatus.REQUESTED
+              ? "Approve or cancel this lesson request."
+              : currentLessonStatus === LessonStatus.CONFIRMED
+                ? "This lesson is confirmed. You can complete or cancel it."
+                : currentLessonStatus === LessonStatus.CANCELLED
+                  ? "This lesson has been cancelled."
+                  : currentLessonStatus === LessonStatus.COMPLETED
+                    ? "This lesson has been completed."
+                    : currentLessonStatus === LessonStatus.REVISED // Added REVISED description
+                      ? "Changes proposed. Waiting for student confirmation."
+                      : "Manage your lesson details."}
           </DialogDescription>
         </DialogHeader>
 
@@ -338,10 +344,10 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
         </div>
 
         <DialogFooter className="px-6 py-4 border-t bg-muted/20">
-          {validTransitions.length > 0 && (
+          {/* Render buttons strictly based on allowedTransitions */}
+          {allowedTransitions.length > 0 ? (
             <div className="flex gap-3 w-full">
-              {/* Show buttons based on valid transitions */}
-              {validTransitions.includes(LessonStatus.CANCELLED) && (
+              {allowedTransitions.includes(LessonStatus.CANCELLED) && (
                 <Button
                   variant="destructive"
                   onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
@@ -353,15 +359,36 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                   ) : (
                     <XCircleIcon className="h-4 w-4 mr-2" />
                   )}
+                  {/* Label depends on context - could be Cancel Request, Cancel Lesson, Cancel Revision */}
                   {isLoading ? "Processing..." : "Cancel"}
                 </Button>
               )}
 
-              {validTransitions.includes(LessonStatus.CONFIRMED) && (
+              {allowedTransitions.includes(LessonStatus.REVISED) && (
+                <Button
+                  variant="outline" // Or another appropriate variant
+                  onClick={() => handleStatusChange(LessonStatus.REVISED)}
+                  disabled={isLoading}
+                  className={cn("flex-1", isLoading && "opacity-70")}
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <ArrowRightIcon className="h-4 w-4 mr-2" /> // TODO: Choose appropriate icon
+                  )}
+                  {/* This button triggers the REVISED state - likely needs more context/logic */}
+                  {isLoading ? "Processing..." : "Propose Changes"}
+                </Button>
+              )}
+
+              {allowedTransitions.includes(LessonStatus.CONFIRMED) && (
                 <Button
                   onClick={() => handleStatusChange(LessonStatus.CONFIRMED)}
                   disabled={isLoading}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  className={cn(
+                    "flex-1 bg-green-600 hover:bg-green-700 text-white",
+                    isLoading && "opacity-70"
+                  )}
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -371,7 +398,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                   {isLoading ? "Processing..." : "Approve"}
                 </Button>
               )}
-              {validTransitions.includes(LessonStatus.COMPLETED) && (
+              {allowedTransitions.includes(LessonStatus.COMPLETED) && (
                 <Button
                   onClick={() => handleStatusChange(LessonStatus.COMPLETED)}
                   disabled={isLoading}
@@ -388,22 +415,14 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                   {isLoading ? "Processing..." : "Complete"}
                 </Button>
               )}
-              {validTransitions.includes(LessonStatus.REQUESTED) && (
-                <Button
-                  variant="outline"
-                  onClick={() => handleStatusChange(LessonStatus.REQUESTED)}
-                  disabled={isLoading}
-                  className="flex-1"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <ArrowRightIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Reopen"}
-                </Button>
-              )}
+              {/* Note: REQUESTED is not listed as a valid target transition from any state in constants */}
+              {/* If 'Reopen' functionality is needed, constants/backend logic needs adjustment */}
             </div>
+          ) : (
+            // Show Close button if no transitions are possible from the current state
+            <Button onClick={onClose} className="w-full" variant="outline">
+              Close
+            </Button>
           )}
         </DialogFooter>
       </DialogContent>

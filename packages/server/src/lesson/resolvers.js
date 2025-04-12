@@ -3,7 +3,7 @@ import {
   VALID_LESSON_STATUS_TRANSITIONS,
   VALID_ENROLLMENT_STATUS_TRANSITIONS,
 } from "@vyzed/constants/lessons";
-
+import { GraphQLError } from "graphql";
 // Note, permissions in this file are handled in the permissions.js file
 export const lessonResolvers = {
   Lesson: {
@@ -168,9 +168,28 @@ export const lessonResolvers = {
 
       // Check if transition is valid using the constant
       if (!VALID_LESSON_STATUS_TRANSITIONS[lesson.status]?.includes(status)) {
-        throw new Error(
+        throw new GraphQLError(
           `Cannot change lesson from ${lesson.status} to ${status}`
         );
+      }
+
+      // If the lesson is trying to be completed, we need to make sure
+      // all enrollments have been confirmed paid by both the teacher and the student
+      if (status === LessonStatus.COMPLETED) {
+        const enrollments = await prisma.enrollment.findMany({
+          where: { lessonId },
+        });
+
+        const allEnrollmentsPaid = enrollments.every(
+          (enrollment) =>
+            enrollment.teacherPaymentAt && enrollment.studentPaymentAt
+        );
+
+        if (!allEnrollmentsPaid) {
+          throw new Error(
+            "All enrollments must be confirmed paid to complete the lesson"
+          );
+        }
       }
 
       // Perform updates in a transaction
