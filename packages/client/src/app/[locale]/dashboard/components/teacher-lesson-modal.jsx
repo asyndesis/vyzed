@@ -208,6 +208,82 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
               </div>
             </div>
           </div>
+          {/* Action buttons - Now placed directly below lesson details */}
+          {allowedTransitions.length > 0 && (
+            <div className="pt-2 pb-1">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Actions
+              </h3>
+              <div className="flex gap-3 w-full">
+                {allowedTransitions.includes(LessonStatus.CANCELLED) && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
+                    disabled={isLoading}
+                    className={cn("flex-1", isLoading && "opacity-70")}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <XCircleIcon className="h-4 w-4 mr-2" />
+                    )}
+                    {isLoading ? "Processing..." : "Cancel"}
+                  </Button>
+                )}
+
+                {allowedTransitions.includes(LessonStatus.REVISED) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleStatusChange(LessonStatus.REVISED)}
+                    disabled={isLoading}
+                    className={cn("flex-1", isLoading && "opacity-70")}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <ArrowRightIcon className="h-4 w-4 mr-2" />
+                    )}
+                    {isLoading ? "Processing..." : "Propose Changes"}
+                  </Button>
+                )}
+
+                {allowedTransitions.includes(LessonStatus.CONFIRMED) && (
+                  <Button
+                    onClick={() => handleStatusChange(LessonStatus.CONFIRMED)}
+                    disabled={isLoading}
+                    className={cn(
+                      "flex-1 bg-green-600 hover:bg-green-700 text-white",
+                      isLoading && "opacity-70"
+                    )}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <CheckCircleIcon className="h-4 w-4 mr-2" />
+                    )}
+                    {isLoading ? "Processing..." : "Approve"}
+                  </Button>
+                )}
+                {allowedTransitions.includes(LessonStatus.COMPLETED) && (
+                  <Button
+                    onClick={() => handleStatusChange(LessonStatus.COMPLETED)}
+                    disabled={isLoading}
+                    className={cn(
+                      "flex-1 bg-green-600 hover:bg-green-700 text-white",
+                      isLoading && "opacity-70"
+                    )}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <CheckCircleIcon className="h-4 w-4 mr-2" />
+                    )}
+                    {isLoading ? "Processing..." : "Complete"}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
           <Separator /> {/* Separator before Student section */}
           {/* Student Information - Refactored List */}
           <div>
@@ -344,86 +420,9 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
         </div>
 
         <DialogFooter className="px-6 py-4 border-t bg-muted/20">
-          {/* Render buttons strictly based on allowedTransitions */}
-          {allowedTransitions.length > 0 ? (
-            <div className="flex gap-3 w-full">
-              {allowedTransitions.includes(LessonStatus.CANCELLED) && (
-                <Button
-                  variant="destructive"
-                  onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
-                  disabled={isLoading}
-                  className={cn("flex-1", isLoading && "opacity-70")}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <XCircleIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {/* Label depends on context - could be Cancel Request, Cancel Lesson, Cancel Revision */}
-                  {isLoading ? "Processing..." : "Cancel"}
-                </Button>
-              )}
-
-              {allowedTransitions.includes(LessonStatus.REVISED) && (
-                <Button
-                  variant="outline" // Or another appropriate variant
-                  onClick={() => handleStatusChange(LessonStatus.REVISED)}
-                  disabled={isLoading}
-                  className={cn("flex-1", isLoading && "opacity-70")}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <ArrowRightIcon className="h-4 w-4 mr-2" /> // TODO: Choose appropriate icon
-                  )}
-                  {/* This button triggers the REVISED state - likely needs more context/logic */}
-                  {isLoading ? "Processing..." : "Propose Changes"}
-                </Button>
-              )}
-
-              {allowedTransitions.includes(LessonStatus.CONFIRMED) && (
-                <Button
-                  onClick={() => handleStatusChange(LessonStatus.CONFIRMED)}
-                  disabled={isLoading}
-                  className={cn(
-                    "flex-1 bg-green-600 hover:bg-green-700 text-white",
-                    isLoading && "opacity-70"
-                  )}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <CheckCircleIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Approve"}
-                </Button>
-              )}
-              {allowedTransitions.includes(LessonStatus.COMPLETED) && (
-                <Button
-                  onClick={() => handleStatusChange(LessonStatus.COMPLETED)}
-                  disabled={isLoading}
-                  className={cn(
-                    "flex-1 bg-green-600 hover:bg-green-700 text-white",
-                    isLoading && "opacity-70"
-                  )}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <CheckCircleIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Complete"}
-                </Button>
-              )}
-              {/* Note: REQUESTED is not listed as a valid target transition from any state in constants */}
-              {/* If 'Reopen' functionality is needed, constants/backend logic needs adjustment */}
-            </div>
-          ) : (
-            // Show Close button if no transitions are possible from the current state
-            <Button onClick={onClose} className="w-full" variant="outline">
-              Close
-            </Button>
-          )}
+          <Button onClick={onClose} className="w-full" variant="outline">
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

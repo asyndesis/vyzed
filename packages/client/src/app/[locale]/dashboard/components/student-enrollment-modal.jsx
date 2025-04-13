@@ -239,6 +239,102 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
               </div>
             </div>
           </div>
+          {/* Action buttons - Now placed directly below lesson details */}
+          {(canCancel || canRequestAgain || canConfirmRevision) && (
+            <div className="pt-2 pb-1">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                Actions
+              </h3>
+              <div className="flex gap-3 w-full">
+                {/* Actions for REVISED state */}
+                {currentStudentStatus === LessonStatus.REVISED && (
+                  <>
+                    {/* Cancel/Reject Revision Button */}
+                    {canCancel && (
+                      <Button
+                        variant="destructive"
+                        onClick={() =>
+                          handleStatusChange(LessonStatus.CANCELLED)
+                        }
+                        disabled={isLoading}
+                        className={cn("flex-1", isLoading && "opacity-70")}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <XCircleIcon className="h-4 w-4 mr-2" />
+                        )}
+                        {isLoading ? "Processing..." : "Cancel Lesson"}
+                      </Button>
+                    )}
+                    {/* Confirm Revision Button */}
+                    {canConfirmRevision && (
+                      <Button
+                        onClick={() =>
+                          handleStatusChange(LessonStatus.CONFIRMED)
+                        }
+                        disabled={isLoading}
+                        className={cn(
+                          "flex-1 bg-green-600 hover:bg-green-700 text-white",
+                          isLoading && "opacity-70"
+                        )}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <CheckIcon className="h-4 w-4 mr-2" />
+                        )}
+                        {isLoading ? "Processing..." : "Confirm Changes"}
+                      </Button>
+                    )}
+                  </>
+                )}
+
+                {/* Other state actions (only show if not REVISED) */}
+                {currentStudentStatus !== LessonStatus.REVISED && (
+                  <>
+                    {/* Show Cancel button if applicable (for REQUESTED/CONFIRMED) */}
+                    {canCancel && (
+                      <Button
+                        variant="destructive"
+                        onClick={() =>
+                          handleStatusChange(LessonStatus.CANCELLED)
+                        }
+                        disabled={isLoading}
+                        className={cn("flex-1", isLoading && "opacity-70")}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <XCircleIcon className="h-4 w-4 mr-2" />
+                        )}
+                        {isLoading ? "Processing..." : "Cancel Enrollment"}
+                      </Button>
+                    )}
+
+                    {/* Show Re-request button if applicable (for CANCELLED) */}
+                    {canRequestAgain && (
+                      <Button
+                        variant="default"
+                        onClick={() =>
+                          handleStatusChange(LessonStatus.REQUESTED)
+                        }
+                        disabled={isLoading}
+                        className={cn("flex-1", isLoading && "opacity-70")}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <RequestIcon className="h-4 w-4 mr-2" />
+                        )}
+                        {isLoading ? "Processing..." : "Re-request Lesson"}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
           <Separator /> {/* Separator before Payment section */}
           {/* Payment Information - Kept Card Structure */}
           {enrollment.paymentType !== PaymentType.FREE && (
@@ -327,92 +423,10 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
           )}
         </div>
 
-        <DialogFooter className="px-6 py-4 border-t bg-muted/20 flex flex-col sm:flex-row sm:justify-between gap-2">
-          {/* Actions for REVISED state */}
-          {currentStudentStatus === LessonStatus.REVISED && (
-            <>
-              {/* Cancel/Reject Revision Button */}
-              {canCancel && (
-                <Button
-                  variant="destructive"
-                  onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
-                  disabled={isLoading}
-                  className={cn("w-full", isLoading && "opacity-70")}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <XCircleIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Cancel Lesson"}
-                </Button>
-              )}
-              {/* Confirm Revision Button */}
-              {canConfirmRevision && (
-                <Button
-                  onClick={() => handleStatusChange(LessonStatus.CONFIRMED)}
-                  disabled={isLoading}
-                  className={cn(
-                    "w-full bg-green-600 hover:bg-green-700 text-white",
-                    isLoading && "opacity-70"
-                  )}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <CheckIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Confirm Changes"}
-                </Button>
-              )}
-            </>
-          )}
-
-          {/* Other state actions (only show if not REVISED) */}
-          {currentStudentStatus !== LessonStatus.REVISED && (
-            <>
-              {/* Show Cancel button if applicable (for REQUESTED/CONFIRMED) */}
-              {canCancel && (
-                <Button
-                  variant="destructive"
-                  onClick={() => handleStatusChange(LessonStatus.CANCELLED)}
-                  disabled={isLoading}
-                  className={cn("w-full", isLoading && "opacity-70")}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <XCircleIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Cancel Enrollment"}
-                </Button>
-              )}
-
-              {/* Show Re-request button if applicable (for CANCELLED) */}
-              {canRequestAgain && (
-                <Button
-                  variant="default"
-                  onClick={() => handleStatusChange(LessonStatus.REQUESTED)}
-                  disabled={isLoading}
-                  className={cn("w-full", isLoading && "opacity-70")}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <RequestIcon className="h-4 w-4 mr-2" />
-                  )}
-                  {isLoading ? "Processing..." : "Re-request Lesson"}
-                </Button>
-              )}
-            </>
-          )}
-
-          {/* Fallback Close button only if no actions available for the current state */}
-          {!canCancel && !canRequestAgain && !canConfirmRevision && (
-            <Button onClick={onClose} className="w-full" variant="outline">
-              Close
-            </Button>
-          )}
+        <DialogFooter className="px-6 py-4 border-t bg-muted/20">
+          <Button onClick={onClose} className="w-full" variant="outline">
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
