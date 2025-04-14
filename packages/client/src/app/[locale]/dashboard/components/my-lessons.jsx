@@ -2,7 +2,7 @@
 import { useQuery, gql } from "@apollo/client";
 import { useState, useMemo, useEffect, createContext, useContext } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Clock, Loader2, ArrowUpDown } from "lucide-react";
+import { Loader2, ArrowUpDown, BookOpen, GraduationCap } from "lucide-react";
 import UserSkillBadge from "@/components/user-skill-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -573,10 +573,12 @@ export function MyLessons() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="teacher">
+              <BookOpen className="h-4 w-4 mr-2" />
               Teaching{" "}
               {loading ? "" : `(${data?.myLessonsAsTeacher?.length || 0})`}
             </TabsTrigger>
             <TabsTrigger value="student">
+              <GraduationCap className="h-4 w-4 mr-2" />
               Learning{" "}
               {loading ? "" : `(${data?.myLessonsAsStudent?.length || 0})`}
             </TabsTrigger>

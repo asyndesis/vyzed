@@ -81,7 +81,7 @@ export default async function DashboardPage() {
           <MyLessons />
         </div>
         {/* Sidebar with simple profile cards */}
-        <div className="w-full md:w-72 space-y-4">
+        <div className="w-full md:w-96 space-y-4">
           <DashboardProfileCards user={user} />
         </div>
       </div>

@@ -6,14 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Form,
   FormControl,
@@ -30,6 +23,8 @@ import {
   Loader2,
   Globe,
   AlertCircle,
+  FileText,
+  Languages,
 } from "lucide-react";
 import { useTransition } from "react";
 import { Input } from "@/components/ui/input";
@@ -242,72 +237,78 @@ export function UserProfileEditForm({ user }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <UserCircle className="h-5 w-5" />
-                User Profile
-              </CardTitle>
-              <Badge
-                variant="outline"
-                className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
-                  hasChanges ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                <AlertCircle className="h-3.5 w-3.5" />
-                <span>Unsaved changes</span>
-              </Badge>
-            </div>
-            <CardDescription>
-              Both teachers and students will see this profile.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Tiptap value={field.value} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full pb-20">
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="general">
+              <UserCircle className="h-4 w-4 mr-2" />
+              General
+            </TabsTrigger>
+            <TabsTrigger value="languages">
+              <Languages className="h-4 w-4 mr-2" />
+              Languages
+            </TabsTrigger>
+          </TabsList>
 
-            <div className="space-y-4">
+          <TabsContent value="general" className="space-y-4 mt-0 flex-1">
+            <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="bio"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bio</FormLabel>
+                        <FormControl>
+                          <Tiptap
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Write a short introduction about yourself. Both
+                          teachers and students will see this.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="languages" className="mt-0">
+            <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
               <FormField
                 control={form.control}
                 name="languages"
@@ -324,7 +325,7 @@ export function UserProfileEditForm({ user }) {
                         buttonLabel="Add Language"
                         dialogTitle="Add Language"
                         dialogDescription="Select a language you speak and your proficiency level."
-                        skillCategoryId="clqwertyu00" // Language category ID
+                        skillCategoryId="clqwertyu00"
                         showProficiency={true}
                         icon={
                           <Globe className="h-5 w-5 text-muted-foreground" />
@@ -335,41 +336,55 @@ export function UserProfileEditForm({ user }) {
                       />
                     </FormControl>
                     <FormDescription>
-                      Add languages you speak and your proficiency level
+                      Add languages you speak and rate your proficiency level.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-          </CardContent>
-          <CardFooter>
+          </TabsContent>
+        </Tabs>
+        <div className="fixed bottom-0 md:left-[--sidebar-width] left-0 right-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-4">
+          <div className="flex items-center justify-between">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.back()}
+              className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" /> Back
             </Button>
-            <Button
-              className="ml-auto"
-              type="submit"
-              disabled={!hasChanges || isPending}
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4" />
-                  Save Changes
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
+            <div className="flex items-center gap-4">
+              <Badge
+                variant="outline"
+                className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
+                  hasChanges ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <AlertCircle className="h-3.5 w-3.5" />
+                <span>Unsaved changes</span>
+              </Badge>
+              <Button
+                type="submit"
+                disabled={!hasChanges || isPending}
+                className="flex items-center gap-2"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
       </form>
     </Form>
   );

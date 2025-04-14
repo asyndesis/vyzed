@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   GraduationCap,
   Save,
@@ -16,13 +17,7 @@ import {
   Euro,
   HelpCircle,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SkillSelector } from "@/components/skill-selector";
 import { updateTeacherProfile } from "../actions";
@@ -240,85 +235,122 @@ export function TeacherProfileEditForm({ profile }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Pricing Section */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Euro className="h-5 w-5" />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full pb-20">
+        <Tabs defaultValue="pricing" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="pricing">
+              <Euro className="h-4 w-4 mr-2" />
               Pricing
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="priceAmount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Hourly Rate (EUR)</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        iconLeft={<Euro className="h-4 w-4" />}
-                        {...field}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            </TabsTrigger>
+            <TabsTrigger value="skills">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Teaching Skills
+            </TabsTrigger>
+          </TabsList>
 
-            <FormField
-              control={form.control}
-              name="allowBarter"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
-                    <FormLabel className="flex items-center gap-2">
-                      Allow Bartering
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs">
-                            When enabled, students can offer to exchange their
-                            skills or services you are interested in learning
-                            instead of paying your hourly rate. You can accept
-                            or decline these offers individually.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      Accept class exchanges instead of money
-                    </div>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
+          {/* Pricing Section */}
+          <TabsContent value="pricing" className="mt-0">
+            <Card>
+              <CardContent className="space-y-4 pt-6">
+                <FormField
+                  control={form.control}
+                  name="priceAmount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hourly Rate (EUR)</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            iconLeft={<Euro className="h-4 w-4" />}
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-        {/* Skills Section */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                Teaching Skills
-              </CardTitle>
+                <FormField
+                  control={form.control}
+                  name="allowBarter"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel className="flex items-center gap-2">
+                          Allow Bartering
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="max-w-xs">
+                                  When enabled, students can offer to exchange
+                                  their skills or services you are interested in
+                                  learning instead of paying your hourly rate.
+                                  You can accept or decline these offers
+                                  individually.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <div className="text-sm text-muted-foreground">
+                          Accept class exchanges instead of money
+                        </div>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Skills Section */}
+          <TabsContent value="skills" className="mt-0">
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <SkillSelector
+                  skills={displaySkills}
+                  onAddSkill={handleAddSkill}
+                  onRemoveSkill={handleRemoveSkill}
+                  onUpdateProficiency={handleUpdateSkillProficiency}
+                  buttonLabel="Add Skill"
+                  dialogTitle="Add New Skill"
+                  dialogDescription="Add a skill that you can teach to students."
+                  showProficiency={true}
+                  icon={
+                    <GraduationCap className="h-5 w-5 text-muted-foreground" />
+                  }
+                  proficiencyLevels={SKILL_LEVELS}
+                  emptyMessage="You have not added any teaching skills yet. Click Add Skill to add skills you can teach."
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+        <div className="fixed bottom-0 md:left-[--sidebar-width] left-0 right-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-4">
+          <div className="flex items-center justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
+            <div className="flex items-center gap-4">
               <Badge
                 variant="outline"
                 className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
@@ -328,45 +360,26 @@ export function TeacherProfileEditForm({ profile }) {
                 <AlertCircle className="h-3.5 w-3.5" />
                 <span>Unsaved changes</span>
               </Badge>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !hasChanges}
+                className="flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <SkillSelector
-              skills={displaySkills}
-              onAddSkill={handleAddSkill}
-              onRemoveSkill={handleRemoveSkill}
-              onUpdateProficiency={handleUpdateSkillProficiency}
-              buttonLabel="Add Skill"
-              dialogTitle="Add New Skill"
-              dialogDescription="Add a skill that you can teach to students."
-              showProficiency={true}
-              icon={<GraduationCap className="h-5 w-5 text-muted-foreground" />}
-              proficiencyLevels={SKILL_LEVELS}
-              emptyMessage="You have not added any teaching skills yet. Click Add Skill to add skills you can teach."
-            />
-          </CardContent>
-          <CardFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft className="h-4 w-4" /> Back
-            </Button>
-            <Button
-              className="ml-auto"
-              type="submit"
-              disabled={isSubmitting || !hasChanges}
-            >
-              {isSubmitting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4" />
-              )}
-              Save Profile
-            </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </form>
     </Form>
   );

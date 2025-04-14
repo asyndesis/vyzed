@@ -18,7 +18,7 @@ export function DashboardProfileCards({ user }) {
     {
       type: "student",
       title: "Student Profile",
-      icon: <BookOpen className="h-5 w-5 text-blue-600" />,
+      icon: <GraduationCap className="h-5 w-5 text-blue-600" />,
       gradient: "from-blue-500 to-indigo-500",
       count: user.studentProfile?.skills?.length || 0,
       countLabel: "skills",
@@ -27,7 +27,7 @@ export function DashboardProfileCards({ user }) {
     {
       type: "teacher",
       title: "Teacher Profile",
-      icon: <GraduationCap className="h-5 w-5 text-green-600" />,
+      icon: <BookOpen className="h-5 w-5 text-green-600" />,
       gradient: "from-green-500 to-emerald-500",
       count: user.teacherProfile?.skills?.length || 0,
       countLabel: "skills",

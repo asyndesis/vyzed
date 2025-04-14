@@ -48,7 +48,7 @@ export default async function RootLayout({ children, params }) {
                   {children}
                 </NextIntlClientProvider>
               </TooltipProvider>
-              <Toaster />
+              <Toaster position="top-right" />
             </ThemeProvider>
           </ApolloWrapper>
         </ClerkProvider>
