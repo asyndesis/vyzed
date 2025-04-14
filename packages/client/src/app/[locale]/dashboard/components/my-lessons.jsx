@@ -292,7 +292,7 @@ function FiltersUI() {
 
   return (
     <div className="flex justify-end mb-4">
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
           <SelectTrigger className="w-[180px]">
             <SelectValue>

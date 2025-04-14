@@ -76,11 +76,10 @@ export default async function DashboardPage() {
       {/* Main Layout with sidebar */}
       <div className="flex flex-col md:flex-row gap-6">
         {/* Main content area */}
-        <div className="flex-1">
+        <div className="w-full min-w-0">
           {/* Your main dashboard content goes here */}
           <MyLessons />
         </div>
-
         {/* Sidebar with simple profile cards */}
         <div className="w-full md:w-72 space-y-4">
           <DashboardProfileCards user={user} />

@@ -20,7 +20,7 @@ export default function DashboardLayout({ children, breadcrumbs, modal }) {
           </div>
           <ThemeSwitcher className="ml-auto mr-5" />
         </header>
-        <div className="p-6 pt-0 flex flex-col flex-1 gap-4">{children}</div>
+        <div className="p-6 pt-0 space-y-4">{children}</div>
       </SidebarInset>
       {modal}
     </SidebarProvider>
