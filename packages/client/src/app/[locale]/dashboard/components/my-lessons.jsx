@@ -380,7 +380,7 @@ function SortableTable({ data, columns, onRowClick }) {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <TableHead key={header.id} className="whitespace-nowrap">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -401,7 +401,7 @@ function SortableTable({ data, columns, onRowClick }) {
                 onClick={() => onRowClick && onRowClick(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="py-3">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

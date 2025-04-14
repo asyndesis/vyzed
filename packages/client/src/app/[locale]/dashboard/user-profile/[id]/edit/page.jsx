@@ -2,6 +2,8 @@ import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
 import { UserProfileEditForm } from "../../components/user-profile-edit-form";
 import { PageHeader } from "@/components/page-header";
+import { UserCalendar } from "../../components/user-calendar";
+
 export const metadata = {
   title: "User Profile",
   description: "Manage your user profile and language preferences",

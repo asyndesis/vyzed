@@ -24,10 +24,42 @@ model User {
     taughtLessons     Lesson[]        @relation("TeacherLessons")
     enrollments       Enrollment[]    @relation("StudentEnrollments")
     taughtEnrollments Enrollment[]    @relation("TeacherEnrollments")
+    userSchedule      UserSchedule?
     createdAt         DateTime        @default(now())
     updatedAt         DateTime        @updatedAt
     createdBy         String?
     updatedBy         String?
+}
+
+model UserSchedule {
+    id        String             @id @default(cuid())
+    userId    String             @unique
+    user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+    slots     UserScheduleSlot[]
+    createdAt DateTime           @default(now())
+    updatedAt DateTime           @updatedAt
+    createdBy String?
+    updatedBy String?
+}
+
+model UserScheduleSlot {
+    id             String               @id @default(cuid())
+    userScheduleId String
+    userSchedule   UserSchedule         @relation(fields: [userScheduleId], references: [id], onDelete: Cascade)
+    dayOfWeek      Int?
+    type           UserScheduleSlotType
+    startTime      DateTime
+    endTime        DateTime
+    createdAt      DateTime             @default(now())
+    updatedAt      DateTime             @updatedAt
+    createdBy      String?
+    updatedBy      String?
+}
+
+enum UserScheduleSlotType {
+    RECURRING_AVAILABLE
+    SPECIFIC_AVAILABLE
+    SPECIFIC_UNAVAILABLE
 }
 
 model UserProfile {
