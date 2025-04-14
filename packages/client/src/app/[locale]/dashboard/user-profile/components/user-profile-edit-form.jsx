@@ -23,7 +23,6 @@ import {
   Loader2,
   Globe,
   AlertCircle,
-  FileText,
   Languages,
 } from "lucide-react";
 import { useTransition } from "react";
@@ -40,145 +39,98 @@ import { saveUserData } from "../actions";
 // Language levels for the proficiency selector
 const LANGUAGE_LEVELS = [1, 2, 3, 4, 5, 6, 7];
 
-// Form schema
-const profileSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  bio: z.string().optional(),
-  languages: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        skillId: z.string(),
-        proficiency: z.number().min(1).max(7),
-        skillName: z.string(),
-        framework: z.string().optional(),
-        isDeleted: z.boolean().optional(),
-        isNew: z.boolean().optional(),
-      })
-    )
-    .optional(),
+// Define language schema separately for clarity
+const languageSchema = z.object({
+  id: z.string().optional(),
+  skillId: z.string(),
+  proficiency: z.number().min(1).max(7),
+  skillName: z.string(),
+  framework: z.string().optional(),
+  isDeleted: z.boolean().optional(),
+  isNew: z.boolean().optional(),
 });
 
-export function UserProfileEditForm({ user }) {
+// Updated Form schema with nested structure
+const profileSchema = z.object({
+  user: z.object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+  }),
+  userProfile: z.object({
+    bio: z.string().optional(),
+    languages: z.array(languageSchema).optional(),
+  }),
+});
+
+export function UserProfileEditForm({ user: userData }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   // Get languages from user profile or default to empty array
-  const userLanguages = user?.userProfile?.languages || [];
+  const userLanguages = userData?.userProfile?.languages || [];
 
-  // Use a ref to store initial values to prevent them from changing on re-renders
+  // Use a ref to store initial values with the nested structure
   const initialValuesRef = useRef({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    bio: user?.userProfile?.bio || "",
-    languages:
-      userLanguages.map((lang) => ({
-        id: lang.id,
-        skillId: lang.skill?.id || lang.skillId,
-        proficiency: lang.proficiency,
-        skillName: lang.skill?.name || "Unknown",
-        framework: lang.skill?.framework || "DEFAULT",
-        isDeleted: false,
-        isNew: false,
-      })) || [],
-  });
-
-  // Initialize form with profile data
-  const form = useForm({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      firstName: initialValuesRef.current.firstName,
-      lastName: initialValuesRef.current.lastName,
-      bio: initialValuesRef.current.bio,
-      languages: initialValuesRef.current.languages,
+    user: {
+      firstName: userData?.firstName || "",
+      lastName: userData?.lastName || "",
+    },
+    userProfile: {
+      bio: userData?.userProfile?.bio || "",
+      languages:
+        userLanguages.map((lang) => ({
+          id: lang.id,
+          skillId: lang.skill?.id || lang.skillId,
+          proficiency: lang.proficiency,
+          skillName: lang.skill?.name || "Unknown",
+          framework: lang.skill?.framework || "DEFAULT",
+          isDeleted: false,
+          isNew: false,
+        })) || [],
     },
   });
 
-  // Watch all form values
-  const formValues = form.watch();
-  const [hasChanges, setHasChanges] = useState(false);
+  // Initialize form with profile data using the nested structure
+  const form = useForm({
+    resolver: zodResolver(profileSchema),
+    defaultValues: initialValuesRef.current,
+  });
 
-  // Use a simple effect to detect changes by comparing with initial values
-  useEffect(() => {
-    const currentFormValues = {
-      firstName: formValues.firstName,
-      lastName: formValues.lastName,
-      bio: formValues.bio,
-      languages: (formValues.languages || [])
-        .filter((lang) => !lang.isDeleted)
-        .map((lang) => ({
-          id: lang.id,
-          skillId: lang.skillId,
-          proficiency: lang.proficiency,
-        })),
-    };
-
-    const initialFormValues = {
-      firstName: initialValuesRef.current.firstName,
-      lastName: initialValuesRef.current.lastName,
-      bio: initialValuesRef.current.bio,
-      languages: initialValuesRef.current.languages
-        .filter((lang) => !lang.isDeleted)
-        .map((lang) => ({
-          id: lang.id,
-          skillId: lang.skillId,
-          proficiency: lang.proficiency,
-        })),
-    };
-
-    // Use JSON.stringify for deep comparison
-    const hasChanges =
-      JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues);
-    setHasChanges(hasChanges);
-  }, [formValues]);
-
-  // Handler for adding a language
+  // Handler for adding a language - updates userProfile.languages
   const handleAddLanguage = (language) => {
-    const currentLanguages = form.getValues("languages") || [];
-    form.setValue("languages", [
-      ...currentLanguages,
-      { ...language, isNew: true },
-    ]);
+    const currentLanguages = form.getValues("userProfile.languages") || [];
+    form.setValue(
+      "userProfile.languages",
+      [...currentLanguages, { ...language, isNew: true }],
+      { shouldDirty: true, shouldTouch: true }
+    );
   };
 
-  // Handler for removing a language - using skillId directly
+  // Handler for removing a language - updates userProfile.languages
   const handleRemoveLanguage = (skillId) => {
-    const languages = form.getValues("languages") || [];
-
-    // Find the language by skillId
+    const languages = form.getValues("userProfile.languages") || [];
     const updatedLanguages = languages
-      .map((lang) => {
-        if (lang.skillId === skillId) {
-          // For existing languages, mark as deleted
-          return { ...lang, isDeleted: true };
-        }
-        return lang;
-      })
-      .filter((lang) => !(lang.isNew && lang.skillId === skillId)); // Remove new ones entirely
-
-    // Update the form state
-    form.setValue("languages", updatedLanguages, {
+      .map((lang) =>
+        lang.skillId === skillId ? { ...lang, isDeleted: true } : lang
+      )
+      .filter((lang) => !(lang.isNew && lang.skillId === skillId));
+    form.setValue("userProfile.languages", updatedLanguages, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,
     });
   };
 
-  // Handler for updating language proficiency - using skillId instead of index
+  // Handler for updating language proficiency - updates userProfile.languages
   const handleUpdateLanguageProficiency = (skillId, newProficiency) => {
-    const languages = form.getValues("languages") || [];
-
-    // Find and update the language by skillId
+    const languages = form.getValues("userProfile.languages") || [];
     const updatedLanguages = languages.map((lang) => {
       if (lang.skillId === skillId && !lang.isDeleted) {
         return { ...lang, proficiency: newProficiency };
       }
       return lang;
     });
-
-    // Update the form state
-    form.setValue("languages", updatedLanguages, {
+    form.setValue("userProfile.languages", updatedLanguages, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,
@@ -188,8 +140,7 @@ export function UserProfileEditForm({ user }) {
   async function onSubmit(values) {
     startTransition(async () => {
       try {
-        // Prepare language skills for the API
-        const languageSkills = (values.languages || [])
+        const languageSkills = (values.userProfile?.languages || [])
           .filter((lang) => !lang.isDeleted)
           .map((lang) => ({
             id: lang.isNew ? undefined : lang.id,
@@ -197,44 +148,41 @@ export function UserProfileEditForm({ user }) {
             proficiency: lang.proficiency,
           }));
 
-        // Call saveUserData with the updated structure
         await saveUserData({
-          userId: user.id,
-          user: {
-            firstName: values.firstName,
-            lastName: values.lastName,
-          },
+          userId: userData.id,
+          user: values.user,
           userProfile: {
-            id: user.userProfile.id, // Pass profile ID
-            bio: values.bio, // Pass bio
-            languages: languageSkills, // Pass prepared languages
+            id: userData.userProfile.id,
+            bio: values.userProfile?.bio,
+            languages: languageSkills,
           },
         });
 
-        // Update the initial values ref after successful save
-        // Prepare the saved languages state for the ref
-        const savedLanguagesState = (values.languages || [])
-          .filter((lang) => !lang.isDeleted) // Filter out deleted ones
+        const savedLanguagesState = (values.userProfile?.languages || [])
+          .filter((lang) => !lang.isDeleted)
           .map((lang) => ({
-            // Map to the format stored in the ref
-            id: lang.id, // Keep existing ID (backend might assign new one, but we don't get it back here)
+            id: lang.id,
             skillId: lang.skillId,
             proficiency: lang.proficiency,
             skillName: lang.skillName,
             framework: lang.framework,
-            isDeleted: false, // Reset flags
+            isDeleted: false,
             isNew: false,
           }));
 
         initialValuesRef.current = {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          bio: values.bio,
-          languages: savedLanguagesState, // Use the cleaned languages state
+          user: {
+            firstName: values.user.firstName,
+            lastName: values.user.lastName,
+          },
+          userProfile: {
+            bio: values.userProfile?.bio,
+            languages: savedLanguagesState,
+          },
         };
 
-        // Reset hasChanges state
-        setHasChanges(false);
+        // Reset the form with the new initial values to clear dirty state
+        form.reset(initialValuesRef.current);
 
         toast.success("Profile updated successfully");
       } catch (error) {
@@ -265,7 +213,7 @@ export function UserProfileEditForm({ user }) {
                 <div className="flex-1 space-y-4">
                   <FormField
                     control={form.control}
-                    name="firstName"
+                    name="user.firstName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>First Name</FormLabel>
@@ -278,7 +226,7 @@ export function UserProfileEditForm({ user }) {
                   />
                   <FormField
                     control={form.control}
-                    name="lastName"
+                    name="user.lastName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Last Name</FormLabel>
@@ -293,13 +241,13 @@ export function UserProfileEditForm({ user }) {
                 <div className="flex-1">
                   <FormField
                     control={form.control}
-                    name="bio"
+                    name="userProfile.bio"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Bio</FormLabel>
                         <FormControl>
                           <Tiptap
-                            value={field.value}
+                            value={field.value || ""}
                             onChange={field.onChange}
                           />
                         </FormControl>
@@ -320,14 +268,14 @@ export function UserProfileEditForm({ user }) {
             <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
               <FormField
                 control={form.control}
-                name="languages"
+                name="userProfile.languages"
                 render={() => (
                   <FormItem>
                     <FormControl>
                       <SkillSelector
-                        skills={(formValues.languages || []).filter(
-                          (lang) => !lang.isDeleted
-                        )}
+                        skills={(
+                          form.getValues("userProfile.languages") || []
+                        ).filter((lang) => !lang.isDeleted)}
                         onAddSkill={handleAddLanguage}
                         onRemoveSkill={handleRemoveLanguage}
                         onUpdateProficiency={handleUpdateLanguageProficiency}
@@ -368,7 +316,7 @@ export function UserProfileEditForm({ user }) {
               <Badge
                 variant="outline"
                 className={`bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1.5 px-3 py-1.5 transition-opacity duration-200 ${
-                  hasChanges ? "opacity-100" : "opacity-0"
+                  form.formState.isDirty ? "opacity-100" : "opacity-0"
                 }`}
               >
                 <AlertCircle className="h-3.5 w-3.5" />
@@ -376,7 +324,7 @@ export function UserProfileEditForm({ user }) {
               </Badge>
               <Button
                 type="submit"
-                disabled={!hasChanges || isPending}
+                disabled={!form.formState.isDirty || isPending}
                 className="flex items-center gap-2"
               >
                 {isPending ? (
