@@ -108,6 +108,31 @@ function useLessonFilters() {
   return context;
 }
 
+// New component for the mini calendar display
+function MiniCalendarDateTime({ startTime, endTime }) {
+  return (
+    // Main container - Align calendar and time horizontally
+    <div className="flex items-center space-x-2.5">
+      {/* Calendar Box - Focused on date */}
+      <div className="border rounded-md w-10 overflow-hidden shadow-sm bg-card flex flex-col items-center text-center">
+        {/* Month Header - Smaller text, tighter line height */}
+        <div className="bg-muted text-muted-foreground text-[8px] font-medium leading-none py-1 uppercase tracking-wider w-full border-b">
+          {format(startTime, "MMM")} {/* e.g., APR */}
+        </div>
+        {/* Day (Larger number) */}
+        <div className="text-sm font-semibold py-0.5 text-card-foreground">
+          {format(startTime, "d")} {/* e.g., 25 */}
+        </div>
+      </div>
+      {/* Time Range - Placed next to the calendar, prevent wrapping */}
+      <div className="text-xs text-muted-foreground whitespace-nowrap">
+        {format(startTime, "p")}
+        {/* e.g., 1:00 PM - 2:00 PM */}
+      </div>
+    </div>
+  );
+}
+
 // Column definitions for TanStack Table
 function getColumns(isTeacherMode) {
   return [
@@ -117,7 +142,7 @@ function getColumns(isTeacherMode) {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent"
+          className="hover:bg-transparent px-0"
         >
           Skill
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -150,7 +175,7 @@ function getColumns(isTeacherMode) {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent"
+          className="hover:bg-transparent px-0"
         >
           Date & Time
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -160,20 +185,8 @@ function getColumns(isTeacherMode) {
         const startTime = new Date(row.original.startTime);
         const endTime = new Date(row.original.endTime);
 
-        return (
-          <div className="flex flex-col text-sm">
-            <div className="flex items-center">
-              <CalendarIcon className="h-3 w-3 mr-1" />
-              <span>{format(startTime, "PPP")}</span>
-            </div>
-            <div className="flex items-center">
-              <Clock className="h-3 w-3 mr-1" />
-              <span>
-                {format(startTime, "h:mm a")} - {format(endTime, "h:mm a")}
-              </span>
-            </div>
-          </div>
-        );
+        // Use the new reusable component
+        return <MiniCalendarDateTime startTime={startTime} endTime={endTime} />;
       },
     },
     {
@@ -182,7 +195,7 @@ function getColumns(isTeacherMode) {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent"
+          className="hover:bg-transparent px-0"
         >
           {isTeacherMode ? "Students" : "Teacher"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -234,7 +247,7 @@ function getColumns(isTeacherMode) {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-transparent"
+          className="hover:bg-transparent px-0"
         >
           Status
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -291,8 +304,8 @@ function FiltersUI() {
   const statusOptions = Object.values(LessonStatus);
 
   return (
-    <div className="flex justify-end mb-4">
-      <div className="flex gap-2 flex-wrap">
+    <div className="flex mb-4 justify-end">
+      <div className="flex gap-2 flex-wrap justify-end">
         <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
           <SelectTrigger className="w-[180px]">
             <SelectValue>
