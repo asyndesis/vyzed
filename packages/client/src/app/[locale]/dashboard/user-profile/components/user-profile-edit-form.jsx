@@ -197,31 +197,40 @@ export function UserProfileEditForm({ user }) {
             proficiency: lang.proficiency,
           }));
 
+        // Call saveUserData with the updated structure
         await saveUserData({
           userId: user.id,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          bio: values.bio,
-          languages: languageSkills,
-          userProfile: user.userProfile,
+          user: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+          },
+          userProfile: {
+            id: user.userProfile.id, // Pass profile ID
+            bio: values.bio, // Pass bio
+            languages: languageSkills, // Pass prepared languages
+          },
         });
 
         // Update the initial values ref after successful save
+        // Prepare the saved languages state for the ref
+        const savedLanguagesState = (values.languages || [])
+          .filter((lang) => !lang.isDeleted) // Filter out deleted ones
+          .map((lang) => ({
+            // Map to the format stored in the ref
+            id: lang.id, // Keep existing ID (backend might assign new one, but we don't get it back here)
+            skillId: lang.skillId,
+            proficiency: lang.proficiency,
+            skillName: lang.skillName,
+            framework: lang.framework,
+            isDeleted: false, // Reset flags
+            isNew: false,
+          }));
+
         initialValuesRef.current = {
           firstName: values.firstName,
           lastName: values.lastName,
           bio: values.bio,
-          languages: (values.languages || [])
-            .filter((lang) => !lang.isDeleted)
-            .map((lang) => ({
-              id: lang.id,
-              skillId: lang.skillId,
-              proficiency: lang.proficiency,
-              skillName: lang.skillName,
-              framework: lang.framework,
-              isDeleted: false,
-              isNew: false,
-            })),
+          languages: savedLanguagesState, // Use the cleaned languages state
         };
 
         // Reset hasChanges state

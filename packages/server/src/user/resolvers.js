@@ -17,6 +17,11 @@ export const userResolvers = {
         where: { userId: parent.id },
       });
     },
+    userSchedule: async (parent, _, { prisma }) => {
+      return prisma.userSchedule.findUnique({
+        where: { userId: parent.id },
+      });
+    },
     lastInitial: async (parent) => {
       return parent.lastName ? parent.lastName.charAt(0) : "";
     },

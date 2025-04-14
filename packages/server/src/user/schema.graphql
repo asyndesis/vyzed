@@ -11,6 +11,7 @@ type User {
   studentProfile: StudentProfile
   teacherProfile: TeacherProfile
   userProfile: UserProfile
+  userSchedule: UserSchedule
   createdAt: DateTime!
   updatedAt: DateTime!
   createdBy: PostgresID
@@ -26,6 +27,7 @@ type PublicUser {
   studentProfile: StudentProfile
   teacherProfile: TeacherProfile
   userProfile: UserProfile
+  userSchedule: UserSchedule
 }
 
 # Input Types
