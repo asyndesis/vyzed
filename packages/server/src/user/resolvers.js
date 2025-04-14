@@ -282,6 +282,14 @@ export const userResolvers = {
             },
           });
 
+          await tx.userSchedule.create({
+            data: {
+              userId: user.id,
+              createdBy: user.id,
+              updatedBy: user.id,
+            },
+          });
+
           return tx.user.update({
             where: { id: user.id },
             data: {

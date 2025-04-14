@@ -1,0 +1,61 @@
+# Type Definitions
+type UserSchedule {
+  id: PostgresID!
+  userId: PostgresID!
+  user: User!
+  slots: [UserScheduleSlot!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+type UserScheduleSlot {
+  id: PostgresID!
+  userScheduleId: PostgresID!
+  userSchedule: UserSchedule!
+  dayOfWeek: DayOfWeek
+  type: UserScheduleSlotType!
+  startTime: DateTime!
+  endTime: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: PostgresID
+  updatedBy: PostgresID
+}
+
+# For slots, we might create/update/delete them separately or in bulk
+input CreateUserScheduleSlotInput {
+  userScheduleId: PostgresID!
+  dayOfWeek: DayOfWeek
+  type: UserScheduleSlotType!
+  startTime: DateTime!
+  endTime: DateTime!
+}
+
+input UpdateUserScheduleSlotInput {
+  dayOfWeek: DayOfWeek
+  type: UserScheduleSlotType
+  startTime: DateTime
+  endTime: DateTime
+}
+
+# Queries
+type Query {
+  userSchedule(userId: PostgresID!): UserSchedule
+}
+
+# Mutations
+type Mutation {
+  # Add a slot to a user's schedule
+  createUserScheduleSlot(input: CreateUserScheduleSlotInput!): UserScheduleSlot!
+
+  # Update an existing schedule slot
+  updateUserScheduleSlot(
+    id: PostgresID!
+    input: UpdateUserScheduleSlotInput!
+  ): UserScheduleSlot!
+
+  # Delete a schedule slot
+  deleteUserScheduleSlot(id: PostgresID!): Boolean!
+}

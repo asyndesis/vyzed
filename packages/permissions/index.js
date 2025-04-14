@@ -73,6 +73,15 @@ const PERMISSIONS = {
       create: true,
       update: (me, lesson) => lesson.teacherId === me.id,
     },
+    userSchedule: {
+      view: true,
+      update: (me, userSchedule) => userSchedule.userId === me.id,
+      delete: (me, userSchedule) => userSchedule.userId === me.id,
+    },
+    userScheduleSlot: {
+      update: (me, userScheduleSlot) => userScheduleSlot.createdBy === me.id,
+      delete: (me, userScheduleSlot) => userScheduleSlot.createdBy === me.id,
+    },
     enrollment: {
       view: (me, enrollment) => enrollment.studentId === me.id,
       create: true,

@@ -46,7 +46,7 @@ model UserScheduleSlot {
     id             String               @id @default(cuid())
     userScheduleId String
     userSchedule   UserSchedule         @relation(fields: [userScheduleId], references: [id], onDelete: Cascade)
-    dayOfWeek      Int?
+    dayOfWeek      DayOfWeek
     type           UserScheduleSlotType
     startTime      DateTime
     endTime        DateTime
@@ -54,6 +54,16 @@ model UserScheduleSlot {
     updatedAt      DateTime             @updatedAt
     createdBy      String?
     updatedBy      String?
+}
+
+enum DayOfWeek {
+    SUNDAY
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+    SATURDAY
 }
 
 enum UserScheduleSlotType {
