@@ -37,71 +37,80 @@ export const userScheduleResolvers = {
     },
   },
   Mutation: {
-    createUserScheduleSlot: async (_, { input }, { user, prisma }) => {
-      const { userScheduleId, ...slotData } = input;
-
+    updateUserScheduleSlots: async (
+      _,
+      { userScheduleId, slots },
+      { user, prisma }
+    ) => {
       try {
-        // Optional: Check if the user owns the schedule they are adding a slot to
+        // Check if the schedule exists
         const schedule = await prisma.userSchedule.findUnique({
           where: { id: userScheduleId },
         });
+
         if (!schedule) {
           throw new Error("Schedule not found");
         }
 
-        const slot = await prisma.userScheduleSlot.create({
-          data: {
-            ...slotData,
-            userScheduleId,
-            createdBy: user.id,
-            updatedBy: user.id,
-          },
+        // Get existing slots for this schedule
+        const existingSlots = await prisma.userScheduleSlot.findMany({
+          where: { userScheduleId },
         });
 
-        return slot;
-      } catch (err) {
-        console.error("Error creating user schedule slot:", err);
-        throw new Error(`Failed to create schedule slot: ${err.message}`);
-      }
-    },
-    updateUserScheduleSlot: async (_, { id, input }, { user, prisma }) => {
-      try {
-        // Optional: Check if the user owns the schedule containing the slot
-        const slot = await prisma.userScheduleSlot.findUnique({
-          where: { id },
-        });
-        if (!slot) {
-          throw new Error("Slot not found");
-        }
+        // Create a transaction to handle all database operations atomically
+        return await prisma.$transaction(async (tx) => {
+          // 1. Delete all slots that aren't in the new list
+          const existingSlotIds = existingSlots.map((slot) => slot.id);
+          const newSlotIds = slots
+            .filter((slot) => slot.id)
+            .map((slot) => slot.id);
 
-        return await prisma.userScheduleSlot.update({
-          where: { id },
-          data: {
-            ...input,
-            updatedBy: user.id,
-          },
-        });
-      } catch (err) {
-        console.error("Error updating user schedule slot:", err);
-        throw new Error(`Failed to update schedule slot: ${err.message}`);
-      }
-    },
-    deleteUserScheduleSlot: async (_, { id }, { prisma }) => {
-      try {
-        // Optional: Check if the user owns the schedule containing the slot
-        const slot = await prisma.userScheduleSlot.findUnique({
-          where: { id },
-        });
-        if (!slot) {
-          throw new Error("Slot not found");
-        }
+          const slotIdsToDelete = existingSlotIds.filter(
+            (id) => !newSlotIds.includes(id)
+          );
 
-        await prisma.userScheduleSlot.delete({ where: { id } });
-        return true; // Indicate success
+          if (slotIdsToDelete.length > 0) {
+            await tx.userScheduleSlot.deleteMany({
+              where: {
+                id: { in: slotIdsToDelete },
+              },
+            });
+          }
+
+          // 2. Process each slot in the input list
+          const results = [];
+
+          for (const slotInput of slots) {
+            if (slotInput.id) {
+              // Update existing slot
+              const { id, ...updateData } = slotInput;
+              const updatedSlot = await tx.userScheduleSlot.update({
+                where: { id },
+                data: {
+                  ...updateData,
+                  updatedBy: user.id,
+                },
+              });
+              results.push(updatedSlot);
+            } else {
+              // Create new slot
+              const newSlot = await tx.userScheduleSlot.create({
+                data: {
+                  ...slotInput,
+                  userScheduleId,
+                  createdBy: user.id,
+                  updatedBy: user.id,
+                },
+              });
+              results.push(newSlot);
+            }
+          }
+
+          return results;
+        });
       } catch (err) {
-        console.error("Error deleting user schedule slot:", err);
-        throw new Error(`Failed to delete schedule slot: ${err.message}`);
-        // return false; // Indicate failure if preferred
+        console.error("Error updating user schedule slots:", err);
+        throw new Error(`Failed to update schedule slots: ${err.message}`);
       }
     },
   },

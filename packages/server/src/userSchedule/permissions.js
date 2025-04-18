@@ -5,21 +5,10 @@ export const userSchedulePermissions = {
     userSchedule: isAuthed,
   },
   Mutation: {
-    // Allow authenticated users to manage slots on their own schedule
-    createUserScheduleSlot: canPerformAction(
-      "userSchedule",
-      "update",
-      "input.userScheduleId"
-    ),
-    updateUserScheduleSlot: canPerformAction(
+    updateUserScheduleSlots: canPerformAction(
       "userScheduleSlot",
       "update",
-      "id"
-    ),
-    deleteUserScheduleSlot: canPerformAction(
-      "userScheduleSlot",
-      "delete",
-      "id"
+      "userScheduleId"
     ),
   },
 };
