@@ -31,30 +31,62 @@ const UPDATE_USER_PROFILE = gql`
   }
 `;
 
-export async function saveUserData({ userId, user, userProfile }) {
-  // First, update the user's name
-  await getClient().mutate({
-    mutation: UPDATE_USER,
-    variables: {
-      id: userId,
-      input: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-    },
-  });
+const UPDATE_USER_SCHEDULE_SLOTS = gql`
+  mutation UpdateUserScheduleSlots(
+    $userScheduleId: PostgresID!
+    $slots: [UserScheduleSlotInput!]!
+  ) {
+    updateUserScheduleSlots(userScheduleId: $userScheduleId, slots: $slots) {
+      id
+      dayOfWeek
+      type
+      startTime
+      endTime
+    }
+  }
+`;
 
-  // Then, handle the userProfile update - assuming userProfile always exists
-  await getClient().mutate({
-    mutation: UPDATE_USER_PROFILE,
-    variables: {
-      id: userProfile.id,
-      input: {
-        bio: userProfile.bio,
-        languages: userProfile.languages,
+export async function saveUserData({
+  userId,
+  user,
+  userProfile,
+  userSchedule,
+}) {
+  if (user) {
+    await getClient().mutate({
+      mutation: UPDATE_USER,
+      variables: {
+        id: userId,
+        input: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
       },
-    },
-  });
+    });
+  }
+
+  if (userProfile) {
+    await getClient().mutate({
+      mutation: UPDATE_USER_PROFILE,
+      variables: {
+        id: userProfile.id,
+        input: {
+          bio: userProfile.bio,
+          languages: userProfile.languages,
+        },
+      },
+    });
+  }
+
+  if (userSchedule) {
+    await getClient().mutate({
+      mutation: UPDATE_USER_SCHEDULE_SLOTS,
+      variables: {
+        userScheduleId: userSchedule.id,
+        slots: userSchedule.slots,
+      },
+    });
+  }
 
   revalidatePath("/dashboard/user-profile");
   return userId;

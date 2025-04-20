@@ -140,24 +140,45 @@ export function UserProfileEditForm({ user: userData }) {
   async function onSubmit(values) {
     startTransition(async () => {
       try {
-        const languageSkills = (values.userProfile?.languages || [])
-          .filter((lang) => !lang.isDeleted)
-          .map((lang) => ({
-            id: lang.isNew ? undefined : lang.id,
-            skillId: lang.skillId,
-            proficiency: lang.proficiency,
-          }));
-
-        await saveUserData({
+        const payload = {
           userId: userData.id,
-          user: values.user,
-          userProfile: {
-            id: userData.userProfile.id,
-            bio: values.userProfile?.bio,
-            languages: languageSkills,
-          },
-        });
+        };
 
+        // Use form.formState.dirtyFields to check which fields have changed
+        const dirtyFields = form.formState.dirtyFields;
+
+        // Add user data only if user fields have changed
+        if (dirtyFields.user?.firstName || dirtyFields.user?.lastName) {
+          payload.user = values.user;
+        }
+
+        // Add userProfile data only if profile fields have changed
+        if (
+          dirtyFields.userProfile?.bio ||
+          dirtyFields.userProfile?.languages
+        ) {
+          // Process languages for submission
+          const languageSkills = (values.userProfile?.languages || [])
+            .filter((lang) => !lang.isDeleted)
+            .map((lang) => ({
+              id: lang.isNew ? undefined : lang.id,
+              skillId: lang.skillId,
+              proficiency: lang.proficiency,
+            }));
+
+          payload.userProfile = {
+            id: userData.userProfile.id,
+            bio: values.userProfile.bio,
+            languages: languageSkills,
+          };
+        }
+
+        // Only call saveUserData if there are changes
+        if (payload.user || payload.userProfile) {
+          await saveUserData(payload);
+        }
+
+        // Update initialValuesRef with new values
         const savedLanguagesState = (values.userProfile?.languages || [])
           .filter((lang) => !lang.isDeleted)
           .map((lang) => ({
