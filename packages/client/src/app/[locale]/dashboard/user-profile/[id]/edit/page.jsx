@@ -2,7 +2,6 @@ import { getClient } from "@/lib/apollo-client";
 import { gql } from "@apollo/client";
 import { UserProfileEditForm } from "../../components/user-profile-edit-form";
 import { PageHeader } from "@/components/page-header";
-import { UserCalendar } from "../../components/user-calendar";
 
 export const metadata = {
   title: "User Profile",
@@ -29,6 +28,16 @@ const GET_USER_PROFILE = gql`
             name
             framework
           }
+        }
+      }
+      userSchedule {
+        id
+        slots {
+          id
+          dayOfWeek
+          type
+          startTime
+          endTime
         }
       }
     }
