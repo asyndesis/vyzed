@@ -1,25 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 
+// DATABASE_URL is read from schema.prisma's env() when the first query runs,
+// so importing this module (e.g. during `next build`) needs no secrets.
 const createPrismaClient = () =>
   new PrismaClient({
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
         : ["error"],
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
-    __internal: {
-      engine: {
-        connectionLimit: 5,
-        retry: {
-          maxRetries: 3,
-          initialDelay: 500,
-        },
-      },
-    },
   });
 
 const globalForPrisma = globalThis;

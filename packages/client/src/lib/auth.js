@@ -1,1 +1,1 @@
-export { auth } from "@vyzed/auth";
+export { getAuth } from "@vyzed/auth";

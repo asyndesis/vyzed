@@ -1,57 +1,30 @@
-# fly.toml app configuration file generated for vyzed on 2025-03-24T19:44:53+01:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
+# See https://fly.io/docs/reference/configuration/
 app = 'vyzed'
+primary_region = 'cdg' # Paris — closest region to Spain (Madrid was retired)
 kill_signal = 'SIGINT'
 kill_timeout = '5s'
-primary_region = 'mad'
 
 [build]
 
+[env]
+NODE_ENV = 'production'
+BETTER_AUTH_URL = 'https://vyzed.fly.dev'
+
+# Next.js (3000) is public; it proxies /graphql to the API on 4000 internally
 [http_service]
 internal_port = 3000
 force_https = true
-auto_stop_machines = true
+auto_stop_machines = 'stop'
 auto_start_machines = true
 min_machines_running = 0
-processes = ['app']
 
 [[http_service.checks]]
 grace_period = '30s'
-interval = '5s'
-method = 'get'
-path = '/health'
-protocol = 'http'
-timeout = '2s'
-
-[[services]]
-protocol = 'tcp'
-internal_port = 3000
-processes = ['app']
-
-[[services.ports]]
-port = 80
-handlers = ['http', 'tls']
-
-[services.ports.tls_options]
-alpn = ['http/1.1', 'h2']
-
-[[services]]
-protocol = 'tcp'
-internal_port = 4000
-processes = ['app']
-
-[[services.ports]]
-port = 8080
-handlers = ['http', 'tls']
-
-[services.ports.tls_options]
-alpn = ['http/1.1', 'h2']
+interval = '15s'
+method = 'GET'
+path = '/api/health'
+timeout = '5s'
 
 [[vm]]
-size = 'shared-cpu-2x'
-memory = '512mb'
-cpu_kind = 'shared'
-cpus = 1
+size = 'shared-cpu-1x'
+memory = '1gb'
