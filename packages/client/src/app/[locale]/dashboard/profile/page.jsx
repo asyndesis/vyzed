@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { Loading, PageTitle } from "@/components/empty-state";
 import { SkillListEditor } from "@/components/skill-picker";
+import { PreferenceFields } from "@/components/preferences";
 
 const LANGUAGE_CATEGORY_ID = "65f000000000000000000000";
 
@@ -67,6 +68,9 @@ function ProfileSkeleton() {
       <Card title="Languages" description="Languages you can hold a lesson in.">{field}</Card>
       <Card title="Teaching" description="What you can teach and what you charge.">{field}</Card>
       <Card title="Learning" description="Skills you want to pick up. Used for swaps.">{field}</Card>
+      <Card title="Preferences" description="Language and appearance. Saved instantly on this device.">
+        <PreferenceFields />
+      </Card>
     </Loading>
   );
 }
@@ -219,6 +223,9 @@ export default function ProfilePage() {
           addLabel="Add skill"
           emptyText="Nothing yet."
         />
+      </Card>
+      <Card title="Preferences" description="Language and appearance. Saved instantly on this device.">
+        <PreferenceFields />
       </Card>
 
       {/* Floating save bar, only while there are unsaved changes */}

@@ -16,13 +16,7 @@ export function ScrollingVerb({ verbs = [] }) {
   }, []);
 
   return (
-    <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] mx-1 relative z-[0]">
-      {/* Container with fade effects */}
-      <span className="absolute inset-0 pointer-events-none">
-        <span className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-background to-transparent z-10"></span>
-        <span className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-background to-transparent z-10"></span>
-      </span>
-
+    <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] relative z-[0]">
       {/* The verb container */}
       <span
         className="inline-flex flex-col h-[calc(1.3em*7)] transition-transform duration-500 ease-in-out"
@@ -31,7 +25,7 @@ export function ScrollingVerb({ verbs = [] }) {
         {verbs.map((verb) => (
           <span
             key={verb}
-            className="h-[1.3em] bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-500 to-indigo-500"
+            className="h-[1.3em] text-muted-foreground"
           >
             {verb}
           </span>

@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
@@ -9,9 +8,6 @@ import {
   Home,
   LogIn,
   LogOut,
-  Monitor,
-  Moon,
-  Sun,
   GraduationCap,
   UserRound,
 } from "lucide-react";
@@ -20,8 +16,7 @@ import { MY_LESSONS } from "@/lib/graphql";
 import { fullName } from "@/lib/format";
 import { useMe } from "@/hooks/use-me";
 import { UserAvatar } from "@/components/user-avatar";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/logo";
 import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
@@ -51,21 +46,11 @@ import {
 const stripLocale = (p) => p.replace(/^\/(en|de|es)(?=\/|$)/, "") || "/";
 
 const NAV = [
-  { title: "Home", url: "/dashboard", icon: Home, exact: true, auth: true },
-  { title: "Lessons", url: "/dashboard/lessons", icon: CalendarDays, auth: true, badge: "pending" },
+  { title: "Home", url: "/dashboard", icon: Home, exact: true },
+  { title: "Lessons", url: "/dashboard/lessons", icon: CalendarDays, badge: "pending" },
   { title: "Find teachers", url: "/dashboard/teachers", icon: GraduationCap },
-  { title: "Profile", url: "/dashboard/profile", icon: UserRound, auth: true },
+  { title: "Profile", url: "/dashboard/profile", icon: UserRound },
 ];
-
-function Logo() {
-  return (
-    <span className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M5 6l7 12 7-12" />
-      </svg>
-    </span>
-  );
-}
 
 // Compact profile progress for signed-in users, hidden when collapsed or complete
 function ProfileProgress() {
@@ -97,49 +82,6 @@ function ProfileProgress() {
       </div>
       <p className="mt-2 text-xs text-muted-foreground">Complete profiles get more requests.</p>
     </Link>
-  );
-}
-
-// Cycles light → dark → system. Icon only renders after mount (theme is client-only)
-const THEMES = [
-  { value: "light", label: "Light", icon: Sun },
-  { value: "dark", label: "Dark", icon: Moon },
-  { value: "system", label: "System", icon: Monitor },
-];
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const i = Math.max(0, THEMES.findIndex((t) => t.value === theme));
-  const current = mounted ? THEMES[i] : THEMES[2];
-  const next = THEMES[(i + 1) % THEMES.length];
-
-  return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <SidebarMenuButton onClick={() => setTheme(next.value)} tooltip={`Theme: ${current.label}`}>
-          <current.icon />
-          <span>Theme</span>
-          <span className="ml-auto text-xs text-muted-foreground">{mounted ? current.label : ""}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  );
-}
-
-// Guest call-to-action in the sidebar, hidden when collapsed
-function JoinCard() {
-  return (
-    <div className="rounded-lg border bg-background p-3 group-data-[collapsible=icon]:hidden">
-      <p className="text-sm font-medium">Teach what you know</p>
-      <p className="mt-0.5 text-xs text-muted-foreground">
-        Join free and swap lessons with people nearby.
-      </p>
-      <Button asChild size="sm" className="mt-3 w-full">
-        <Link href="/sign-up">Create account</Link>
-      </Button>
-    </div>
   );
 }
 
@@ -216,7 +158,7 @@ function UserMenu() {
 
 export function AppShell({ children }) {
   const pathname = stripLocale(usePathname());
-  const { signedIn, sessionPending } = useMe();
+  const { signedIn } = useMe();
   const pending = usePendingCount(signedIn);
 
   const isActive = (item) =>
@@ -232,7 +174,7 @@ export function AppShell({ children }) {
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
                 <Link href={signedIn ? "/dashboard" : "/"}>
-                  <Logo />
+                  <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
                   <span className="font-display text-base font-semibold">vyzed</span>
                 </Link>
               </SidebarMenuButton>
@@ -242,8 +184,8 @@ export function AppShell({ children }) {
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              {/* Show the full nav while the session resolves; most visitors are signed in */}
-              {NAV.filter((i) => sessionPending || signedIn || !i.auth).map((item) => (
+              {/* The dashboard is signed-in only (middleware), so the nav never changes */}
+              {NAV.map((item) => (
                     <SidebarMenuItem key={item.url}>
                       <SidebarMenuButton asChild isActive={isActive(item)} tooltip={item.title}>
                         <Link href={item.url}>
@@ -260,9 +202,7 @@ export function AppShell({ children }) {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          {!sessionPending && !signedIn && <JoinCard />}
           <ProfileProgress />
-          <ThemeToggle />
           <UserMenu />
         </SidebarFooter>
         <SidebarRail />
@@ -273,11 +213,6 @@ export function AppShell({ children }) {
           <SidebarTrigger className="-ml-1 text-muted-foreground" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <span className="text-sm font-medium">{current?.title ?? "Vyzed"}</span>
-          {!sessionPending && !signedIn && (
-            <Button asChild size="sm" className="ml-auto">
-              <Link href="/sign-up">Join Vyzed</Link>
-            </Button>
-          )}
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 space-y-8 px-4 py-6 md:px-10 md:py-10">
           {children}
