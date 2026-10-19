@@ -6,7 +6,7 @@ import {
   SidebarFooter,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { HomeIcon, SettingsIcon, UsersIcon } from "lucide-react";
+import { HomeIcon, UsersIcon } from "lucide-react";
 import { getSession } from "@/lib/session";
 
 export async function AppSidebar() {
@@ -24,25 +24,6 @@ export async function AppSidebar() {
       title: "Teachers",
       url: "/dashboard/teachers",
       icon: UsersIcon,
-    },
-    {
-      title: "Settings",
-      url: "/dashboard/settings",
-      icon: SettingsIcon,
-      items: [
-        {
-          title: "Profile Settings",
-          url: "/dashboard/settings/profile",
-        },
-        {
-          title: "Account Settings",
-          url: "/dashboard/settings/account",
-        },
-        {
-          title: "Notification Settings",
-          url: "/dashboard/settings/notifications",
-        },
-      ],
     },
   ];
 
