@@ -22,12 +22,14 @@
     "prisma:studio": "npm run -w @vyzed/prisma studio",
     "prisma:seed": "npm run -w @vyzed/prisma seed",
     "lint": "oxlint",
-    "format:check": "oxfmt --check"
+    "format:check": "oxfmt --check",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.7.10",
     "oxfmt": "^0.74.0",
-    "oxlint": "^1.89.0"
+    "oxlint": "^1.89.0",
+    "patch-package": "^8.0.1"
   },
   "engines": {
     "node": "^22"

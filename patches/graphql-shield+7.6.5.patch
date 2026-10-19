@@ -1,0 +1,34 @@
+diff --git a/node_modules/graphql-shield/cjs/rules.js b/node_modules/graphql-shield/cjs/rules.js
+index b13a5cb..e2235c9 100644
+--- a/node_modules/graphql-shield/cjs/rules.js
++++ b/node_modules/graphql-shield/cjs/rules.js
+@@ -268,7 +268,7 @@ class RuleChain extends LogicRule {
+         const rules = this.getRules();
+         return iterate(rules);
+         async function iterate([rule, ...otherRules]) {
+-            if ((0, util_1.isUndefined)(rule))
++            if (((v) => v === undefined)(rule))
+                 return [];
+             return rule.resolve(parent, args, ctx, info, options).then((res) => {
+                 if (res !== true) {
+@@ -306,7 +306,7 @@ class RuleRace extends LogicRule {
+         const rules = this.getRules();
+         return iterate(rules);
+         async function iterate([rule, ...otherRules]) {
+-            if ((0, util_1.isUndefined)(rule))
++            if (((v) => v === undefined)(rule))
+                 return [];
+             return rule.resolve(parent, args, ctx, info, options).then((res) => {
+                 if (res === true) {
+diff --git a/node_modules/graphql-shield/esm/rules.js b/node_modules/graphql-shield/esm/rules.js
+index 70530da..e76871e 100644
+--- a/node_modules/graphql-shield/esm/rules.js
++++ b/node_modules/graphql-shield/esm/rules.js
+@@ -1,6 +1,6 @@
+ import * as Yup from 'yup';
+ import { isLogicRule } from './utils.js';
+-import { isUndefined } from 'util';
++const isUndefined = (v) => v === undefined;
+ export class Rule {
+     constructor(name, func, constructorOptions) {
+         const options = this.normalizeOptions(constructorOptions);
