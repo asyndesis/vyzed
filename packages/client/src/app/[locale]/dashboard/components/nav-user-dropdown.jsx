@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export function NavUserDropdown({ user, fullName }) {
   const { isMobile } = useSidebar();

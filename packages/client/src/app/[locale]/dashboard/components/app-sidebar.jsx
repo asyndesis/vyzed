@@ -7,11 +7,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { HomeIcon, SettingsIcon, UsersIcon } from "lucide-react";
-import { currentUser } from "@clerk/nextjs/server";
+import { getSession } from "@/lib/session";
 
 export async function AppSidebar() {
-  const user = await currentUser();
-  const isAuthenticated = !!user;
+  const session = await getSession();
+  const isAuthenticated = !!session;
 
   const navigationItems = [
     {

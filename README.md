@@ -6,23 +6,23 @@ Will add more info here as we go
 
 Create a `.env` file in the root of each package.
 
-**packages/prisma/.env**
+**packages/prisma/.env**, and also in client and server (both load Prisma)
 
 ```bash
-# mongoDB connection string
+# mongoDB connection string (must be a replica set, e.g. Atlas)
 DATABASE_URL=
 ```
 
 **packages/client/.env**
 
 ```bash
-# Clerk is what we use for authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
-CLERK_SECRET_KEY=
+DATABASE_URL=
+# Better Auth
+BETTER_AUTH_SECRET= # openssl rand -base64 32
+BETTER_AUTH_URL=http://localhost:3000
+# Resend (emails for verification / password reset)
+RESEND_API_KEY=
+EMAIL_FROM="Vyzed <noreply@yourdomain.com>"
 # Port here should match apollo port
 NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
@@ -31,8 +31,10 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 
 ```bash
 NODE_ENV="development"
-CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
+DATABASE_URL=
+# Must match the client so the API can read the session
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
 PORT=4000
 ```
 

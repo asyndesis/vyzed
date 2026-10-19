@@ -1,38 +1,38 @@
-import { prisma } from "./index";
+import { prisma } from "../index.js";
 
 const SKILLS = {
   // Parent: Language
-  clqwertyu00: {
+  "65f000000000000000000000": {
     name: "Language",
     framework: "CEFR",
     children: {
-      clqwertyu01: { name: "Spanish", framework: "CEFR" },
-      clqwertyu02: { name: "English", framework: "CEFR" },
-      clqwertyu03: { name: "German", framework: "CEFR" },
+      "65f000000000000000000001": { name: "Spanish", framework: "CEFR" },
+      "65f000000000000000000002": { name: "English", framework: "CEFR" },
+      "65f000000000000000000003": { name: "German", framework: "CEFR" },
     },
   },
   // Parent: Therapy
-  clqwertyu10: {
+  "65f000000000000000000010": {
     name: "Therapy",
     children: {
-      clqwertyu11: { name: "Cognitive Behavioral Therapy (CBT)" },
-      clqwertyu12: { name: "Psychoanalysis" },
-      clqwertyu13: { name: "Family Therapy" },
-      clqwertyu14: { name: "Art Therapy" },
-      clqwertyu15: { name: "Mindfulness-Based Therapy" },
+      "65f000000000000000000011": { name: "Cognitive Behavioral Therapy (CBT)" },
+      "65f000000000000000000012": { name: "Psychoanalysis" },
+      "65f000000000000000000013": { name: "Family Therapy" },
+      "65f000000000000000000014": { name: "Art Therapy" },
+      "65f000000000000000000015": { name: "Mindfulness-Based Therapy" },
     },
   },
   // Parent: Programming
-  clqwertyu20: {
+  "65f000000000000000000020": {
     name: "Programming",
     children: {
-      clqwertyu21: { name: "Python" },
-      clqwertyu22: { name: "JavaScript" },
-      clqwertyu23: { name: "Java" },
-      clqwertyu24: { name: "C#" },
-      clqwertyu25: { name: "Ruby" },
-      clqwertyu26: { name: "PHP" },
-      clqwertyu27: { name: "Go" },
+      "65f000000000000000000021": { name: "Python" },
+      "65f000000000000000000022": { name: "JavaScript" },
+      "65f000000000000000000023": { name: "Java" },
+      "65f000000000000000000024": { name: "C#" },
+      "65f000000000000000000025": { name: "Ruby" },
+      "65f000000000000000000026": { name: "PHP" },
+      "65f000000000000000000027": { name: "Go" },
     },
   },
 };

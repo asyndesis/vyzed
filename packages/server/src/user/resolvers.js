@@ -60,23 +60,6 @@ export const userResolvers = {
         throw new Error(err.message);
       }
     },
-    userByAuthId: async (parent, args, { prisma }) => {
-      const { authId } = args;
-      try {
-        return await prisma.user.findUnique({ where: { authId } });
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
-    checkUserExistsByAuthId: async (parent, args, { prisma }) => {
-      const { authId } = args;
-      try {
-        const user = await prisma.user.findUnique({ where: { authId } });
-        return !!user;
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
     users: async (parent, args, { prisma }) => {
       try {
         return await prisma.user.findMany();
@@ -237,73 +220,6 @@ export const userResolvers = {
             updatedBy: user.id,
           },
         });
-        return newUser;
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    },
-    createMyUser: async (parent, args, { prisma }) => {
-      const { input } = args;
-      try {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: input.email },
-        });
-
-        if (existingUser) {
-          throw new Error("User already exists.");
-        }
-
-        const newUser = await prisma.$transaction(async (tx) => {
-          // Create base user
-          const user = await tx.user.create({
-            data: {
-              ...input,
-              roles: ["user"],
-            },
-          });
-
-          // Create profiles
-          await tx.userProfile.create({
-            data: {
-              userId: user.id,
-              createdBy: user.id,
-              updatedBy: user.id,
-            },
-          });
-
-          await tx.studentProfile.create({
-            data: {
-              userId: user.id,
-              createdBy: user.id,
-              updatedBy: user.id,
-            },
-          });
-
-          await tx.teacherProfile.create({
-            data: {
-              userId: user.id,
-              createdBy: user.id,
-              updatedBy: user.id,
-            },
-          });
-
-          await tx.userSchedule.create({
-            data: {
-              userId: user.id,
-              createdBy: user.id,
-              updatedBy: user.id,
-            },
-          });
-
-          return tx.user.update({
-            where: { id: user.id },
-            data: {
-              createdBy: user.id,
-              updatedBy: user.id,
-            },
-          });
-        });
-
         return newUser;
       } catch (err) {
         throw new Error(err.message);

@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 
 export default async function AuthLayout(props) {
-  const { userId } = await auth();
+  const session = await getSession();
 
-  if (userId) {
+  if (session) {
     redirect("/dashboard");
   }
 

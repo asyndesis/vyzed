@@ -4,7 +4,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import { applyMiddleware } from "graphql-middleware";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { clerkMiddleware } from "@clerk/express";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "@vyzed/auth";
 import { typeDefs } from "./schema";
 import cors from "cors";
 import {
@@ -32,11 +33,9 @@ app.use(
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   }),
 );
-
-app.use(clerkMiddleware());
 
 // https://www.apollographql.com/docs/apollo-server/api/express-middleware
 const schema = makeExecutableSchema({
@@ -63,22 +62,18 @@ app.use(
         auth: null,
       };
 
-      // Check if they are authed. If so, attach the user to the context
-      const clerkUserId = req.auth?.userId;
-      if (!clerkUserId) return context;
-
-      // Could store whole auth object here, but lets be conscise
-      context.auth = { userId: clerkUserId };
-
-      // Fetch user from database
-      const dbUser = await prisma.user.findUnique({
-        where: { authId: clerkUserId },
+      // Resolve the Better Auth session from the request cookies/headers
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
       });
+      if (!session?.user) return context;
 
-      // If we have a dbUser, add it to the context
-      if (dbUser) {
-        context.user = { ...dbUser, authId: clerkUserId };
-      }
+      context.auth = { userId: session.user.id };
+
+      // Fetch the full app user from the database
+      context.user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+      });
 
       return context;
     },

@@ -1,7 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ClerkProvider } from "@clerk/nextjs";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ApolloWrapper } from "@/components/apollo-wrapper";
@@ -35,7 +34,6 @@ export default async function RootLayout({ children, params }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClerkProvider>
           <ApolloWrapper>
             <ThemeProvider
               attribute="class"
@@ -51,7 +49,6 @@ export default async function RootLayout({ children, params }) {
               <Toaster position="top-right" />
             </ThemeProvider>
           </ApolloWrapper>
-        </ClerkProvider>
       </body>
     </html>
   );

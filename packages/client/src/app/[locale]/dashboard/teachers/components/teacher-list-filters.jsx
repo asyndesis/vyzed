@@ -268,7 +268,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
                       onUpdateSkill={(skillId, skill) =>
                         handleUpdateSkill("languages", skillId, skill)
                       }
-                      skillCategoryId="clqwertyu00" // Language category ID
+                      skillCategoryId="65f000000000000000000000" // Language category ID
                       label={
                         <div className="flex items-center gap-2">
                           <Languages className="h-4 w-4 text-muted-foreground" />

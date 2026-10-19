@@ -4,7 +4,7 @@ import {
   ApolloClient,
   InMemoryCache,
 } from "@apollo/experimental-nextjs-app-support";
-import { auth } from "@clerk/nextjs/server";
+import { headers as nextHeaders } from "next/headers";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
@@ -31,13 +31,10 @@ const getLink = () => {
     fetchOptions: { cache: "no-store" },
   });
   const authLink = setContext(async (_, { headers = {} }) => {
-    if (!headers?.authorization) {
-      const { getToken } = await auth();
-      const token = await getToken();
-      headers.authorization = `Bearer ${token}`;
-    }
+    // Forward the user's session cookie to the API
+    const cookie = (await nextHeaders()).get("cookie");
     return {
-      headers,
+      headers: cookie ? { ...headers, cookie } : headers,
     };
   });
 

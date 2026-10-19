@@ -2,7 +2,7 @@ import { MobileMenuToggle } from "./components/mobile-menu-toggle";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function HomeLayout({ children }) {
   return (
@@ -79,16 +79,17 @@ function NavLinks({ mobile = false }) {
 function AuthButtons({ mobile = false }) {
   return (
     <>
-      <SignInButton>
-        <Button variant="secondary" size="sm" className={mobile ? "w-1/2" : ""}>
-          Log in
-        </Button>
-      </SignInButton>
-      <SignUpButton>
-        <Button size="sm" className={mobile ? "w-1/2" : ""}>
-          Sign up
-        </Button>
-      </SignUpButton>
+      <Button
+        asChild
+        variant="secondary"
+        size="sm"
+        className={mobile ? "w-1/2" : ""}
+      >
+        <Link href="/sign-in">Log in</Link>
+      </Button>
+      <Button asChild size="sm" className={mobile ? "w-1/2" : ""}>
+        <Link href="/sign-up">Sign up</Link>
+      </Button>
     </>
   );
 }

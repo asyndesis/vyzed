@@ -2,14 +2,9 @@ import { rule } from "graphql-shield";
 import { ROLES, hasPermission } from "@vyzed/permissions";
 import get from "lodash/get";
 
-// User has a clerk auth, but may not yet have a user in our database
-export const isClerkAuthed = rule()(async (parent, args, context) => {
-  return !!context?.auth?.userId;
-});
-
-// User has a user in our database and clerk added it to the context
+// User has a valid session
 export const isAuthed = rule()(async (parent, args, context) => {
-  return !!context?.user?.authId;
+  return !!context?.user?.id;
 });
 
 export const isAdmin = rule()(async (parent, args, context) => {

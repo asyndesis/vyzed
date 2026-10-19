@@ -7,7 +7,6 @@ type User {
   lastInitial: String
   imageUrl: String
   roles: [String!]!
-  authId: String!
   studentProfile: StudentProfile
   teacherProfile: TeacherProfile
   userProfile: UserProfile
@@ -37,7 +36,6 @@ input CreateUserInput {
   lastName: String
   imageUrl: String
   roles: [String!]
-  authId: String!
 }
 
 input UpdateUserInput {
@@ -52,8 +50,6 @@ input UpdateUserInput {
 type Query {
   me: User
   userById(id: PostgresID!): User
-  userByAuthId(authId: String!): User
-  checkUserExistsByAuthId(authId: String!): Boolean!
   users: [User!]!
   publicUserById(id: PostgresID!): PublicUser
   publicTeacherUsers(
@@ -64,7 +60,6 @@ type Query {
 
 # Mutations
 type Mutation {
-  createMyUser(input: CreateUserInput!): User!
   createUser(input: CreateUserInput!): User!
   updateUser(id: PostgresID!, input: UpdateUserInput!): User!
   deleteUser(id: PostgresID!): Boolean!

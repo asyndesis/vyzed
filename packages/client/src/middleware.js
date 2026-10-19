@@ -1,49 +1,33 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { completeOnboarding } from "./lib/complete-onboarding";
+import { getSessionCookie } from "better-auth/cookies";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-const isRootRoute = createRouteMatcher(["/"]);
-
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/:locale?", // locale is optional
-  "/:locale?/(sign-in|sign-up)(.*)",
-  "/api(.*)",
-  "/:locale?/dashboard/teachers(.*)",
-]);
-
 const intlMiddleware = createMiddleware(routing);
-export default clerkMiddleware(async (auth, req) => {
-  const clerkAuth = await auth();
-  const { userId, redirectToSignIn, getToken } = clerkAuth;
 
-  if (!userId && !isPublicRoute(req)) {
-    return redirectToSignIn({ returnBackUrl: req.url });
-  }
+const PUBLIC_PATHS = [
+  /^\/api(\/|$)/,
+  /^\/(?:(?:en|de|es)\/?)?$/,
+  /^\/(?:(?:en|de|es)\/)?(sign-in|sign-up|forgot-password|reset-password)(\/|$)/,
+  /^\/(?:(?:en|de|es)\/)?dashboard\/teachers(\/|$)/,
+];
 
-  if (userId) {
-    // Make sure user exists in our system, if not, let's onboard them
-    const token = await getToken();
+export default function middleware(req) {
+  const { pathname } = req.nextUrl;
+  if (pathname.startsWith("/api")) return NextResponse.next();
 
-    try {
-      await completeOnboarding({
-        authId: userId,
-        token,
-      });
-    } catch (e) {
-      console.error("Onboarding error:", e);
-      return NextResponse.next();
-    }
+  const isPublic = PUBLIC_PATHS.some((re) => re.test(pathname));
 
-    // if (isRootRoute(req)) {
-    //   return NextResponse.redirect(new URL("/dashboard", req.url));
-    // }
+  // Optimistic check only (cookie presence). Real validation happens in
+  // the server on every GraphQL request and in getSession() on the server.
+  if (!isPublic && !getSessionCookie(req)) {
+    const url = new URL("/sign-in", req.url);
+    url.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(url);
   }
 
   return intlMiddleware(req);
-});
+}
 
 export const config = {
   matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],

@@ -4,11 +4,8 @@ FROM node:22-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-ENV NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-ENV NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-ENV NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-ENV NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 ENV NEXT_PUBLIC_API_URL=https://vyzed.fly.dev:8080
+ENV BETTER_AUTH_URL=https://vyzed.fly.dev
 
 # Copy the entire monorepo to the container
 COPY . .

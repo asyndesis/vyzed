@@ -303,7 +303,7 @@ export function UserProfileEditForm({ user: userData }) {
                         buttonLabel="Add Language"
                         dialogTitle="Add Language"
                         dialogDescription="Select a language you speak and your proficiency level."
-                        skillCategoryId="clqwertyu00"
+                        skillCategoryId="65f000000000000000000000"
                         showProficiency={true}
                         icon={
                           <Globe className="h-5 w-5 text-muted-foreground" />
