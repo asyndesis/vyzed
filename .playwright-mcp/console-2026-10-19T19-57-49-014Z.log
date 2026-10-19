@@ -1,0 +1,233 @@
+[     138ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[   10154ms] [LOG] Download the Apollo DevTools for a better development experience: %s https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm @ http://localhost:3000/_next/static/chunks/node_modules_69598d53._.js:12879
+[   19536ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   19537ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[   19626ms] [LOG] [Fast Refresh] done in 68ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[   19844ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[   19888ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <RenderFromTemplateContext>
+      <ScrollAndFocusHandler segmentPath={[...]}>
+        <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>
+          <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>
+            <LoadingBoundary loading={null}>
+              <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+                <RedirectBoundary>
+                  <RedirectErrorBoundary router={{...}}>
+                    <InnerLayoutRouter url="/en/dashbo..." tree={[...]} cacheNode={{lazyData:null, ...}} ...>
+                      <SegmentViewNode type="layout" pagePath="/packages/...">
+                        <SegmentTrieNode>
+                        <script>
+                        <script>
+                        <script>
+                        <DashboardLayout>
+                          <AppShell>
+                            <SidebarProvider>
+                              <div
++                               style={{--sidebar-width:"16rem",--sidebar-width-icon:"2.5rem"}}
+-                               style={{--sidebar-width:"16rem",--sidebar-width-icon:"3rem"}}
+                                className="group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-s..."
+                                ref={null}
+                              >
+                                ...
+                                  <div className="duration-2...">
+                                    <div data-sidebar="sidebar" className="flex h-ful...">
+                                      <_c12 className="px-1">
+                                        <div ref={null} data-sidebar="header" className="flex flex-...">
+                                          <LinkComponent href="/" className="flex h-9 i...">
+                                            <a
++                                             className="flex h-9 items-center gap-2 px-2 group-data-[collapsible=icon..."
+-                                             className="flex h-9 items-center gap-2 px-2 font-display text-[17px] fon..."
+                                              ref={function}
+                                              onClick={function onClick}
+                                              onMouseEnter={function onMouseEnter}
+                                              onTouchStart={function onTouchStart}
+                                              href="/"
+                                            >
+                                      ...
+                                        <_c20 className="px-1">
+                                          <div ref={null} data-sidebar="group" className="relative f...">
+                                            <_c28 className="gap-0.5 gr...">
+                                              <ul
+                                                ref={null}
+                                                data-sidebar="menu"
++                                               className="flex w-full min-w-0 flex-col gap-0.5 group-data-[collapsibl..."
+-                                               className="flex w-full min-w-0 flex-col gap-0.5"
+                                              >
+                                                <_c30>
+                                                  <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                                                    <div
++                                                     className="flex h-8 items-center gap-2.5 px-2 group-data-[collap..."
+-                                                     className="flex h-8 items-center gap-2 px-2"
+                                                    >
+                                                <_c30>
+                                                  <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                                                    <div
++                                                     className="flex h-8 items-center gap-2.5 px-2 group-data-[collap..."
+-                                                     className="flex h-8 items-center gap-2 px-2"
+                                                    >
+                                                <_c30>
+                                                  <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                                                    <div
++                                                     className="flex h-8 items-center gap-2.5 px-2 group-data-[collap..."
+-                                                     className="flex h-8 items-center gap-2 px-2"
+                                                    >
+                                                <_c30>
+                                                  <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                                                    <div
++                                                     className="flex h-8 items-center gap-2.5 px-2 group-data-[collap..."
+-                                                     className="flex h-8 items-center gap-2 px-2"
+                                                    >
+                                      <_c14 className="gap-3 px-1...">
+                                        <div
+                                          ref={null}
+                                          data-sidebar="footer"
++                                         className="flex flex-col p-2 gap-3 px-1 group-data-[collapsible=icon]:items-..."
+-                                         className="flex flex-col p-2 gap-3 px-1"
+                                        >
+                                ...
+                    ...
+          ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[   29358ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   29359ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[   29450ms] [LOG] [Fast Refresh] done in 21ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[   29686ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[   39708ms] [LOG] Download the Apollo DevTools for a better development experience: %s https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm @ http://localhost:3000/_next/static/chunks/node_modules_69598d53._.js:12879
+[   46665ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   46802ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[   46862ms] [LOG] [Fast Refresh] done in 239ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[   46866ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[   47209ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   47249ms] [LOG] [Fast Refresh] done in 140ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[   47393ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[   47435ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <script>
+    <script>
+    <script>
+    <DashboardLayout>
+      <AppShell>
+        <SidebarProvider>
+          <div style={{...}} className="group/side..." ref={null}>
+            <Sidebar collapsible="icon">
+              <div ref={null} className="group peer..." data-state="expanded" data-collapsible="" data-variant="sidebar" ...>
+                <div>
+                <div className="duration-2...">
+                  <div data-sidebar="sidebar" className="flex h-ful...">
+                    <_c12>
+                    ...
+                      <ul ref={null} data-sidebar="menu" className="flex w-ful...">
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"73%"}}
+-                                   style={{--skeleton-width:"72%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"83%"}}
+-                                   style={{--skeleton-width:"56%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"76%"}}
+-                                   style={{--skeleton-width:"53%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"86%"}}
+-                                   style={{--skeleton-width:"82%"}}
+                                  >
+                    <_c14>
+                      <div ref={null} data-sidebar="footer" className="flex flex-...">
+                        <UserMenu>
+                          <SidebarMenuSkeleton showIcon={true}>
+                            <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                              <Skeleton>
+                              <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                <div
+                                  className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                  data-sidebar="menu-skeleton-text"
++                                 style={{--skeleton-width:"55%"}}
+-                                 style={{--skeleton-width:"67%"}}
+                                >
+            ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433

@@ -1,0 +1,566 @@
+[     152ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[     197ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <script>
+    <script>
+    <script>
+    <DashboardLayout>
+      <AppShell>
+        <SidebarProvider>
+          <div style={{...}} className="group/side..." ref={null}>
+            <Sidebar collapsible="icon">
+              <div ref={null} className="group peer..." data-state="expanded" data-collapsible="" data-variant="sidebar" ...>
+                <div>
+                <div className="duration-2...">
+                  <div data-sidebar="sidebar" className="flex h-ful...">
+                    <_c12>
+                    ...
+                      <ul ref={null} data-sidebar="menu" className="flex w-ful...">
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"84%"}}
+-                                   style={{--skeleton-width:"54%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"75%"}}
+-                                   style={{--skeleton-width:"86%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"80%"}}
+-                                   style={{--skeleton-width:"53%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"89%"}}
+-                                   style={{--skeleton-width:"86%"}}
+                                  >
+                    <_c14>
+                      <div ref={null} data-sidebar="footer" className="flex flex-...">
+                        <UserMenu>
+                          <SidebarMenuSkeleton showIcon={true}>
+                            <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                              <Skeleton>
+                              <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                <div
+                                  className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                  data-sidebar="menu-skeleton-text"
++                                 style={{--skeleton-width:"54%"}}
+-                                 style={{--skeleton-width:"64%"}}
+                                >
+            ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[   10170ms] [LOG] Download the Apollo DevTools for a better development experience: %s https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm @ http://localhost:3000/_next/static/chunks/node_modules_69598d53._.js:12879
+[   47549ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   47555ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[   76219ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   76329ms] [LOG] [Fast Refresh] done in 147ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  125169ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  125195ms] [LOG] [Fast Refresh] done in 68ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  126172ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  126199ms] [LOG] [Fast Refresh] done in 52ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  148114ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  148138ms] [LOG] [Fast Refresh] done in 62ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  149133ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  149158ms] [LOG] [Fast Refresh] done in 61ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  151456ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  151465ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  151857ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  151859ms] [LOG] [Fast Refresh] done in 102ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  172465ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  172474ms] [LOG] [Fast Refresh] done in 108ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  172853ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  172867ms] [LOG] [Fast Refresh] done in 115ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  176146ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  176147ms] [LOG] [Fast Refresh] done in 102ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  178803ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  178808ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  179211ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  179228ms] [LOG] [Fast Refresh] done in 119ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  181057ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  181066ms] [LOG] [Fast Refresh] done in 109ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  181964ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  181972ms] [LOG] [Fast Refresh] done in 108ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  188336ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  188359ms] [LOG] [Fast Refresh] done in 123ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  196967ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  196973ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  197165ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  197185ms] [LOG] [Fast Refresh] done in 121ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  201604ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  201649ms] [LOG] [Fast Refresh] done in 75ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  202573ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  202603ms] [LOG] [Fast Refresh] done in 131ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  202621ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  202622ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[  202667ms] [LOG] [Fast Refresh] done in 18ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  202982ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[  203035ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <Sidebar collapsible="icon">
+      <div ref={null} className="group peer..." data-state="expanded" data-collapsible="" data-variant="sidebar" ...>
+        <div>
+        <div className="duration-2...">
+          <div data-sidebar="sidebar" className="flex h-ful...">
+            <_c12>
+            <_c18>
+              <div ref={null} data-sidebar="content" className="flex min-h...">
+                <_c20>
+                  <div ref={null} data-sidebar="group" className="relative f...">
+                    <_c28>
+                      <ul ref={null} data-sidebar="menu" className="flex w-ful...">
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"66%"}}
+-                                   style={{--skeleton-width:"75%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"77%"}}
+-                                   style={{--skeleton-width:"66%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"83%"}}
+-                                   style={{--skeleton-width:"63%"}}
+                                  >
+                        <_c30>
+                          <li ref={null} data-sidebar="menu-item" className="group/menu...">
+                            <SidebarMenuSkeleton showIcon={true}>
+                              <div ref={null} data-sidebar="menu-skeleton" className="rounded-md...">
+                                <Skeleton>
+                                <Skeleton className="h-4 flex-1..." data-sidebar="menu-skele..." style={{...}}>
+                                  <div
+                                    className="animate-pulse rounded-md bg-muted h-4 flex-1 max-w-[--skeleton-width]"
+                                    data-sidebar="menu-skeleton-text"
++                                   style={{--skeleton-width:"89%"}}
+-                                   style={{--skeleton-width:"67%"}}
+                                  >
+            ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  203667ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  203667ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[  203748ms] [LOG] [Fast Refresh] done in 62ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  203976ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[  204054ms] Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <Tooltip>
+      <Popper __scopePopper={{Popper:[...]}}>
+        <PopperProvider scope={{Popper:[...]}} anchor={null} onAnchorChange={function bound dispatchSetState} ...>
+          <TooltipProvider scope={undefined} contentId="radix-_R_1..." setContentId={function bound dispatchSetState} ...>
+            <TooltipTrigger asChild={true}>
+              <PopperAnchor asChild={true} __scopePopper={{Popper:[...]}}>
+                <Primitive.div data-radix-popper-side={undefined} data-radix-popper-align={undefined} asChild={true} ...>
+                  <Primitive.div.Slot data-radix-popper-side={undefined} data-radix-popper-align={undefined} ...>
+                    <Primitive.button aria-describedby={undefined} data-state="closed" asChild={true} ref={function} ...>
+                      <Primitive.button.Slot aria-describedby={undefined} data-state="closed" ...>
+                        <Slot.Slot ref={function} data-sidebar="menu-button" data-size="default" data-active={false} ...>
+                          <LinkComponent href="/dashboard" data-sidebar="menu-button" data-size="default" ...>
++                           <a
++                             data-sidebar="menu-button"
++                             data-size="default"
++                             data-active={false}
++                             className={"peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md ..."}
++                             aria-describedby={undefined}
++                             data-state="closed"
++                             onPointerMove={function handleEvent}
++                             onPointerLeave={function handleEvent}
++                             onPointerDown={function handleEvent}
++                             onFocus={function handleEvent}
++                             onBlur={function handleEvent}
++                             data-radix-popper-side={undefined}
++                             data-radix-popper-align={undefined}
++                             ref={function}
++                             onClick={function onClick}
++                             onMouseEnter={function onMouseEnter}
++                             onTouchStart={function onTouchStart}
++                             href="/dashboard"
++                           >
+-                           <div data-sidebar="menu-skeleton" className="rounded-md h-8 flex gap-2 px-2 items-center">
+            ...
+
+    at throwOnHydrationMismatch (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:2892:56)
+    at beginWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:6178:918)
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:886:74)
+    at performUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8298:97)
+    at workLoopConcurrentByScheduler (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8294:58)
+    at renderRootConcurrent (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8276:71)
+    at performWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7908:176)
+    at performWorkOnRootViaSchedulerTask (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8882:9)
+    at MessagePort.performWorkUntilDeadline (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_5150ccfd._.js:2601:64)
+[  204686ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  204687ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js:34
+[  204768ms] [LOG] [Fast Refresh] done in 58ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  205008ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[  205076ms] Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <Tooltip>
+      <Popper __scopePopper={{Popper:[...]}}>
+        <PopperProvider scope={{Popper:[...]}} anchor={null} onAnchorChange={function bound dispatchSetState} ...>
+          <TooltipProvider scope={undefined} contentId="radix-_R_1..." setContentId={function bound dispatchSetState} ...>
+            <TooltipTrigger asChild={true}>
+              <PopperAnchor asChild={true} __scopePopper={{Popper:[...]}}>
+                <Primitive.div data-radix-popper-side={undefined} data-radix-popper-align={undefined} asChild={true} ...>
+                  <Primitive.div.Slot data-radix-popper-side={undefined} data-radix-popper-align={undefined} ...>
+                    <Primitive.button aria-describedby={undefined} data-state="closed" asChild={true} ref={function} ...>
+                      <Primitive.button.Slot aria-describedby={undefined} data-state="closed" ...>
+                        <Slot.Slot ref={function} data-sidebar="menu-button" data-size="default" data-active={false} ...>
+                          <LinkComponent href="/dashboard" data-sidebar="menu-button" data-size="default" ...>
++                           <a
++                             data-sidebar="menu-button"
++                             data-size="default"
++                             data-active={false}
++                             className={"peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md ..."}
++                             aria-describedby={undefined}
++                             data-state="closed"
++                             onPointerMove={function handleEvent}
++                             onPointerLeave={function handleEvent}
++                             onPointerDown={function handleEvent}
++                             onFocus={function handleEvent}
++                             onBlur={function handleEvent}
++                             data-radix-popper-side={undefined}
++                             data-radix-popper-align={undefined}
++                             ref={function}
++                             onClick={function onClick}
++                             onMouseEnter={function onMouseEnter}
++                             onTouchStart={function onTouchStart}
++                             href="/dashboard"
++                           >
+-                           <div data-sidebar="menu-skeleton" className="rounded-md h-8 flex gap-2 px-2 items-center">
+            ...
+
+    at throwOnHydrationMismatch (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:2892:56)
+    at beginWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:6178:918)
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:886:74)
+    at performUnitOfWork (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8298:97)
+    at workLoopConcurrentByScheduler (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8294:58)
+    at renderRootConcurrent (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8276:71)
+    at performWorkOnRoot (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:7908:176)
+    at performWorkOnRootViaSchedulerTask (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:8882:9)
+    at MessagePort.performWorkUntilDeadline (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_5150ccfd._.js:2601:64)
+[  213780ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  213806ms] [LOG] [Fast Refresh] done in 128ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  215025ms] [LOG] Download the Apollo DevTools for a better development experience: %s https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm @ http://localhost:3000/_next/static/chunks/node_modules_69598d53._.js:12879
+[  218037ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  218040ms] [LOG] {file: Object} @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_a9cb0712.js:16058
+[  218150ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  218598ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  218679ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  218781ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  218819ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  220115ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  220161ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  220215ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  220262ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  221597ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  221681ms] [ERROR] ./packages/client/src/app/[locale]/dashboard/page.jsx:226:13
+Parsing ecmascript source code failed
+  224 |       <FadeIn className="grid gap-4 sm:grid-cols-2">
+  225 |         {teachers.map((u) => <TeacherCard key={u.id} user={u} />)}
+> 226 |       </div>
+      |             ^
+> 227 |     </Section>
+      | ^^^^^
+  228 |   );
+  229 | }
+  230 |
+
+Expected '</', got 'jsx text (
+    )'
+
+Import traces:
+  Client Component Browser:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component Browser]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Client Component SSR]
+    ./packages/client/src/app/[locale]/dashboard/page.jsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[  221736ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  222126ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  222132ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  225405ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  225408ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  225605ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  225615ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  225808ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  225818ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  231831ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  231865ms] [LOG] [Fast Refresh] done in 44ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  233472ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  233474ms] [LOG] [Fast Refresh] done in 104ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  236214ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  236216ms] [LOG] [Fast Refresh] done in 102ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  236451ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  236499ms] [LOG] [Fast Refresh] done in 63ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[  239352ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[  239411ms] [LOG] [Fast Refresh] done in 159ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816

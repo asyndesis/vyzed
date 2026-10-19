@@ -40,7 +40,7 @@ export const teacherProfileResolvers = {
         });
 
         // Handle skills if provided
-        if (skills && skills.length > 0) {
+        if (skills) {
           // Get existing skills for this profile
           const existingSkills = await tx.teacherSkill.findMany({
             where: { teacherProfileId: id },

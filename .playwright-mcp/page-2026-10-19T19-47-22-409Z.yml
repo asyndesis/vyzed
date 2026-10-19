@@ -1,0 +1,29 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e6]:
+      - link "V Vyzed" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e9]: V
+        - generic [ref=e10]: Vyzed
+      - list [ref=e13]:
+        - listitem [ref=e14]:
+          - link "Find teachers" [ref=e15] [cursor=pointer]:
+            - /url: /dashboard/teachers
+      - button "Toggle Sidebar" [ref=e26]
+    - main [ref=e27]:
+      - generic [ref=e28]:
+        - button "Toggle Sidebar" [ref=e29] [cursor=pointer]
+        - generic [ref=e31]:
+          - link "Join Vyzed" [ref=e32] [cursor=pointer]:
+            - /url: /sign-up
+          - button "Toggle theme" [ref=e34] [cursor=pointer]
+      - main [ref=e36]:
+        - generic [ref=e38]:
+          - heading "Find a teacher" [level=1] [ref=e39]
+          - paragraph [ref=e40]: Learn from people near you, or trade lessons skill for skill.
+        - generic [ref=e41]:
+          - textbox "Search by name…" [ref=e47]
+          - generic [ref=e48]:
+            - button "Skill" [ref=e49] [cursor=pointer]
+            - button "Open to swaps" [ref=e50] [cursor=pointer]
+  - region "Notifications alt+T"

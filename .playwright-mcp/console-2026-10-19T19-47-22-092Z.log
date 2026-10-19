@@ -1,0 +1,47 @@
+[     218ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537
+[     353ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <RedirectBoundary>
+      <RedirectErrorBoundary router={{...}}>
+        <InnerLayoutRouter url="/en/dashbo..." tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>
+          <SegmentViewNode type="page" pagePath="/packages/...">
+            <SegmentTrieNode>
+            <ClientPageRoot Component={function TeachersPage} searchParams={{}} params={{locale:"en"}}>
+              <TeachersPage params={Promise} searchParams={Promise}>
+                <Suspense>
+                  <Teachers>
+                    <PageTitle>
+                    <div className="space-y-3">
+                      <div className="relative">
+                        <Search>
+                        <_c value="" onChange={function onChange} placeholder="Search by ..." className="h-11 pl-9">
+                          <div className="relative f...">
+                            <input
+                              type={undefined}
+                              className="flex h-10 w-full rounded-md border border-input bg-background text-base ring-..."
+                              ref={null}
+                              value=""
+                              onChange={function onChange}
+                              placeholder="Search by name…"
+-                             style={{caret-color:"transparent"}}
+                            >
+                      ...
+                    ...
+          ...
+        ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_b0daae9a._.js:2433
+[   10284ms] [LOG] Download the Apollo DevTools for a better development experience: %s https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm @ http://localhost:3000/_next/static/chunks/node_modules_69598d53._.js:12879
+[   26900ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5956
+[   27630ms] [LOG] [Fast Refresh] done in 822ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_cf1d9188._.js:5816
+[   28007ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:14537

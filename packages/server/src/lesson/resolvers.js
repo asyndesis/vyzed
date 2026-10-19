@@ -49,12 +49,13 @@ export const lessonResolvers = {
   Query: {
     myLessonsAsStudent: async (_, { filter }, { user, prisma }) => {
       // Build where clause with filters
+      // Look up enrollments directly; nested relation filters are unreliable on Mongo
+      const enrollments = await prisma.enrollment.findMany({
+        where: { studentId: user.id },
+        select: { lessonId: true },
+      });
       const where = {
-        enrollments: {
-          some: {
-            studentId: user.id,
-          },
-        },
+        id: { in: enrollments.map((e) => e.lessonId) },
       };
 
       // Apply status filter if provided
@@ -78,7 +79,7 @@ export const lessonResolvers = {
       // Return lessons but with a custom resolver for enrollments
       const lessons = await prisma.lesson.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy: { startTime: "asc" },
         // Don't include enrollments here, will be handled by resolver
       });
 
@@ -110,7 +111,7 @@ export const lessonResolvers = {
 
       return prisma.lesson.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy: { startTime: "asc" },
       });
     },
   },

@@ -17,6 +17,13 @@ const makeClient = () =>
   new ApolloClient({
     cache: new InMemoryCache(),
     link: httpLink,
+    // Show cached data instantly on revisits, then refresh in the background
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: "cache-and-network",
+        nextFetchPolicy: "cache-first",
+      },
+    },
   });
 
 export function ApolloWrapper({ children }) {
