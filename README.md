@@ -46,6 +46,32 @@ the database must be a replica set — every Atlas cluster (including the free t
 
 Without `RESEND_API_KEY`, sign-in codes are printed in the API terminal.
 
+The browser only talks to the web app: `apps/web/src/routes/api/$.ts` forwards `/api/*` to the
+API, so Better Auth's session cookie is first-party in dev and production alike.
+
+## Deploying to Fly.io
+
+One machine runs both servers (`Dockerfile`, `start.sh`); it stops when idle and starts on the
+next request.
+
+```bash
+fly apps create vyzed                     # once; the name matches `app` in fly.toml
+fly secrets set \
+  MONGODB_URI=... \
+  BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
+  BETTER_AUTH_URL=https://vyzed.fly.dev \
+  WEB_URL=https://vyzed.fly.dev \
+  RESEND_API_KEY=... \
+  EMAIL_FROM="Vyzed <login@your-domain>"
+fly deploy
+```
+
+- The API refuses to start in production without `RESEND_API_KEY`. Email goes through Resend's
+  HTTPS API, so Fly's SMTP restrictions don't apply, but Resend only delivers to your own address
+  until you verify a sending domain.
+- Fly machines don't have fixed outbound IPs, so Atlas's network access list must allow
+  `0.0.0.0/0` (or allocate a static egress IP).
+
 ## Scripts
 
 | Command          | What it does                     |

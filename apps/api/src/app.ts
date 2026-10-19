@@ -21,7 +21,7 @@ export const app = new Hono<AppEnv>()
       allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     }),
   )
-  .get("/health", (c) => c.json({ ok: true }))
+  .get("/api/health", (c) => c.json({ ok: true }))
   .on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw))
   .use("/api/*", sessionMiddleware)
   .route("/api/me", meRoutes)

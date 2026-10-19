@@ -1,7 +1,14 @@
 import type { AppType } from "@vyzed/api";
 import { type ClientResponse, hc, type InferResponseType, parseResponse } from "hono/client";
 
-export const API_URL: string = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+/**
+ * The browser calls its own origin, where routes/api/$.ts forwards to the API, so auth cookies
+ * stay first-party. SSR (and that proxy) call the API directly.
+ */
+export const API_URL: string =
+  typeof window === "undefined"
+    ? (process.env.API_INTERNAL_URL ?? "http://localhost:4000")
+    : window.location.origin;
 
 /** Typed RPC client generated from the Hono app's routes. */
 export const api = hc<AppType>(API_URL, { init: { credentials: "include" } }).api;

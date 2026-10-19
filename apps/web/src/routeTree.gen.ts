@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardAvailabilityRouteImport } from './routes/dashboard/availability'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
@@ -37,6 +38,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSplatRoute = ApiSplatRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/sign-in': typeof SignInRoute
+  '/api/$': typeof ApiSplatRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/teachers/$teacherId': typeof TeachersTeacherIdRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
   '/sign-in': typeof SignInRoute
+  '/api/$': typeof ApiSplatRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/teachers/$teacherId': typeof TeachersTeacherIdRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/sign-in': typeof SignInRoute
+  '/api/$': typeof ApiSplatRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/teachers/$teacherId': typeof TeachersTeacherIdRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/sign-in'
+    | '/api/$'
     | '/dashboard/availability'
     | '/dashboard/profile'
     | '/teachers/$teacherId'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/onboarding'
     | '/sign-in'
+    | '/api/$'
     | '/dashboard/availability'
     | '/dashboard/profile'
     | '/teachers/$teacherId'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/sign-in'
+    | '/api/$'
     | '/dashboard/availability'
     | '/dashboard/profile'
     | '/teachers/$teacherId'
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   SignInRoute: typeof SignInRoute
+  ApiSplatRoute: typeof ApiSplatRoute
   TeachersTeacherIdRoute: typeof TeachersTeacherIdRoute
   TeachersIndexRoute: typeof TeachersIndexRoute
 }
@@ -170,6 +183,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -231,6 +251,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   SignInRoute: SignInRoute,
+  ApiSplatRoute: ApiSplatRoute,
   TeachersTeacherIdRoute: TeachersTeacherIdRoute,
   TeachersIndexRoute: TeachersIndexRoute,
 }
