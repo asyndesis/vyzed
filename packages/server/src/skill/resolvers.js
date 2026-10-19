@@ -29,7 +29,7 @@ export const skillResolvers = {
       const { parentId } = args;
       try {
         return await prisma.skill.findMany({
-          where: parentId ? { parentId } : { parentId: null },
+          where: parentId ? { parentId } : { OR: [{ parentId: null }, { parentId: { isSet: false } }] },
         });
       } catch (err) {
         throw new Error(err.message);
@@ -37,7 +37,7 @@ export const skillResolvers = {
     },
     rootSkills: async () => {
       try {
-        return await prisma.skill.findMany({ where: { parentId: null } });
+        return await prisma.skill.findMany({ where: { OR: [{ parentId: null }, { parentId: { isSet: false } }] } });
       } catch (err) {
         throw new Error(err.message);
       }

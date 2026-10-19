@@ -1,12 +1,12 @@
 import { and } from "graphql-shield";
-import { isAdmin, isAuthed } from "../rules";
+import { isAdmin, isAuthed, isPublic } from "../rules";
 
 export const skillPermissions = {
   Query: {
-    skillById: isAuthed,
-    skillsByParentId: isAuthed,
-    rootSkills: isAuthed,
-    allSkills: isAuthed,
+    skillById: isPublic,
+    skillsByParentId: isPublic,
+    rootSkills: isPublic,
+    allSkills: isPublic,
   },
   Mutation: {
     createSkill: and(isAuthed, isAdmin),

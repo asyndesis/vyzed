@@ -1,0 +1,25 @@
+- generic [active] [ref=f21e1]:
+  - generic [ref=f21e2]:
+    - generic [ref=f21e6]:
+      - link "vyzed" [ref=f21e8] [cursor=pointer]:
+        - /url: /
+      - list [ref=f21e15]:
+        - listitem [ref=f21e16]
+        - listitem [ref=f21e20]
+        - listitem [ref=f21e24]
+        - listitem [ref=f21e28]
+    - main [ref=f21e38]:
+      - generic [ref=f21e39]:
+        - button "Toggle Sidebar" [ref=f21e40] [cursor=pointer]
+        - generic [ref=f21e43]: Find teachers
+        - button "Toggle theme" [ref=f21e46] [cursor=pointer]
+      - main [ref=f21e48]:
+        - generic [ref=f21e50]:
+          - heading "Find a teacher" [level=1] [ref=f21e51]
+          - paragraph [ref=f21e52]: Learn from people near you, or trade lessons skill for skill.
+        - generic [ref=f21e53]:
+          - textbox "Search teachers…" [ref=f21e59]
+          - button "Skill" [ref=f21e60] [cursor=pointer]
+          - button "Speaks" [ref=f21e61] [cursor=pointer]
+          - button [ref=f21e62] [cursor=pointer]
+  - region "Notifications alt+T"

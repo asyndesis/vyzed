@@ -78,97 +78,60 @@ export const userResolvers = {
     },
     publicTeacherUsers: async (_, { filters, pagination }, { prisma }) => {
       try {
-        // Base condition - user must have a teacherProfile
-        const where = {
-          teacherProfile: { isNot: null },
-        };
+        // Mongo + Prisma can't reliably filter through nested relations,
+        // so resolve each filter to a set of userIds and intersect them.
+        const skillMatch = (list) => ({
+          OR: list.map(({ skillId, proficiency }) => ({
+            skillId,
+            proficiency: { gte: Number(proficiency) },
+          })),
+        });
+        const intersect = (a, b) => (a ? a.filter((id) => b.includes(id)) : b);
 
-        // Use a single where.AND array for all filters
-        where.AND = [];
+        // Teachers = profiles with at least one (matching) teaching skill
+        const teacherProfiles = await prisma.teacherProfile.findMany({
+          where: filters?.allowBarter === true ? { allowBarter: true } : {},
+          select: { id: true, userId: true },
+        });
+        const teacherSkills = await prisma.teacherSkill.findMany({
+          where: {
+            teacherProfileId: { in: teacherProfiles.map((p) => p.id) },
+            ...(filters?.teachingSkills?.length > 0 &&
+              skillMatch(filters.teachingSkills)),
+          },
+          select: { teacherProfileId: true },
+        });
+        const teachingProfileIds = new Set(
+          teacherSkills.map((s) => s.teacherProfileId),
+        );
+        let userIds = teacherProfiles
+          .filter((p) => teachingProfileIds.has(p.id))
+          .map((p) => p.userId);
 
-        // Add teaching skills filter if provided
-        if (filters?.teachingSkills?.length > 0) {
-          where.AND.push({
-            teacherProfile: {
-              is: {
-                skills: {
-                  some: {
-                    OR: filters.teachingSkills.map(
-                      ({ skillId, proficiency }) => ({
-                        skillId,
-                        proficiency: { gte: Number(proficiency) },
-                      }),
-                    ),
-                  },
-                },
-              },
-            },
-          });
-        }
-
-        // Add student skills filter if provided
         if (filters?.studentSkills?.length > 0) {
-          where.AND.push({
-            studentProfile: {
-              is: {
-                skills: {
-                  some: {
-                    OR: filters.studentSkills.map(
-                      ({ skillId, proficiency }) => ({
-                        skillId,
-                        proficiency: { gte: Number(proficiency) },
-                      }),
-                    ),
-                  },
-                },
-              },
-            },
+          const rows = await prisma.studentSkill.findMany({
+            where: skillMatch(filters.studentSkills),
+            select: { studentProfile: { select: { userId: true } } },
           });
+          userIds = intersect(userIds, rows.map((r) => r.studentProfile.userId));
         }
 
-        // Add language filter if provided
         if (filters?.languages?.length > 0) {
-          where.AND.push({
-            userProfile: {
-              is: {
-                languages: {
-                  some: {
-                    OR: filters.languages.map(({ skillId, proficiency }) => ({
-                      skillId,
-                      proficiency: { gte: Number(proficiency) },
-                    })),
-                  },
-                },
-              },
-            },
+          const rows = await prisma.userLanguage.findMany({
+            where: skillMatch(filters.languages),
+            select: { userProfile: { select: { userId: true } } },
           });
+          userIds = intersect(userIds, rows.map((r) => r.userProfile.userId));
         }
 
-        // Add allowBarter filter if provided
-        if (filters?.allowBarter === true) {
-          where.AND.push({
-            teacherProfile: {
-              is: {
-                allowBarter: true,
-              },
-            },
-          });
-        }
+        const where = { id: { in: [...new Set(userIds)] } };
 
-        // Add search filter if provided
         if (filters?.search?.trim()) {
           const searchTerm = filters.search.trim();
-          where.AND.push({
-            OR: [
-              { firstName: { contains: searchTerm, mode: "insensitive" } },
-              { lastName: { contains: searchTerm, mode: "insensitive" } },
-            ],
-          });
-        }
-
-        // If no filters were applied, remove the empty AND array
-        if (where.AND.length === 0) {
-          delete where.AND;
+          where.OR = [
+            { firstName: { contains: searchTerm, mode: "insensitive" } },
+            { lastName: { contains: searchTerm, mode: "insensitive" } },
+          ];
         }
 
         // Set pagination parameters

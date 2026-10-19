@@ -12,7 +12,8 @@
     "studio": "prisma studio",
     "push": "prisma db push",
     "seed": "tsx scripts/seed.js",
-    "generate:enums": "node scripts/generate-enums.js"
+    "generate:enums": "node scripts/generate-enums.js",
+    "seed:teachers": "tsx scripts/seed-teachers.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
