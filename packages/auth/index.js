@@ -18,7 +18,8 @@ const sendEmail = async ({ to, subject, html }) => {
   if (error) console.error("[auth] Failed to send email:", error);
 };
 
-export const auth = betterAuth({
+const createAuth = () =>
+  betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: [
@@ -77,3 +78,8 @@ export const auth = betterAuth({
     },
   },
 });
+
+// Created on first use, not at import: Better Auth validates its secret on
+// construction, and builds import this module without runtime secrets.
+let instance;
+export const getAuth = () => (instance ??= createAuth());

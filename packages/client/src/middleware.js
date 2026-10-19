@@ -14,7 +14,8 @@ const PUBLIC_PATHS = [
 
 export default function middleware(req) {
   const { pathname } = req.nextUrl;
-  if (pathname.startsWith("/api")) return NextResponse.next();
+  // /graphql is rewritten to the API server, which does its own auth
+  if (pathname.startsWith("/api") || pathname === "/graphql") return NextResponse.next();
 
   const isPublic = PUBLIC_PATHS.some((re) => re.test(pathname));
 

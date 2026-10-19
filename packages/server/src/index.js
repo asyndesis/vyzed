@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import { applyMiddleware } from "graphql-middleware";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { fromNodeHeaders } from "better-auth/node";
-import { auth } from "@vyzed/auth";
+import { getAuth } from "@vyzed/auth";
 import { typeDefs } from "./schema";
 import cors from "cors";
 import {
@@ -63,7 +63,7 @@ app.use(
       };
 
       // Resolve the Better Auth session from the request cookies/headers
-      const session = await auth.api.getSession({
+      const session = await getAuth().api.getSession({
         headers: fromNodeHeaders(req.headers),
       });
       if (!session?.user) return context;
