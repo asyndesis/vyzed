@@ -1,0 +1,7 @@
+{
+  "extends": "@vyzed/tsconfig/vite.json",
+  "compilerOptions": {
+    "paths": { "~/*": ["./src/*"] }
+  },
+  "include": ["src", "vite.config.ts"]
+}

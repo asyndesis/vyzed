@@ -1,0 +1,22 @@
+{
+  "name": "@vyzed/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@vyzed/shared": "workspace:*",
+    "mongodb": "~7.7.0",
+    "mongoose": "^9.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@vyzed/tsconfig": "workspace:*",
+    "typescript": "^7.0.2"
+  }
+}

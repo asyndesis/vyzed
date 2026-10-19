@@ -1,0 +1,7 @@
+{
+  "extends": "@vyzed/tsconfig/react.json",
+  "compilerOptions": {
+    "paths": { "@vyzed/ui/*": ["./src/*"] }
+  },
+  "include": ["src"]
+}
