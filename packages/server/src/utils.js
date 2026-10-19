@@ -18,14 +18,14 @@ export const queryApi = async ({
   try {
     // Clean params by removing null or undefined values
     const cleanParams = Object.fromEntries(
-      Object.entries(params).filter(([, value]) => value != null)
+      Object.entries(params).filter(([, value]) => value != null),
     );
 
     // Build query string
     const queryString = Object.entries(cleanParams)
       .map(
         ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
       )
       .join("&");
 

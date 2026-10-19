@@ -57,7 +57,7 @@ const GET_MY_PROFILE = gql`
 export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const [initialized, setInitialized] = useState(false);
   const [offerMySkills, setOfferMySkills] = useState(
-    !!initialFilters?.allowBarter
+    !!initialFilters?.allowBarter,
   );
   const { data: skillsData } = useQuery(GET_SKILLS);
   const { data: profileData } = useQuery(GET_MY_PROFILE);
@@ -82,7 +82,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
         for (const category of skillsData.rootSkills) {
           if (category.children) {
             const found = category.children.find(
-              (s) => s.id === filter.skillId
+              (s) => s.id === filter.skillId,
             );
             if (found) {
               skillDetails = found;
@@ -139,7 +139,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const handleUpdateSkill = (filterType, skillId, updatedSkill) => {
     const currentSkills = methods.getValues(filterType) || [];
     const updatedSkills = currentSkills.map((skill) =>
-      skill.skillId === skillId ? updatedSkill : skill
+      skill.skillId === skillId ? updatedSkill : skill,
     );
     methods.setValue(filterType, updatedSkills);
     notifyFilterChange(filterType, updatedSkills);
@@ -148,7 +148,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const handleRemoveSkill = (filterType, skillId) => {
     const currentSkills = methods.getValues(filterType) || [];
     const updatedSkills = currentSkills.filter(
-      (skill) => skill.skillId !== skillId
+      (skill) => skill.skillId !== skillId,
     );
     methods.setValue(filterType, updatedSkills);
     notifyFilterChange(filterType, updatedSkills);
@@ -178,7 +178,7 @@ export const TeacherListFilters = ({ initialFilters = {}, onFilterChange }) => {
   const notifyFilterChange = (
     filterType,
     updatedSkills,
-    barterOverride = undefined
+    barterOverride = undefined,
   ) => {
     if (!onFilterChange) return;
 

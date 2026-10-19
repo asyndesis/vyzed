@@ -17,7 +17,7 @@ const getGraphqlFilesOneLevelDeep = (dir) => {
     if (entry.isDirectory()) {
       // Check for .graphql files in subdirectories
       const subFiles = readdirSync(fullPath).filter((file) =>
-        file.endsWith(".graphql")
+        file.endsWith(".graphql"),
       );
       subFiles.forEach((file) => files.push(path.join(fullPath, file)));
     } else if (entry.isFile() && entry.name.endsWith(".graphql")) {

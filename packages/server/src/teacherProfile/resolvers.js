@@ -33,7 +33,7 @@ export const teacherProfileResolvers = {
           data: {
             ...omitBy(
               pick(input, ["priceAmount", "priceCurrency", "allowBarter"]),
-              isNil
+              isNil,
             ),
             updatedBy: user?.id,
           },

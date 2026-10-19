@@ -114,7 +114,7 @@ export const userResolvers = {
                       ({ skillId, proficiency }) => ({
                         skillId,
                         proficiency: { gte: Number(proficiency) },
-                      })
+                      }),
                     ),
                   },
                 },
@@ -134,7 +134,7 @@ export const userResolvers = {
                       ({ skillId, proficiency }) => ({
                         skillId,
                         proficiency: { gte: Number(proficiency) },
-                      })
+                      }),
                     ),
                   },
                 },

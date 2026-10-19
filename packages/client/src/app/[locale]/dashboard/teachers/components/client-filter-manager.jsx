@@ -32,7 +32,7 @@ export function ClientFilterManager({ initialFilters }) {
         "teaching",
         filters.teachingSkills
           .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-          .join(",")
+          .join(","),
       );
     }
 
@@ -41,7 +41,7 @@ export function ClientFilterManager({ initialFilters }) {
         "student",
         filters.studentSkills
           .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-          .join(",")
+          .join(","),
       );
     }
 
@@ -50,7 +50,7 @@ export function ClientFilterManager({ initialFilters }) {
         "languages",
         filters.languages
           .map((skill) => `${skill.skillId}:${skill.proficiency}`)
-          .join(",")
+          .join(","),
       );
     }
 

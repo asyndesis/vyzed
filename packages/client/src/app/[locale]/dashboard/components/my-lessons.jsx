@@ -102,7 +102,7 @@ function useLessonFilters() {
   const context = useContext(LessonFiltersContext);
   if (!context) {
     throw new Error(
-      "useLessonFilters must be used within a LessonFiltersProvider"
+      "useLessonFilters must be used within a LessonFiltersProvider",
     );
   }
   return context;
@@ -398,7 +398,7 @@ function SortableTable({ data, columns, onRowClick }) {
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                 </TableHead>
               ))}
@@ -441,7 +441,7 @@ function LessonsTable({ lessons, mode, onUpdate }) {
 
   // Get the fresh lesson data based on the selected ID
   const selectedLesson = lessons.find(
-    (lesson) => lesson.id === selectedLessonId
+    (lesson) => lesson.id === selectedLessonId,
   );
 
   // Handle row click
@@ -458,9 +458,9 @@ function LessonsTable({ lessons, mode, onUpdate }) {
   const filteredLessons = useMemo(
     () =>
       lessons.filter(
-        (lesson) => skillFilter === "all" || lesson.skill.id === skillFilter
+        (lesson) => skillFilter === "all" || lesson.skill.id === skillFilter,
       ),
-    [lessons, skillFilter]
+    [lessons, skillFilter],
   );
 
   const columns = useMemo(() => getColumns(isTeacherMode), [isTeacherMode]);

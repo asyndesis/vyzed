@@ -11,12 +11,12 @@ export const lessonPermissions = {
     changeEnrollmentStatus: canPerformAction(
       "enrollment",
       "update",
-      "enrollmentId"
+      "enrollmentId",
     ),
     updateEnrollmentPaymentStatus: canPerformAction(
       "enrollment",
       "update",
-      "enrollmentId"
+      "enrollmentId",
     ),
   },
 };

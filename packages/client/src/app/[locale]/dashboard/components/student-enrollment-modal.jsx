@@ -94,7 +94,7 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
         console.error("Error updating payment status:", error);
         setProcessingPayment(false);
       },
-    }
+    },
   );
 
   if (!lesson || !enrollment) return null;
@@ -132,7 +132,7 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
   const canCancel = allowedTransitions.includes(LessonStatus.CANCELLED);
   const canRequestAgain = allowedTransitions.includes(LessonStatus.REQUESTED);
   const canConfirmRevision = allowedTransitions.includes(
-    LessonStatus.CONFIRMED
+    LessonStatus.CONFIRMED,
   );
 
   // Format initials for avatar
@@ -196,7 +196,7 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
                   <AvatarFallback className="text-xs bg-primary/10 text-primary">
                     {getInitials(
                       lesson.teacher?.firstName,
-                      lesson.teacher?.lastInitial
+                      lesson.teacher?.lastInitial,
                     )}
                   </AvatarFallback>
                 </Avatar>
@@ -276,7 +276,7 @@ export function StudentEnrollmentModal({ lesson, open, onClose, onUpdate }) {
                         disabled={isLoading}
                         className={cn(
                           "flex-1 bg-green-600 hover:bg-green-700 text-white",
-                          isLoading && "opacity-70"
+                          isLoading && "opacity-70",
                         )}
                       >
                         {isLoading ? (

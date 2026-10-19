@@ -55,7 +55,7 @@ async function main() {
           // No parentId for parent skills
         },
       });
-    }
+    },
   );
 
   await Promise.all(parentPromises);
@@ -73,9 +73,9 @@ async function main() {
               parentId: parentId, // Set the parentId reference
             },
           });
-        }
+        },
       );
-    }
+    },
   );
 
   await Promise.all(childPromises);

@@ -83,7 +83,7 @@ export function SkillSelectorCompact({
       return getCategories();
     }
     return getCategories().filter(
-      (category) => category.id === skillCategoryId
+      (category) => category.id === skillCategoryId,
     );
   };
 
@@ -100,7 +100,7 @@ export function SkillSelectorCompact({
       .map((s) => s.skillId);
 
     return category.children.filter(
-      (child) => !excludedSkillIds.includes(child.id)
+      (child) => !excludedSkillIds.includes(child.id),
     );
   };
 

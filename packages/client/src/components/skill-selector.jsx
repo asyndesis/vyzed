@@ -82,7 +82,7 @@ export function SkillSelector({
     {
       variables: skillCategoryId ? { id: skillCategoryId } : {},
       skip: skillCategoryId === null && !isOpen, // Only fetch if open or if specific category
-    }
+    },
   );
 
   // Get categories for selection or use the single category if specified
@@ -108,7 +108,7 @@ export function SkillSelector({
 
     const currentSkillIds = skills.map((s) => s.skillId);
     return category.children.filter(
-      (child) => !currentSkillIds.includes(child.id)
+      (child) => !currentSkillIds.includes(child.id),
     );
   };
 
@@ -237,7 +237,7 @@ export function SkillSelector({
                         <SelectItem key={skill.id} value={skill.id}>
                           {skill.name}
                         </SelectItem>
-                      )
+                      ),
                     )}
                   </SelectContent>
                 </Select>
@@ -305,7 +305,7 @@ export function SkillSelector({
                       onValueChange={(value) =>
                         onUpdateProficiency(
                           skillItem.skillId,
-                          parseInt(value, 10)
+                          parseInt(value, 10),
                         )
                       }
                     >

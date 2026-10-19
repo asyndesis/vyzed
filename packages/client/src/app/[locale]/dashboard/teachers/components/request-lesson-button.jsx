@@ -60,7 +60,7 @@ export function RequestLessonButton({ user }) {
   const [open, setOpen] = useState(false);
   const [requestLesson, { loading }] = useMutation(REQUEST_LESSON);
   const [selectedSkillFramework, setSelectedSkillFramework] = useState(
-    SkillFramework.DEFAULT
+    SkillFramework.DEFAULT,
   );
 
   const form = useForm({
@@ -80,7 +80,7 @@ export function RequestLessonButton({ user }) {
   useEffect(() => {
     if (watchedSkillId) {
       const selectedSkill = user.teacherProfile.skills.find(
-        (skill) => skill.skill.id === watchedSkillId
+        (skill) => skill.skill.id === watchedSkillId,
       );
 
       if (selectedSkill && selectedSkill.skill.framework) {
@@ -153,7 +153,7 @@ export function RequestLessonButton({ user }) {
                             variant="outline"
                             className={cn(
                               "pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                             style={{ height: "2.5rem" }}
                           >

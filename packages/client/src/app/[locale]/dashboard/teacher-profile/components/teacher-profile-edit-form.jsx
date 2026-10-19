@@ -50,7 +50,7 @@ const profileSchema = z.object({
       framework: z.string().optional(),
       isDeleted: z.boolean().optional(),
       isNew: z.boolean().optional(),
-    })
+    }),
   ),
   allowBarter: z.boolean().optional(),
   priceAmount: z.coerce.number().min(0).optional(),
@@ -135,7 +135,7 @@ export function TeacherProfileEditForm({ profile }) {
   const handleRemoveSkill = (skillId) => {
     const skills = form.getValues("skills");
     const index = skills.findIndex(
-      (skill) => skill.id === skillId || skill.skillId === skillId
+      (skill) => skill.id === skillId || skill.skillId === skillId,
     );
     if (index === -1) return;
 
@@ -156,7 +156,7 @@ export function TeacherProfileEditForm({ profile }) {
   const handleUpdateSkillProficiency = (skillId, newProficiency) => {
     const skills = form.getValues("skills");
     const index = skills.findIndex(
-      (skill) => skill.id === skillId || skill.skillId === skillId
+      (skill) => skill.id === skillId || skill.skillId === skillId,
     );
     if (index === -1) return;
 
@@ -230,7 +230,7 @@ export function TeacherProfileEditForm({ profile }) {
 
   // Filter out deleted skills for display
   const displaySkills = (formValues.skills || []).filter(
-    (skill) => !skill.isDeleted
+    (skill) => !skill.isDeleted,
   );
 
   return (

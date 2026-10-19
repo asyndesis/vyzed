@@ -46,5 +46,5 @@ export const permissions = shield(
   },
   {
     allowExternalErrors: process.env.NODE_ENV === "development", // This allows custom errors to pass through
-  }
+  },
 );

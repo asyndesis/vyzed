@@ -14,7 +14,7 @@ ENV NEXT_PUBLIC_API_URL=https://vyzed.fly.dev:8080
 COPY . .
 
 # Install dependencies using your monorepo package manager
-RUN npm install
+RUN npm ci
 RUN npm run prisma:generate
 RUN npm run client:build
 

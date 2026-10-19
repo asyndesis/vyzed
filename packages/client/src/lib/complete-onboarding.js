@@ -49,7 +49,7 @@ export const completeOnboarding = async ({ authId, token }) => {
 
   const email =
     clerkUser.emailAddresses.find(
-      (email) => email.id === clerkUser.primaryEmailAddressId
+      (email) => email.id === clerkUser.primaryEmailAddressId,
     )?.emailAddress || "";
 
   // Save the new user to the database

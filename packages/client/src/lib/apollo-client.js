@@ -12,7 +12,7 @@ const errorLink = onError(({ graphQLErrors }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, path, extensions }) => {
       console.error(
-        `[GraphQL error]: Message: ${message}, Path: ${path}, Code: ${extensions?.code}`
+        `[GraphQL error]: Message: ${message}, Path: ${path}, Code: ${extensions?.code}`,
       );
     });
   }

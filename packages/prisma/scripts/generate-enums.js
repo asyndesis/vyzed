@@ -46,7 +46,7 @@ ${enums
     (enumObj) => `export const ${enumObj.name} = {
 ${enumObj.values.map((value) => `  ${value}: '${value}',`).join("\n")}
 };
-`
+`,
   )
   .join("\n")}
 `;
@@ -65,7 +65,7 @@ ${enums
   enum ${enumObj.name} {
     \${Object.values(${enumObj.name}).join('\\n    ')}
   }
-\`;`
+\`;`,
   )
   .join("\n\n")}
 
@@ -79,7 +79,7 @@ console.log(`✅ Generated enums at ${ENUMS_OUTPUT_PATH}`);
 
 fs.writeFileSync(ENUM_TYPEDEFS_OUTPUT_PATH, enumTypeDefsContent);
 console.log(
-  `✅ Generated enum type definitions at ${ENUM_TYPEDEFS_OUTPUT_PATH}`
+  `✅ Generated enum type definitions at ${ENUM_TYPEDEFS_OUTPUT_PATH}`,
 );
 
 console.log("🎉 Enum generation complete!");

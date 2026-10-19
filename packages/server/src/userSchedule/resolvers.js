@@ -31,7 +31,7 @@ export const userScheduleResolvers = {
       } catch (err) {
         console.error("Error fetching userSchedule:", err);
         throw new Error(
-          `Failed to fetch schedule for user ${userId}: ${err.message}`
+          `Failed to fetch schedule for user ${userId}: ${err.message}`,
         );
       }
     },
@@ -40,7 +40,7 @@ export const userScheduleResolvers = {
     updateUserScheduleSlots: async (
       _,
       { userScheduleId, slots },
-      { user, prisma }
+      { user, prisma },
     ) => {
       try {
         // Check if the schedule exists
@@ -66,7 +66,7 @@ export const userScheduleResolvers = {
             .map((slot) => slot.id);
 
           const slotIdsToDelete = existingSlotIds.filter(
-            (id) => !newSlotIds.includes(id)
+            (id) => !newSlotIds.includes(id),
           );
 
           if (slotIdsToDelete.length > 0) {

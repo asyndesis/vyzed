@@ -102,7 +102,7 @@ export function UserProfileEditForm({ user: userData }) {
     form.setValue(
       "userProfile.languages",
       [...currentLanguages, { ...language, isNew: true }],
-      { shouldDirty: true, shouldTouch: true }
+      { shouldDirty: true, shouldTouch: true },
     );
   };
 
@@ -111,7 +111,7 @@ export function UserProfileEditForm({ user: userData }) {
     const languages = form.getValues("userProfile.languages") || [];
     const updatedLanguages = languages
       .map((lang) =>
-        lang.skillId === skillId ? { ...lang, isDeleted: true } : lang
+        lang.skillId === skillId ? { ...lang, isDeleted: true } : lang,
       )
       .filter((lang) => !(lang.isNew && lang.skillId === skillId));
     form.setValue("userProfile.languages", updatedLanguages, {

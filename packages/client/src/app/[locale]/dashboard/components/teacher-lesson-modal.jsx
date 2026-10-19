@@ -253,7 +253,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                     disabled={isLoading}
                     className={cn(
                       "flex-1 bg-green-600 hover:bg-green-700 text-white",
-                      isLoading && "opacity-70"
+                      isLoading && "opacity-70",
                     )}
                   >
                     {isLoading ? (
@@ -270,7 +270,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                     disabled={isLoading}
                     className={cn(
                       "flex-1 bg-green-600 hover:bg-green-700 text-white",
-                      isLoading && "opacity-70"
+                      isLoading && "opacity-70",
                     )}
                   >
                     {isLoading ? (
@@ -312,7 +312,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                           <AvatarFallback className="text-xs bg-primary/10 text-primary">
                             {getInitials(
                               enrollment.student?.firstName,
-                              enrollment.student?.lastInitial
+                              enrollment.student?.lastInitial,
                             )}
                           </AvatarFallback>
                         </Avatar>
@@ -383,7 +383,7 @@ export function TeacherLessonModal({ lesson, open, onClose, onUpdate }) {
                           onClick={() =>
                             handlePaymentUpdate(
                               enrollment.id,
-                              !enrollment.teacherPaymentAt
+                              !enrollment.teacherPaymentAt,
                             )
                           }
                           disabled={processingPaymentId === enrollment.id}

@@ -8,7 +8,7 @@ export const userSchedulePermissions = {
     updateUserScheduleSlots: canPerformAction(
       "userScheduleSlot",
       "update",
-      "userScheduleId"
+      "userScheduleId",
     ),
   },
 };

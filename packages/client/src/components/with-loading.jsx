@@ -14,7 +14,7 @@ export const WithLoading = ({
       <div
         className={cn(
           "flex flex-1 w-full h-full items-center justify-center bg-background/70",
-          className
+          className,
         )}
       >
         {isLoading && (

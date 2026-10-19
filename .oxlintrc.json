@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "react", "nextjs"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "import/named": "error",
+    "import/default": "error",
+    "import/namespace": "error",
+    "react/exhaustive-deps": "warn",
+    "react/purity": "warn",
+    "react/incompatible-library": "warn",
+    "react/set-state-in-effect": "warn",
+    "react/refs": "warn"
+  },
+  "ignorePatterns": [
+    "**/node_modules",
+    "**/.next",
+    "packages/prisma/enums.js",
+    "packages/prisma/enumTypeDefs.js"
+  ]
+}

@@ -169,7 +169,7 @@ export const lessonResolvers = {
       // Check if transition is valid using the constant
       if (!VALID_LESSON_STATUS_TRANSITIONS[lesson.status]?.includes(status)) {
         throw new GraphQLError(
-          `Cannot change lesson from ${lesson.status} to ${status}`
+          `Cannot change lesson from ${lesson.status} to ${status}`,
         );
       }
 
@@ -182,12 +182,12 @@ export const lessonResolvers = {
 
         const allEnrollmentsPaid = enrollments.every(
           (enrollment) =>
-            enrollment.teacherPaymentAt && enrollment.studentPaymentAt
+            enrollment.teacherPaymentAt && enrollment.studentPaymentAt,
         );
 
         if (!allEnrollmentsPaid) {
           throw new Error(
-            "All enrollments must be confirmed paid to complete the lesson"
+            "All enrollments must be confirmed paid to complete the lesson",
           );
         }
       }
@@ -235,11 +235,11 @@ export const lessonResolvers = {
         // Check if transition is valid
         if (
           !VALID_ENROLLMENT_STATUS_TRANSITIONS[enrollment.status]?.includes(
-            status
+            status,
           )
         ) {
           throw new Error(
-            `Cannot change enrollment from ${enrollment.status} to ${status}`
+            `Cannot change enrollment from ${enrollment.status} to ${status}`,
           );
         }
 
@@ -277,7 +277,7 @@ export const lessonResolvers = {
     updateEnrollmentPaymentStatus: async (
       _,
       { enrollmentId, isPaid },
-      { user, prisma }
+      { user, prisma },
     ) => {
       const enrollment = await prisma.enrollment.findUnique({
         where: { id: enrollmentId },

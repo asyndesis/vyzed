@@ -2,30 +2,34 @@
   "name": "vyzed",
   "version": "0.0.1",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
+    "dev": "npm run prisma:generate && (npm run server:dev & npm run client:dev & wait)",
     "client:dev": "npm run -w @vyzed/client dev",
     "client:start": "npm run -w @vyzed/client start",
     "client:build": "npm run -w @vyzed/client build",
     "server:dev": "npm run -w @vyzed/server dev",
     "server:start": "npm run -w @vyzed/server start",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "oxfmt",
     "prisma": "npm run -w @vyzed/prisma",
-    "prisma:build": "npm run -w @vyzed/prisma build",
     "prisma:migrate:dev": "npm run -w @vyzed/prisma migrate:dev",
     "prisma:migrate:deploy": "npm run -w @vyzed/prisma migrate:deploy",
     "prisma:migrate:reset": "npm run -w @vyzed/prisma migrate:reset",
     "prisma:generate": "npm run -w @vyzed/prisma generate && npm run -w @vyzed/prisma generate:enums",
     "prisma:push": "npm run -w @vyzed/prisma push",
     "prisma:studio": "npm run -w @vyzed/prisma studio",
-    "prisma:seed": "npm run -w @vyzed/prisma seed"
+    "prisma:seed": "npm run -w @vyzed/prisma seed",
+    "lint": "oxlint",
+    "format:check": "oxfmt --check"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.7.8",
-    "prettier": "^3.5.2",
-    "eslint": "^8.57.0",
-    "eslint-plugin-import": "^2.31.0"
+    "@flydotio/dockerfile": "^0.7.10",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "engines": {
+    "node": "^22"
+  }
 }

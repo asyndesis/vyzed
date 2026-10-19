@@ -12,7 +12,7 @@ import { useAuth } from "@clerk/nextjs";
 const fetchTokenWithRetries = async (
   getToken,
   maxRetries = 10,
-  delay = 250
+  delay = 250,
 ) => {
   let retries = 0;
   let token = await getToken();

@@ -128,7 +128,7 @@ const Tiptap = ({ value, onChange }) => {
       attributes: {
         class: cn(
           "prose focus:outline-none min-h-[300px] max-w-none",
-          "dark:prose-invert"
+          "dark:prose-invert",
         ),
       },
     },
@@ -220,7 +220,7 @@ const Tiptap = ({ value, onChange }) => {
                     className={cn(
                       "w-6 h-6 rounded-full",
                       color.value === "currentColor" &&
-                        "border border-dashed border-foreground/30"
+                        "border border-dashed border-foreground/30",
                     )}
                     style={{
                       backgroundColor:
