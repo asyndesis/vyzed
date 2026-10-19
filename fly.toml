@@ -1,5 +1,5 @@
 app = "vyzed"
-primary_region = "iad"
+primary_region = "cdg"
 
 [http_service]
 internal_port = 3000
