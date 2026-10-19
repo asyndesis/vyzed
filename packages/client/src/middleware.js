@@ -9,7 +9,7 @@ const PUBLIC_PATHS = [
   /^\/api(\/|$)/,
   /^\/(?:(?:en|de|es)\/?)?$/,
   /^\/(?:(?:en|de|es)\/)?(sign-in|sign-up|forgot-password|reset-password)(\/|$)/,
-  /^\/(?:(?:en|de|es)\/)?dashboard\/teachers(\/|$)/,
+  /^\/(?:(?:en|de|es)\/)?browse(\/|$)/,
 ];
 
 export default function middleware(req) {
@@ -18,6 +18,11 @@ export default function middleware(req) {
   if (pathname.startsWith("/api") || pathname === "/graphql") return NextResponse.next();
 
   const isPublic = PUBLIC_PATHS.some((re) => re.test(pathname));
+
+  // The landing page is a sign-up page; signed-in users belong in the app
+  if (getSessionCookie(req) && /^\/(?:(?:en|de|es)\/?)?$/.test(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
 
   // Optimistic check only (cookie presence). Real validation happens in
   // the server on every GraphQL request and in getSession() on the server.

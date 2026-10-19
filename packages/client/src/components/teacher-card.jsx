@@ -5,14 +5,14 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { SkillBadges } from "@/components/skill-badge";
 
-export function TeacherCard({ user }) {
+export function TeacherCard({ user, href = `/dashboard/teachers/${user.id}` }) {
   const tp = user.teacherProfile;
   const price = formatPrice(tp?.priceAmount, tp?.priceCurrency);
   const languages = user.userProfile?.languages ?? [];
 
   return (
     <Link
-      href={`/dashboard/teachers/${user.id}`}
+      href={href}
       className="group flex flex-col gap-4 rounded-xl border bg-card p-5 transition-colors hover:border-foreground/20"
     >
       <div className="flex items-start gap-3">
