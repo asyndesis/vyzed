@@ -1,7 +1,6 @@
-"use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMutation } from "@apollo/client";
+import { useRouter } from "@/lib/navigation";
+import { useMutation } from "@apollo/client/react";
 import { addDays, format } from "date-fns";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";

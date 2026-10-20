@@ -1,6 +1,6 @@
-"use client";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
+import { useLocale, usePathname } from "@/lib/navigation";
 import { useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,12 @@ const THEMES = [
 ];
 
 function useLanguage() {
-  const router = useRouter();
+  const locale = useLocale();
+  const navigate = useNavigate();
   const pathname = usePathname();
-  const code = pathname.split("/")[1];
-  const locale = LANGUAGES.some((l) => l.value === code) ? code : "en";
+  // Same page, same filters, other language
   const setLocale = (next) =>
-    next && router.push(`/${next}${pathname.replace(/^\/(en|es|de)(?=\/|$)/, "")}`);
+    next && navigate({ to: `/${next}${pathname === "/" ? "" : pathname}`, search: true });
   return [locale, setLocale];
 }
 

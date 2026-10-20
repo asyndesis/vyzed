@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import { ArrowLeftRight, Languages } from "lucide-react";
 import { fullName, formatPrice } from "@/lib/format";
 import { UserAvatar } from "@/components/user-avatar";

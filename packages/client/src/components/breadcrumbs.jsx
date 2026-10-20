@@ -1,5 +1,4 @@
-"use client";
-import Link from "next/link";
+import { Link, usePathname } from "@/lib/navigation";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,7 +7,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { usePathname } from "next/navigation";
 import startCase from "lodash/startCase";
 import { Skeleton } from "@/components/ui/skeleton"; // Adjust the import path to your project structure
 import { Fragment } from "react";
@@ -24,11 +22,6 @@ export const BreadCrumbs = ({ overrides = {}, isLoading = false }) => {
 
       // If override is explicitly set to { hidden: true }, skip this segment
       if (override?.hidden === true) {
-        return null;
-      }
-
-      // Skip this segment if it's the first one and matches a locale pattern
-      if (index === 0 && segment.match(/^[a-z]{2}(-[A-Z]{2})?$/)) {
         return null;
       }
 

@@ -1,6 +1,5 @@
-"use client";
 import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Plus, X } from "lucide-react";
 import { ROOT_SKILLS } from "@/lib/graphql";
 import { renderProficiency } from "@/lib/utils";

@@ -1,5 +1,4 @@
-"use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/navigation";
 import { authClient } from "@/lib/auth-client";
 
 // Wraps a single child and signs the user out when it is clicked

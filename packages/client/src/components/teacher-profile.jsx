@@ -1,6 +1,5 @@
-"use client";
-import Link from "next/link";
-import { useQuery } from "@apollo/client";
+import { Link } from "@/lib/navigation";
+import { useQuery } from "@apollo/client/react";
 import { format } from "date-fns";
 import {
   ArrowLeft,

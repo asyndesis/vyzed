@@ -1,5 +1,4 @@
-"use client";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { useSession } from "@/lib/auth-client";
 import { ME } from "@/lib/graphql";
 

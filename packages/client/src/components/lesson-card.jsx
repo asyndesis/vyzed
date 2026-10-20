@@ -1,5 +1,4 @@
-"use client";
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Check, Loader2, X, CircleDollarSign, Repeat } from "lucide-react";

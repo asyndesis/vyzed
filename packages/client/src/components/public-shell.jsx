@@ -1,7 +1,5 @@
-"use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/lib/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMe } from "@/hooks/use-me";
@@ -11,8 +9,6 @@ import { LanguageMenu, ThemeMenu } from "@/components/preferences";
 
 // Public site navigation. Add About, Pricing, etc. here.
 const NAV = [{ title: "Browse teachers", url: "/browse" }];
-
-const stripLocale = (p) => p.replace(/^\/(en|de|es)(?=\/|$)/, "") || "/";
 
 // Signed in → Dashboard; signed out → Log in / Sign up. While the session
 // resolves, the signed-out buttons hold their space invisibly so nothing shifts.
@@ -41,7 +37,7 @@ function AuthActions({ className, onNavigate }) {
 }
 
 function Header() {
-  const pathname = stripLocale(usePathname());
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [pathname]);
   const isActive = (url) => pathname === url || pathname.startsWith(`${url}/`);

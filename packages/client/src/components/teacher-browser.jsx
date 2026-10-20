@@ -1,7 +1,6 @@
-"use client";
 import { Suspense, useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { usePathname, useRouter, useSearchParams } from "@/lib/navigation";
+import { useQuery } from "@apollo/client/react";
 import { ArrowLeftRight, Languages, Loader2, Search, SearchX, X } from "lucide-react";
 import { ROOT_SKILLS, TEACHERS } from "@/lib/graphql";
 import { cn } from "@/lib/utils";
@@ -172,7 +171,6 @@ export function TeacherBrowser({
   title = "Find a teacher",
   description = "Learn from people near you, or trade lessons skill for skill.",
 }) {
-  // useSearchParams needs a Suspense boundary in the app router
   return (
     <Suspense>
       <Teachers basePath={basePath} title={title} description={description} />

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "react", "nextjs"],
+  "plugins": ["import", "react"],
   "env": {
     "browser": true,
     "node": true,
@@ -22,7 +22,9 @@
   },
   "ignorePatterns": [
     "**/node_modules",
-    "**/.next",
+    "**/.output",
+    "**/.nitro",
+    "**/routeTree.gen.ts",
     "packages/prisma/enums.js",
     "packages/prisma/enumTypeDefs.js"
   ]

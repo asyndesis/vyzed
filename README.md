@@ -23,8 +23,6 @@ BETTER_AUTH_URL=http://localhost:3000
 # Resend (emails for verification / password reset)
 RESEND_API_KEY=
 EMAIL_FROM="Vyzed <noreply@yourdomain.com>"
-# Port here should match apollo port
-NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
 **packages/server/.env**

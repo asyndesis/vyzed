@@ -1,7 +1,7 @@
-"use client";
 
 import { useState } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2, X } from "lucide-react";
 import UserSkillBadge from "@/components/user-skill-badge";

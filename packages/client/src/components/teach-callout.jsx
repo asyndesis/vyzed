@@ -1,5 +1,4 @@
-"use client";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import { useMe } from "@/hooks/use-me";
 import { Button } from "@/components/ui/button";
 

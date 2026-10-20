@@ -1,7 +1,5 @@
-"use client";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { Link, usePathname, useRouter } from "@/lib/navigation";
+import { useQuery } from "@apollo/client/react";
 import {
   CalendarDays,
   ChevronsUpDown,
@@ -42,9 +40,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-// Strip the locale prefix so active matching works for /en/dashboard etc.
-const stripLocale = (p) => p.replace(/^\/(en|de|es)(?=\/|$)/, "") || "/";
-
 const NAV = [
   { title: "Home", url: "/dashboard", icon: Home, exact: true },
   { title: "Lessons", url: "/dashboard/lessons", icon: CalendarDays, badge: "pending" },
@@ -54,7 +49,7 @@ const NAV = [
 
 // Compact profile progress for signed-in users, hidden when collapsed or complete
 function ProfileProgress() {
-  const pathname = stripLocale(usePathname());
+  const pathname = usePathname();
   const { me } = useMe();
   if (!me || pathname === "/dashboard/profile") return null;
   const steps = [
@@ -157,7 +152,7 @@ function UserMenu() {
 }
 
 export function AppShell({ children }) {
-  const pathname = stripLocale(usePathname());
+  const pathname = usePathname();
   const { signedIn } = useMe();
   const pending = usePendingCount(signedIn);
 
