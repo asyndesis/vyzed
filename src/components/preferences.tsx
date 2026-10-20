@@ -44,14 +44,11 @@ function useChangeLocale() {
 }
 
 // The theme only exists in the browser; empty until mounted keeps SSR in sync
-// (and keeps radix groups controlled rather than flipping from undefined)
+// (and keeps the groups controlled rather than flipping from undefined)
 function useThemeValue() {
   const { theme, setTheme } = useTheme();
   const hydrated = useHydrated();
-  return [
-    (hydrated && theme) || "",
-    (t: string) => t && setTheme(t),
-  ] as const;
+  return [(hydrated && theme) || "", (t: string) => t && setTheme(t)] as const;
 }
 
 // Header controls ------------------------------------------------------------
@@ -60,15 +57,17 @@ export function LanguageMenu() {
   const changeLocale = useChangeLocale();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-10 px-0 text-xs font-semibold uppercase"
-          aria-label="Language"
-        >
-          {getLocale()}
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-10 px-0 text-xs font-semibold uppercase"
+            aria-label="Language"
+          />
+        }
+      >
+        {getLocale()}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuRadioGroup
@@ -90,11 +89,11 @@ export function ThemeMenu() {
   const [theme, setTheme] = useThemeValue();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Theme">
-          <Sun className="dark:hidden" />
-          <Moon className="hidden dark:block" />
-        </Button>
+      <DropdownMenuTrigger
+        render={<Button variant="ghost" size="icon" aria-label="Theme" />}
+      >
+        <Sun className="dark:hidden" />
+        <Moon className="hidden dark:block" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
@@ -119,11 +118,10 @@ export function PreferenceFields() {
       <div className="space-y-2">
         <p className="text-sm font-medium">Language</p>
         <ToggleGroup
-          type="single"
           variant="outline"
           size="sm"
-          value={getLocale()}
-          onValueChange={changeLocale}
+          value={[getLocale()]}
+          onValueChange={([v]) => v && changeLocale(v)}
         >
           {LANGUAGES.map((l) => (
             <ToggleGroupItem key={l.value} value={l.value} className="px-3">
@@ -135,11 +133,10 @@ export function PreferenceFields() {
       <div className="space-y-2">
         <p className="text-sm font-medium">Theme</p>
         <ToggleGroup
-          type="single"
           variant="outline"
           size="sm"
-          value={theme}
-          onValueChange={setTheme}
+          value={theme ? [theme] : []}
+          onValueChange={([t]) => t && setTheme(t)}
         >
           {THEMES.map((t) => (
             <ToggleGroupItem

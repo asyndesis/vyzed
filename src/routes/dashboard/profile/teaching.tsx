@@ -31,10 +31,15 @@ function TeachingPage() {
         description="What you offer students, and what it costs."
         actions={
           listed && (
-            <Button asChild variant="outline" size="sm">
-              <Link to="/dashboard/teachers/$id" params={{ id: me.id }}>
-                Public profile <ExternalLink />
-              </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              render={
+                <Link to="/dashboard/teachers/$id" params={{ id: me.id }} />
+              }
+              nativeButton={false}
+            >
+              Public profile <ExternalLink />
             </Button>
           )
         }

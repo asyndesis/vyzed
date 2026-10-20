@@ -17,8 +17,8 @@ function Message({
         <Icon className="mx-auto size-8 text-muted-foreground" />
         <h1 className="mt-4 text-xl font-semibold">{title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-        <Button asChild className="mt-6">
-          <Link to="/">Back to home</Link>
+        <Button className="mt-6" render={<Link to="/" />} nativeButton={false}>
+          Back to home
         </Button>
       </div>
     </main>

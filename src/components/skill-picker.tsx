@@ -50,10 +50,10 @@ export function SkillCombobox({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button type="button" variant="outline" size="sm">
-          <Plus /> {label}
-        </Button>
+      <PopoverTrigger
+        render={<Button type="button" variant="outline" size="sm" />}
+      >
+        <Plus /> {label}
       </PopoverTrigger>
       <PopoverContent className="w-64 p-0" align="start">
         <Command>

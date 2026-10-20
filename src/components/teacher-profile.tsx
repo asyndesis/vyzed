@@ -100,10 +100,14 @@ export function TeacherProfile({
 
   return (
     <>
-      <Button asChild variant="ghost" size="sm" className="-ml-2">
-        <Link to={backTo}>
-          <ArrowLeft /> All teachers
-        </Link>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-ml-2"
+        render={<Link to={backTo} />}
+        nativeButton={false}
+      >
+        <ArrowLeft /> All teachers
       </Button>
 
       <div className="grid gap-8 md:grid-cols-[1fr_280px]">
@@ -158,8 +162,13 @@ export function TeacherProfile({
             </p>
           )}
           {isMe ? (
-            <Button asChild variant="outline" className="w-full">
-              <Link to="/dashboard/profile">Edit your profile</Link>
+            <Button
+              variant="outline"
+              className="w-full"
+              render={<Link to="/dashboard/profile" />}
+              nativeButton={false}
+            >
+              Edit your profile
             </Button>
           ) : teaches.length === 0 ? (
             <p className="text-sm text-muted-foreground">
@@ -175,14 +184,19 @@ export function TeacherProfile({
               }
             />
           ) : (
-            <Button asChild size="lg" className="w-full">
-              {/* Come back to this teacher inside the app after signing in */}
-              <Link
-                to="/sign-in"
-                search={{ redirect: `/dashboard/teachers/${user.id}` }}
-              >
-                Sign in to book
-              </Link>
+            <Button
+              size="lg"
+              className="w-full"
+              nativeButton={false}
+              // Come back to this teacher inside the app after signing in
+              render={
+                <Link
+                  to="/sign-in"
+                  search={{ redirect: `/dashboard/teachers/${user.id}` }}
+                />
+              }
+            >
+              Sign in to book
             </Button>
           )}
         </aside>

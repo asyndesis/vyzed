@@ -62,7 +62,7 @@ export function RequestLessonDialog({
   trigger,
 }: {
   data: FragmentOf<typeof BookableTeacherFields>;
-  trigger: React.ReactNode;
+  trigger: React.ReactElement;
 }) {
   const teacher = readFragment(BookableTeacherFields, data);
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ export function RequestLessonDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger render={trigger} />
       <DialogContent className="sm:max-w-md">
         <form
           className="space-y-5"
@@ -141,7 +141,7 @@ export function RequestLessonDialog({
 
           <div className="space-y-2">
             <Label>What do you want to learn?</Label>
-            <Select value={skillId} onValueChange={setSkillId}>
+            <Select value={skillId} onValueChange={(v) => setSkillId(v ?? "")}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose a skill" />
               </SelectTrigger>
@@ -193,10 +193,9 @@ export function RequestLessonDialog({
           <div className="space-y-2">
             <Label>Payment</Label>
             <ToggleGroup
-              type="single"
               variant="outline"
-              value={payment}
-              onValueChange={(v) => v && setPayment(v as PaymentType)}
+              value={[payment]}
+              onValueChange={([v]) => v && setPayment(v as PaymentType)}
               className="grid w-full grid-cols-2"
             >
               {options.map((o) => (

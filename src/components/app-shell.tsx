@@ -2,7 +2,6 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import {
   CalendarDays,
-  ChevronRight,
   ChevronsUpDown,
   GraduationCap,
   Home,
@@ -36,13 +35,7 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
 import { fullName } from "@/lib/format";
@@ -51,7 +44,7 @@ import { meQuery } from "@/lib/queries";
 import { viewerQuery } from "@/lib/session";
 
 export const PROFILE_PAGES = [
-  { title: "Profile", to: "/dashboard/profile", exact: true },
+  { title: "General", to: "/dashboard/profile", exact: true },
   { title: "Teaching", to: "/dashboard/profile/teaching" },
   { title: "Learning", to: "/dashboard/profile/learning" },
   { title: "Preferences", to: "/dashboard/profile/preferences" },
@@ -65,7 +58,6 @@ const NAV = [
     title: "Profile",
     to: "/dashboard/profile",
     icon: UserRound,
-    // Shown under Profile while you're in it
     children: PROFILE_PAGES,
   },
 ] as const;
@@ -130,20 +122,22 @@ function UserMenu() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <UserAvatar user={me} className="size-8 rounded-lg" />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{fullName(me)}</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {me.email}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
+                size="lg"
+                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
+              />
+            }
+          >
+            <UserAvatar user={me} className="size-8 rounded-lg" />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{fullName(me)}</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {me.email}
+              </span>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="right"
@@ -155,12 +149,10 @@ function UserMenu() {
               {me.email}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/dashboard/profile">
-                <UserRound /> Profile
-              </Link>
+            <DropdownMenuItem render={<Link to="/dashboard/profile" />}>
+              <UserRound /> Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={signOut}>
+            <DropdownMenuItem onClick={signOut}>
               <LogOut /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -170,10 +162,9 @@ function UserMenu() {
   );
 }
 
-// After shadcn's sidebar-07 block: items with pages expand in place under a chevron
+// Every item is a link; one with pages lists them underneath while you're in it
 function NavMain({ pending }: { pending: number }) {
   const matchRoute = useMatchRoute();
-  const { state, isMobile } = useSidebar();
   const isActive = (item: { to: string; exact?: boolean }) =>
     !!matchRoute({ to: item.to, fuzzy: !item.exact });
 
@@ -182,53 +173,33 @@ function NavMain({ pending }: { pending: number }) {
       <SidebarMenu>
         {NAV.map((item) => {
           const active = isActive(item);
-          // Icon-only rail can't show the pages, so the item just links to the first
-          if ("children" in item && (isMobile || state === "expanded"))
-            return (
-              <Collapsible
-                // Remounts on entering or leaving, so it opens with the section
-                key={`${item.to}-${active}`}
-                defaultOpen={active}
-                asChild
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.children.map((sub) => (
-                        <SidebarMenuSubItem key={sub.to}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={isActive(sub)}
-                          >
-                            <Link to={sub.to}>
-                              <span>{sub.title}</span>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            );
           return (
             <SidebarMenuItem key={item.to}>
-              <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
-                <Link to={item.to}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
+              <SidebarMenuButton
+                // With its pages showing, the highlight goes on the current page instead
+                isActive={active && !("children" in item)}
+                tooltip={item.title}
+                render={<Link to={item.to} />}
+              >
+                <item.icon />
+                <span>{item.title}</span>
               </SidebarMenuButton>
               {item.to === "/dashboard/lessons" && pending > 0 && (
                 <SidebarMenuBadge>{pending}</SidebarMenuBadge>
+              )}
+              {"children" in item && active && (
+                <SidebarMenuSub>
+                  {item.children.map((sub) => (
+                    <SidebarMenuSubItem key={sub.to}>
+                      <SidebarMenuSubButton
+                        isActive={isActive(sub)}
+                        render={<Link to={sub.to} />}
+                      >
+                        <span>{sub.title}</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
               )}
             </SidebarMenuItem>
           );
@@ -258,13 +229,11 @@ export function AppShell({
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <Link to="/dashboard">
-                  <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
-                  <span className="font-display text-base font-semibold">
-                    vyzed
-                  </span>
-                </Link>
+              <SidebarMenuButton size="lg" render={<Link to="/dashboard" />}>
+                <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
+                <span className="font-display text-base font-semibold">
+                  vyzed
+                </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

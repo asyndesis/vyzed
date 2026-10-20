@@ -95,8 +95,13 @@ function CheckEmail({ message }: { message: string }) {
         <h1 className="text-xl font-semibold">Check your email</h1>
         <p className="text-sm text-muted-foreground">{message}</p>
       </div>
-      <Button asChild variant="outline" className="w-full">
-        <Link to="/sign-in">Back to sign in</Link>
+      <Button
+        variant="outline"
+        className="w-full"
+        render={<Link to="/sign-in" />}
+        nativeButton={false}
+      >
+        Back to sign in
       </Button>
     </div>
   );
@@ -356,8 +361,12 @@ export function ResetPasswordForm({
             one.
           </p>
         </div>
-        <Button asChild className="w-full">
-          <Link to="/forgot-password">Send a new link</Link>
+        <Button
+          className="w-full"
+          render={<Link to="/forgot-password" />}
+          nativeButton={false}
+        >
+          Send a new link
         </Button>
       </div>
     );
