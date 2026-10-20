@@ -17,7 +17,9 @@
     "db:seed": "tsx src/server/db/seed.ts",
     "gql": "tsx scripts/print-schema.ts && gql.tada generate-output",
     "format:check": "oxfmt --check",
-    "postinstall": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
+    "postinstall": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@better-auth/api-key": "^1.7.12",
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@0no-co/graphqlsp": "^1.17.5",
+    "@electric-sql/pglite": "^0.5.10",
     "@inlang/paraglide-js": "^2.29.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/devtools-vite": "0.8.5",
@@ -75,7 +78,8 @@
     "oxlint": "^1.89.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
