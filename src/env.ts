@@ -21,5 +21,7 @@ export const env = createEnv({
       ),
   },
   runtimeEnv: process.env,
+  // Set during the Docker build, where secrets are not available
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
 });

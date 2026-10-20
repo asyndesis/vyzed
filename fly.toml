@@ -6,11 +6,13 @@ kill_timeout = '5s'
 
 [build]
 
+[deploy]
+release_command = 'node scripts/migrate.mjs'
+
 [env]
 NODE_ENV = 'production'
 BETTER_AUTH_URL = 'https://vyzed.fly.dev'
 
-# TanStack Start (3000) is public; it proxies /graphql to the API on 4000 internally
 [http_service]
 internal_port = 3000
 force_https = true

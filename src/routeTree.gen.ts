@@ -14,6 +14,7 @@ import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as GraphqlRouteImport } from './routes/graphql'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as PublicAuthRouteImport } from './routes/_public/_auth'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardLessonsRouteImport } from './routes/dashboard/lessons'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
@@ -49,6 +50,11 @@ const PublicIndexRoute = PublicIndexRouteImport.update({
 const PublicAuthRoute = PublicAuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => PublicRoute,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/': typeof PublicIndexRoute
   '/graphql': typeof GraphqlRoute
+  '/api/health': typeof ApiHealthRoute
   '/dashboard/lessons': typeof DashboardLessonsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/graphql': typeof GraphqlRoute
   '/': typeof PublicIndexRoute
+  '/api/health': typeof ApiHealthRoute
   '/dashboard/lessons': typeof DashboardLessonsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteWithChildren
   '/graphql': typeof GraphqlRoute
   '/_public/_auth': typeof PublicAuthRouteWithChildren
+  '/api/health': typeof ApiHealthRoute
   '/dashboard/lessons': typeof DashboardLessonsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/_public/': typeof PublicIndexRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/'
     | '/graphql'
+    | '/api/health'
     | '/dashboard/lessons'
     | '/dashboard/profile'
     | '/dashboard/'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
   to:
     | '/graphql'
     | '/'
+    | '/api/health'
     | '/dashboard/lessons'
     | '/dashboard/profile'
     | '/dashboard'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/_public'
     | '/graphql'
     | '/_public/_auth'
+    | '/api/health'
     | '/dashboard/lessons'
     | '/dashboard/profile'
     | '/_public/'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   PublicRoute: typeof PublicRouteWithChildren
   GraphqlRoute: typeof GraphqlRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof PublicAuthRouteImport
       parentRoute: typeof PublicRoute
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -410,17 +430,9 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
   GraphqlRoute: GraphqlRoute,
+  ApiHealthRoute: ApiHealthRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

@@ -15,6 +15,7 @@ To build this application for production:
 
 ```bash
 npm run build
+node .output/server/index.mjs
 ```
 
 ## Styling
@@ -93,18 +94,37 @@ import { env } from "#/env";
 console.log(env.VITE_APP_TITLE);
 ```
 
-## Deploy with Nitro
+## Deploy (Fly.io)
 
-This project uses Nitro as a generic server adapter, so it can run on any Node-compatible host.
+The app runs on Fly.io as a single Nitro Node server (`Dockerfile`, `fly.toml`). `GET /api/health` is the health check.
+
+First time only, set the secrets (never committed or baked into the image):
 
 ```bash
-npm run build
-node dist/server/index.mjs
+fly secrets set \
+  DATABASE_URL="postgres://..." \
+  BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
+  RESEND_API_KEY="re_..." \
+  EMAIL_FROM="Vyzed <noreply@yourdomain.com>"
+# optional: CORS_ORIGINS="https://other.example.com"
 ```
 
-The build output is a self-contained Node server. To deploy, push the `dist/` directory to your host (Render, Fly.io, your own VPS, etc.) and run the server command above.
+`BETTER_AUTH_URL` and `NODE_ENV` are non-secret and live in `fly.toml`.
 
-For host-specific presets (Vercel, Netlify, Cloudflare, AWS Lambda, etc.) and tuning, see https://v3.nitro.build/deploy.
+Then deploy:
+
+```bash
+fly deploy
+```
+
+Each deploy first runs `node scripts/migrate.mjs` as the `release_command`, which applies pending migrations from `drizzle/` with drizzle-orm's migrator (already-applied ones are skipped). A failed migration aborts the deploy. Generate new migrations locally with `npm run db:generate` and commit them.
+
+Run the production image locally:
+
+```bash
+docker build -t vyzed:local .
+docker run --rm --env-file .env -e BETTER_AUTH_URL=http://localhost:3200 -p 3200:3000 vyzed:local
+```
 
 ## Routing
 
