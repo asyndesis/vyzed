@@ -13,7 +13,6 @@ export function RootError({ error }) {
       description="We're sorry, something went wrong on our end."
       iconName="CircleAlert"
       actionText="Go Home"
-      actionHref="/"
     />
   );
 }

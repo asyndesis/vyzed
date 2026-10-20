@@ -2,11 +2,11 @@ import { Suspense } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AuthForm } from "@/components/auth-form";
 
-export const Route = createFileRoute("/$locale/_login/reset-password")({
-  head: () => ({ meta: [{ title: "Reset password · Vyzed" }] }),
+export const Route = createFileRoute("/{-$locale}/_login/sign-up")({
+  head: () => ({ meta: [{ title: "Create account · Vyzed" }] }),
   component: () => (
     <Suspense>
-      <AuthForm mode="reset-password" />
+      <AuthForm mode="sign-up" />
     </Suspense>
   ),
 });

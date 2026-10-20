@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useRouter, useSearchParams } from "@/lib/navigation";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,16 +30,21 @@ const CONFIG = {
 };
 
 export function AuthForm({ mode }) {
-  const router = useRouter();
-  const params = useSearchParams();
+  const navigate = useNavigate();
+  const params = useSearch({ strict: false });
   const cfg = CONFIG[mode];
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
   const [unverifiedEmail, setUnverifiedEmail] = useState("");
-  const token = params.get("token");
+  const token = params.token;
 
-  const redirectTo = params.get("redirect") || "/dashboard";
+  // Only same-site paths, never //evil.com
+  const redirectTo = /^\/(?!\/)/.test(params.redirect ?? "") ? params.redirect : null;
+  const afterSignIn = () =>
+    redirectTo
+      ? navigate({ href: redirectTo, replace: true })
+      : navigate({ to: "/{-$locale}/dashboard", replace: true });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -58,7 +63,7 @@ export function AuthForm({ mode }) {
     if (mode === "sign-in") {
       await authClient.signIn.email(
         { email: f.email, password: f.password },
-        { onSuccess: () => router.replace(redirectTo), onError },
+        { onSuccess: afterSignIn, onError },
       );
     } else if (mode === "sign-up") {
       await authClient.signUp.email(
@@ -87,7 +92,7 @@ export function AuthForm({ mode }) {
     } else {
       await authClient.resetPassword(
         { newPassword: f.password, token },
-        { onSuccess: () => router.replace("/sign-in?reset=1"), onError },
+        { onSuccess: () => navigate({ to: "/{-$locale}/sign-in", search: { reset: "1" }, replace: true }), onError },
       );
     }
     setLoading(false);
@@ -122,7 +127,7 @@ export function AuthForm({ mode }) {
           <p className="text-sm text-muted-foreground">{notice}</p>
         </div>
         <Button asChild variant="outline" className="w-full">
-          <Link href="/sign-in">Back to sign in</Link>
+          <Link to="/{-$locale}/sign-in">Back to sign in</Link>
         </Button>
       </div>
     );
@@ -140,7 +145,7 @@ export function AuthForm({ mode }) {
   };
 
   // Reset links without a token (or with an expired one) can't work
-  if (mode === "reset-password" && (!token || params.get("error")))
+  if (mode === "reset-password" && (!token || params.error))
     return (
       <div className="space-y-4">
         <div className="space-y-1.5">
@@ -150,7 +155,7 @@ export function AuthForm({ mode }) {
           </p>
         </div>
         <Button asChild className="w-full">
-          <Link href="/forgot-password">Send a new link</Link>
+          <Link to="/{-$locale}/forgot-password">Send a new link</Link>
         </Button>
       </div>
     );
@@ -158,7 +163,7 @@ export function AuthForm({ mode }) {
   return (
     <>
       {header}
-      {mode === "sign-in" && params.get("reset") && (
+      {mode === "sign-in" && params.reset && (
         <p className="mb-4 rounded-md border px-3 py-2 text-sm">Password updated. Sign in with your new password.</p>
       )}
       <form onSubmit={onSubmit} className="space-y-4">
@@ -180,7 +185,7 @@ export function AuthForm({ mode }) {
               autoComplete: mode === "sign-in" ? "current-password" : "new-password",
             },
             mode === "sign-in" && (
-              <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/{-$locale}/forgot-password" className="text-sm text-muted-foreground hover:text-foreground">
                 Forgot password?
               </Link>
             ),
@@ -207,19 +212,19 @@ export function AuthForm({ mode }) {
         {mode === "sign-in" ? (
           <>
             New to Vyzed?{" "}
-            <Link href="/sign-up" className="font-medium text-foreground hover:underline">
+            <Link to="/{-$locale}/sign-up" className="font-medium text-foreground hover:underline">
               Create an account
             </Link>
           </>
         ) : mode === "sign-up" ? (
           <>
             Already have an account?{" "}
-            <Link href="/sign-in" className="font-medium text-foreground hover:underline">
+            <Link to="/{-$locale}/sign-in" className="font-medium text-foreground hover:underline">
               Sign in
             </Link>
           </>
         ) : (
-          <Link href="/sign-in" className="font-medium text-foreground hover:underline">
+          <Link to="/{-$locale}/sign-in" className="font-medium text-foreground hover:underline">
             Back to sign in
           </Link>
         )}

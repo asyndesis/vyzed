@@ -1,4 +1,4 @@
-import { Link } from "@/lib/navigation";
+import { Link } from "@tanstack/react-router";
 import { useMe } from "@/hooks/use-me";
 import { Button } from "@/components/ui/button";
 
@@ -18,10 +18,10 @@ export function TeachCallout() {
       </div>
       <div className="flex gap-2">
         <Button asChild variant="outline">
-          <Link href="/sign-in">Log in</Link>
+          <Link to="/{-$locale}/sign-in">Log in</Link>
         </Button>
         <Button asChild>
-          <Link href="/sign-up">Become a teacher</Link>
+          <Link to="/{-$locale}/sign-up">Become a teacher</Link>
         </Button>
       </div>
     </section>

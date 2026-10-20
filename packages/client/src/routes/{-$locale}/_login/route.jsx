@@ -3,9 +3,18 @@ import { hasSession } from "@/lib/session";
 import { PublicShell } from "@/components/public-shell";
 import { PitchPoints, SplitLayout } from "@/components/split-layout";
 
-export const Route = createFileRoute("/$locale/_login")({
-  beforeLoad: async ({ params }) => {
-    if (await hasSession()) throw redirect({ to: "/$locale/dashboard", params });
+const text = (v) => (v == null || v === "" ? undefined : String(v));
+
+export const Route = createFileRoute("/{-$locale}/_login")({
+  // Search params used by the auth forms
+  validateSearch: (search) => ({
+    redirect: text(search.redirect),
+    token: text(search.token),
+    error: text(search.error),
+    reset: text(search.reset),
+  }),
+  beforeLoad: async () => {
+    if (await hasSession()) throw redirect({ to: "/{-$locale}/dashboard" });
   },
   component: AuthLayout,
 });

@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Link } from "@/lib/navigation";
+
 import { useQuery } from "@apollo/client/react";
 import { CalendarDays, Inbox, History } from "lucide-react";
 import { MY_LESSONS } from "@/lib/graphql";
@@ -86,7 +86,7 @@ function LessonsPage() {
                   action={
                     t.key === "upcoming" && (
                       <Button asChild variant="outline">
-                        <Link href="/dashboard/teachers">Find a teacher</Link>
+                        <Link to="/{-$locale}/dashboard/teachers">Find a teacher</Link>
                       </Button>
                     )
                   }
@@ -100,4 +100,4 @@ function LessonsPage() {
   );
 }
 
-export const Route = createFileRoute("/$locale/dashboard/lessons")({ component: LessonsPage });
+export const Route = createFileRoute("/{-$locale}/dashboard/lessons")({ component: LessonsPage });

@@ -1,21 +1,13 @@
-import { HeadContent, Outlet, Scripts, createRootRoute, redirect } from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts, createRootRoute, useParams } from "@tanstack/react-router";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorPage } from "@/components/error-page";
 import { RootError } from "@/components/root-error";
-import { detectLocale, isLocale } from "@/lib/locale";
-import { useLocale } from "@/lib/navigation";
+import { defaultLocale } from "@/lib/locale";
 import appCss from "@/styles/globals.css?url";
 
 export const Route = createRootRoute({
-  // Every page lives under /:locale. Send bare paths (/, /dashboard, links from
-  // emails) to the visitor's language.
-  beforeLoad: async ({ location }) => {
-    if (isLocale(location.pathname.split("/")[1])) return;
-    const path = location.pathname === "/" ? "" : location.pathname;
-    throw redirect({ href: `/${await detectLocale()}${path}${location.searchStr}` });
-  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -40,14 +32,14 @@ export const Route = createRootRoute({
       description="The page you're looking for doesn't exist or has been moved."
       iconName="FileQuestion"
       actionText="Back to Home"
-      actionHref="/"
     />
   ),
 });
 
 function RootComponent() {
+  const { locale = defaultLocale } = useParams({ strict: false });
   return (
-    <html lang={useLocale()} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

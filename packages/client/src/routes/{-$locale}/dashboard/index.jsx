@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@/lib/navigation";
+import { Link, createFileRoute } from "@tanstack/react-router";
+
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { format, formatDistanceToNowStrict } from "date-fns";
@@ -38,15 +38,16 @@ function summary({ action, upcoming }) {
   return "Your calendar is clear — a good time to learn something new.";
 }
 
-function Section({ title, children, href, linkLabel = "See all" }) {
+// `link` is spread onto <Link>: { to, search?, params? }
+function Section({ title, children, link, linkLabel = "See all" }) {
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {title}
         </h2>
-        {href && (
-          <Link href={href} className="text-sm text-primary hover:underline">
+        {link && (
+          <Link {...link} className="text-sm text-primary hover:underline">
             {linkLabel}
           </Link>
         )}
@@ -99,7 +100,7 @@ function NextLesson({ lesson, role }) {
         </div>
         {role === "student" && (
           <Button asChild variant="outline" size="sm" className="shrink-0">
-            <Link href={`/dashboard/teachers/${lesson.teacher.id}`}>View teacher</Link>
+            <Link to="/{-$locale}/dashboard/teachers/$id" params={{ id: lesson.teacher.id }}>View teacher</Link>
           </Button>
         )}
       </div>
@@ -125,7 +126,11 @@ function TeachersForYou({ me }) {
   return (
     <Section
       title={wanted.length ? "Teachers for you" : "Discover teachers"}
-      href={teachers.length ? `/dashboard/teachers${wanted.length ? `?skills=${wanted.join(",")}` : ""}` : undefined}
+      link={
+        teachers.length
+          ? { to: "/{-$locale}/dashboard/teachers", search: wanted.length ? { skills: wanted.join(",") } : {} }
+          : undefined
+      }
       linkLabel="Browse all"
     >
       {data && !teachers.length ? (
@@ -136,7 +141,7 @@ function TeachersForYou({ me }) {
             description="New teachers join all the time. Know something? Be one of the first."
             action={
               <Button asChild variant="outline" size="sm">
-                <Link href="/dashboard/profile">Start teaching</Link>
+                <Link to="/{-$locale}/dashboard/profile">Start teaching</Link>
               </Button>
             }
           />
@@ -184,12 +189,12 @@ function DashboardPage() {
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link href="/dashboard/profile">
+            <Link to="/{-$locale}/dashboard/profile">
               <UserPen className="h-4 w-4" /> Profile
             </Link>
           </Button>
           <Button asChild size="sm">
-            <Link href="/dashboard/teachers">
+            <Link to="/{-$locale}/dashboard/teachers">
               <Search className="h-4 w-4" /> Find a teacher
             </Link>
           </Button>
@@ -226,7 +231,7 @@ function DashboardPage() {
         <FadeIn className="space-y-8">
           <NextLesson {...next} />
           {later.length > 0 && (
-            <Section title="Later" href={later.length > 3 ? "/dashboard/lessons" : undefined}>
+            <Section title="Later" link={later.length > 3 ? { to: "/{-$locale}/dashboard/lessons" } : undefined}>
               <div className="space-y-2">
                 {later.slice(0, 3).map((i) => (
                   <LessonCard key={i.lesson.id + i.role} {...i} />
@@ -242,7 +247,7 @@ function DashboardPage() {
           description="Find someone to learn from, or wait for students to book you."
           action={
             <Button asChild>
-              <Link href="/dashboard/teachers">
+              <Link to="/{-$locale}/dashboard/teachers">
                 <Search className="h-4 w-4" /> Find a teacher
               </Link>
             </Button>
@@ -255,4 +260,4 @@ function DashboardPage() {
   );
 }
 
-export const Route = createFileRoute("/$locale/dashboard/")({ component: DashboardPage });
+export const Route = createFileRoute("/{-$locale}/dashboard/")({ component: DashboardPage });

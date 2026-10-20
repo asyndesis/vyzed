@@ -1,18 +1,19 @@
-import { Link } from "@/lib/navigation";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeftRight, Languages } from "lucide-react";
 import { fullName, formatPrice } from "@/lib/format";
 import { UserAvatar } from "@/components/user-avatar";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { SkillBadges } from "@/components/skill-badge";
 
-export function TeacherCard({ user, href = `/dashboard/teachers/${user.id}` }) {
+export function TeacherCard({ user, to = "/{-$locale}/dashboard/teachers/$id" }) {
   const tp = user.teacherProfile;
   const price = formatPrice(tp?.priceAmount, tp?.priceCurrency);
   const languages = user.userProfile?.languages ?? [];
 
   return (
     <Link
-      href={href}
+      to={to}
+      params={{ id: user.id }}
       className="group flex flex-col gap-4 rounded-xl border bg-card p-5 transition-colors hover:border-foreground/20"
     >
       <div className="flex items-start gap-3">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, usePathname } from "@/lib/navigation";
+import { Link, useLocation } from "@tanstack/react-router";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMe } from "@/hooks/use-me";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { LanguageMenu, ThemeMenu } from "@/components/preferences";
 
 // Public site navigation. Add About, Pricing, etc. here.
-const NAV = [{ title: "Browse teachers", url: "/browse" }];
+const NAV = [{ title: "Browse teachers", to: "/{-$locale}/browse" }];
 
 // Signed in → Dashboard; signed out → Log in / Sign up. While the session
 // resolves, the signed-out buttons hold their space invisibly so nothing shifts.
@@ -18,7 +18,7 @@ function AuthActions({ className, onNavigate }) {
     return (
       <div className={className}>
         <Button asChild size="sm" onClick={onNavigate}>
-          <Link href="/dashboard">
+          <Link to="/{-$locale}/dashboard">
             Dashboard <ArrowRight />
           </Link>
         </Button>
@@ -27,37 +27,34 @@ function AuthActions({ className, onNavigate }) {
   return (
     <div className={cn(className, sessionPending && "invisible")}>
       <Button asChild size="sm" variant="ghost" onClick={onNavigate}>
-        <Link href="/sign-in">Log in</Link>
+        <Link to="/{-$locale}/sign-in">Log in</Link>
       </Button>
       <Button asChild size="sm" onClick={onNavigate}>
-        <Link href="/sign-up">Sign up</Link>
+        <Link to="/{-$locale}/sign-up">Sign up</Link>
       </Button>
     </div>
   );
 }
 
 function Header() {
-  const pathname = usePathname();
+  const pathname = useLocation({ select: (l) => l.pathname });
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [pathname]);
-  const isActive = (url) => pathname === url || pathname.startsWith(`${url}/`);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-4 md:px-10">
-        <Link href="/" aria-label="Vyzed home">
+        <Link to="/{-$locale}" aria-label="Vyzed home">
           <Logo />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <Link
-              key={item.url}
-              href={item.url}
-              className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
-                isActive(item.url) && "text-foreground",
-              )}
+              key={item.to}
+              to={item.to}
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
             >
               {item.title}
             </Link>
@@ -87,12 +84,11 @@ function Header() {
           <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4">
             {NAV.map((item) => (
               <Link
-                key={item.url}
-                href={item.url}
-                className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium",
-                  isActive(item.url) ? "bg-muted" : "text-muted-foreground",
-                )}
+                key={item.to}
+                to={item.to}
+                className="rounded-md px-3 py-2 text-sm font-medium"
+                activeProps={{ className: "bg-muted" }}
+                inactiveProps={{ className: "text-muted-foreground" }}
               >
                 {item.title}
               </Link>
@@ -116,11 +112,11 @@ function Footer() {
         <span>© Vyzed</span>
         <nav className="flex flex-wrap gap-x-6 gap-y-2">
           {NAV.map((item) => (
-            <Link key={item.url} href={item.url} className="hover:text-foreground">
+            <Link key={item.to} to={item.to} className="hover:text-foreground">
               {item.title}
             </Link>
           ))}
-          <Link href="/sign-up" className="hover:text-foreground">
+          <Link to="/{-$locale}/sign-up" className="hover:text-foreground">
             Become a teacher
           </Link>
         </nav>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "@/lib/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@apollo/client/react";
 import { addDays, format } from "date-fns";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ import {
 import { LevelSelect } from "@/components/skill-picker";
 
 export function RequestLessonDialog({ teacher, trigger }) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const skills = teacher.teacherProfile?.skills ?? [];
   const tp = teacher.teacherProfile;
   const price = formatPrice(tp?.priceAmount, tp?.priceCurrency);
@@ -68,7 +68,7 @@ export function RequestLessonDialog({ teacher, trigger }) {
       setOpen(false);
       toast.success("Request sent", {
         description: `${teacher.firstName} will confirm soon.`,
-        action: { label: "View", onClick: () => router.push("/dashboard/lessons") },
+        action: { label: "View", onClick: () => navigate({ to: "/{-$locale}/dashboard/lessons" }) },
       });
     } catch (err) {
       toast.error(err.message);

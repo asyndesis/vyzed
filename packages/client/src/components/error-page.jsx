@@ -1,4 +1,4 @@
-import { Link } from "@/lib/navigation";
+import { Link } from "@tanstack/react-router";
 import { Icon } from "@/components/ui/icon";
 import { SignOutButton } from "@/components/sign-out-button";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ export function ErrorPage({
   description = "We encountered an unexpected error.",
   iconName = "CircleAlert",
   actionText = "Back to Home",
-  actionHref = "/",
+  actionTo = "/{-$locale}",
 }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/30 p-4">
@@ -35,7 +35,7 @@ export function ErrorPage({
         <div className="p-6 bg-muted/30 border-t border-border/40">
           <div className="flex justify-center items-center gap-4">
             <Link
-              href={actionHref}
+              to={actionTo}
               className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               {actionText}

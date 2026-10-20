@@ -1,4 +1,4 @@
-import { Link, usePathname, useRouter } from "@/lib/navigation";
+import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@apollo/client/react";
 import {
   CalendarDays,
@@ -41,17 +41,17 @@ import {
 } from "@/components/ui/sidebar";
 
 const NAV = [
-  { title: "Home", url: "/dashboard", icon: Home, exact: true },
-  { title: "Lessons", url: "/dashboard/lessons", icon: CalendarDays, badge: "pending" },
-  { title: "Find teachers", url: "/dashboard/teachers", icon: GraduationCap },
-  { title: "Profile", url: "/dashboard/profile", icon: UserRound },
+  { title: "Home", to: "/{-$locale}/dashboard", icon: Home, exact: true },
+  { title: "Lessons", to: "/{-$locale}/dashboard/lessons", icon: CalendarDays, badge: "pending" },
+  { title: "Find teachers", to: "/{-$locale}/dashboard/teachers", icon: GraduationCap },
+  { title: "Profile", to: "/{-$locale}/dashboard/profile", icon: UserRound },
 ];
 
 // Compact profile progress for signed-in users, hidden when collapsed or complete
 function ProfileProgress() {
-  const pathname = usePathname();
+  const matchRoute = useMatchRoute();
   const { me } = useMe();
-  if (!me || pathname === "/dashboard/profile") return null;
+  if (!me || matchRoute({ to: "/{-$locale}/dashboard/profile" })) return null;
   const steps = [
     me.userProfile?.languages?.length,
     me.studentProfile?.skills?.length,
@@ -63,7 +63,7 @@ function ProfileProgress() {
 
   return (
     <Link
-      href="/dashboard/profile"
+      to="/{-$locale}/dashboard/profile"
       className="block rounded-lg border bg-background p-3 transition-colors hover:border-primary/40 group-data-[collapsible=icon]:hidden"
     >
       <div className="flex items-center justify-between text-sm">
@@ -91,7 +91,7 @@ export function usePendingCount(enabled) {
 }
 
 function UserMenu() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { me, signedIn, loading } = useMe();
 
   // Reserve the row's height without random-width skeletons (they break hydration)
@@ -102,7 +102,7 @@ function UserMenu() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild tooltip="Sign in">
-            <Link href="/sign-in">
+            <Link to="/{-$locale}/sign-in">
               <LogIn />
               <span>Sign in</span>
             </Link>
@@ -112,7 +112,7 @@ function UserMenu() {
     );
 
   const signOut = () =>
-    authClient.signOut({ fetchOptions: { onSuccess: () => router.replace("/sign-in") } });
+    authClient.signOut({ fetchOptions: { onSuccess: () => navigate({ to: "/{-$locale}/sign-in", replace: true }) } });
 
   return (
     <SidebarMenu>
@@ -137,7 +137,7 @@ function UserMenu() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/profile">
+              <Link to="/{-$locale}/dashboard/profile">
                 <UserRound /> Profile
               </Link>
             </DropdownMenuItem>
@@ -152,12 +152,11 @@ function UserMenu() {
 }
 
 export function AppShell({ children }) {
-  const pathname = usePathname();
+  const matchRoute = useMatchRoute();
   const { signedIn } = useMe();
   const pending = usePendingCount(signedIn);
 
-  const isActive = (item) =>
-    item.exact ? pathname === item.url : pathname.startsWith(item.url);
+  const isActive = (item) => !!matchRoute({ to: item.to, fuzzy: !item.exact });
 
   const current = NAV.filter(isActive).at(-1);
 
@@ -168,7 +167,7 @@ export function AppShell({ children }) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
-                <Link href={signedIn ? "/dashboard" : "/"}>
+                <Link to={signedIn ? "/{-$locale}/dashboard" : "/{-$locale}"}>
                   <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
                   <span className="font-display text-base font-semibold">vyzed</span>
                 </Link>
@@ -179,11 +178,11 @@ export function AppShell({ children }) {
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              {/* The dashboard is signed-in only (middleware), so the nav never changes */}
+              {/* The dashboard is signed-in only, so the nav never changes */}
               {NAV.map((item) => (
-                    <SidebarMenuItem key={item.url}>
+                    <SidebarMenuItem key={item.to}>
                       <SidebarMenuButton asChild isActive={isActive(item)} tooltip={item.title}>
-                        <Link href={item.url}>
+                        <Link to={item.to}>
                           <item.icon />
                           <span>{item.title}</span>
                         </Link>

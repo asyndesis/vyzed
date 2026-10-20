@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { useLocale, usePathname } from "@/lib/navigation";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { defaultLocale } from "@/lib/locale";
 import { useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,16 @@ const THEMES = [
 ];
 
 function useLanguage() {
-  const locale = useLocale();
+  const { locale = defaultLocale } = useParams({ strict: false });
   const navigate = useNavigate();
-  const pathname = usePathname();
-  // Same page, same filters, other language
+  // Same page, same filters, other language. English has no prefix.
   const setLocale = (next) =>
-    next && navigate({ to: `/${next}${pathname === "/" ? "" : pathname}`, search: true });
+    next &&
+    navigate({
+      to: ".",
+      params: (prev) => ({ ...prev, locale: next === defaultLocale ? undefined : next }),
+      search: (prev) => prev,
+    });
   return [locale, setLocale];
 }
 

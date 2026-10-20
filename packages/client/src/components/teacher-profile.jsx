@@ -1,4 +1,4 @@
-import { Link } from "@/lib/navigation";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@apollo/client/react";
 import { format } from "date-fns";
 import {
@@ -56,15 +56,20 @@ function Block({ icon: Icon, title, children }) {
   );
 }
 
-// Shared by the public /browse/[id] and signed-in /dashboard/teachers/[id] pages
-export function TeacherProfile({ id, basePath }) {
+// Shared by the public /browse/$id and signed-in /dashboard/teachers/$id pages
+export function TeacherProfile({ id, backTo }) {
   const { me, signedIn } = useMe();
   const { data, loading } = useQuery(PUBLIC_USER, { variables: { id } });
   const user = data?.publicUserById;
+  // After signing in, come back to this teacher inside the app
+  const { href: bookHref } = useRouter().buildLocation({
+    to: "/{-$locale}/dashboard/teachers/$id",
+    params: { id },
+  });
 
   const back = (
     <Button asChild variant="ghost" size="sm" className="-ml-2">
-      <Link href={basePath}>
+      <Link to={backTo}>
         <ArrowLeft className="h-4 w-4" /> All teachers
       </Link>
     </Button>
@@ -88,7 +93,7 @@ export function TeacherProfile({ id, basePath }) {
     <RequestLessonDialog teacher={user} trigger={<Button size="lg" className="w-full">Request a lesson</Button>} />
   ) : (
     <Button asChild size="lg" className="w-full">
-      <Link href={`/sign-in?redirect=/dashboard/teachers/${user.id}`}>Sign in to book</Link>
+      <Link to="/{-$locale}/sign-in" search={{ redirect: bookHref }}>Sign in to book</Link>
     </Button>
   );
 
@@ -141,7 +146,7 @@ export function TeacherProfile({ id, basePath }) {
           )}
           {isMe ? (
             <Button asChild variant="outline" className="w-full">
-              <Link href="/dashboard/profile">Edit your profile</Link>
+              <Link to="/{-$locale}/dashboard/profile">Edit your profile</Link>
             </Button>
           ) : canBook ? (
             bookButton

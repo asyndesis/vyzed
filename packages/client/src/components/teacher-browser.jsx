@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "@/lib/navigation";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@apollo/client/react";
 import { ArrowLeftRight, Languages, Loader2, Search, SearchX, X } from "lucide-react";
 import { ROOT_SKILLS, TEACHERS } from "@/lib/graphql";
@@ -13,6 +13,17 @@ import { TeacherCard, TeacherCardSkeleton } from "@/components/teacher-card";
 
 const PAGE = 12;
 
+const text = (v) => (v == null || v === "" ? undefined : String(v));
+
+// validateSearch for both teacher list routes. Lists stay comma-separated in
+// the URL (?skills=a,b) so links read cleanly.
+export const validateTeacherSearch = (search) => ({
+  q: text(search.q),
+  skills: text(search.skills),
+  langs: text(search.langs),
+  swap: search.swap === true || undefined,
+});
+
 function useDebounced(value, ms = 300) {
   const [v, setV] = useState(value);
   useEffect(() => {
@@ -22,33 +33,34 @@ function useDebounced(value, ms = 300) {
   return v;
 }
 
-function Teachers({ basePath, title, description }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const params = useSearchParams();
+function Teachers({ profileTo, title, description }) {
+  const navigate = useNavigate();
+  const params = useSearch({ strict: false });
 
   // Filters live in the URL so results are shareable and survive back/forward
-  const list = (k) => params.get(k)?.split(",").filter(Boolean) ?? [];
+  const list = (k) => params[k]?.split(",").filter(Boolean) ?? [];
   const skillIds = list("skills");
   const langIds = list("langs");
-  const swap = params.get("swap") === "1";
-  const [q, setQ] = useState(params.get("q") ?? "");
+  const swap = !!params.swap;
+  const [q, setQ] = useState(params.q ?? "");
   const search = useDebounced(q.trim());
   const [limit, setLimit] = useState(PAGE);
 
-  const setParams = (patch) => {
-    const next = new URLSearchParams(params);
-    Object.entries(patch).forEach(([k, v]) => (v ? next.set(k, v) : next.delete(k)));
-    router.replace(`${pathname}?${next}`, { scroll: false });
-  };
+  const setParams = (patch) =>
+    navigate({
+      to: ".",
+      search: (prev) => validateTeacherSearch({ ...prev, ...patch }),
+      replace: true,
+      resetScroll: false,
+    });
 
   useEffect(() => {
-    if (search !== (params.get("q") ?? "")) setParams({ q: search });
+    if (search !== (params.q ?? "")) setParams({ q: search });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   // Reset paging whenever the filters change
-  useEffect(() => setLimit(PAGE), [search, swap, params.get("skills"), params.get("langs")]);
+  useEffect(() => setLimit(PAGE), [search, swap, params.skills, params.langs]);
 
   const { data: skillData } = useQuery(ROOT_SKILLS);
   const categories = skillData?.rootSkills ?? [];
@@ -76,7 +88,7 @@ function Teachers({ basePath, title, description }) {
   const hasFilters = !!(search || swap || skillIds.length || langIds.length);
   const clearAll = () => {
     setQ("");
-    router.replace(pathname, { scroll: false });
+    navigate({ to: ".", search: {}, replace: true, resetScroll: false });
   };
 
   return (
@@ -108,7 +120,7 @@ function Teachers({ basePath, title, description }) {
         <Toggle
           variant="filter"
           pressed={swap}
-          onPressedChange={(on) => setParams({ swap: on ? "1" : "" })}
+          onPressedChange={(on) => setParams({ swap: on })}
         >
           <ArrowLeftRight /> Open to swaps
         </Toggle>
@@ -144,7 +156,7 @@ function Teachers({ basePath, title, description }) {
             )}
           >
             {teachers.map((u) => (
-              <TeacherCard key={u.id} user={u} href={`${basePath}/${u.id}`} />
+              <TeacherCard key={u.id} user={u} to={profileTo} />
             ))}
           </div>
           {result.pagination.hasMore && (
@@ -167,13 +179,13 @@ function Teachers({ basePath, title, description }) {
 
 // Shared by the public /browse page and the signed-in /dashboard/teachers page
 export function TeacherBrowser({
-  basePath,
+  profileTo,
   title = "Find a teacher",
   description = "Learn from people near you, or trade lessons skill for skill.",
 }) {
   return (
     <Suspense>
-      <Teachers basePath={basePath} title={title} description={description} />
+      <Teachers profileTo={profileTo} title={title} description={description} />
     </Suspense>
   );
 }

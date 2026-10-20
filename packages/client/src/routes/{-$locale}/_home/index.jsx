@@ -1,18 +1,18 @@
 import { Suspense } from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { useTranslations } from "use-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthForm } from "@/components/auth-form";
 import { PitchPoints, SplitLayout } from "@/components/split-layout";
 import { ScrollingVerb } from "@/components/scrolling-verb";
-import { Link } from "@/lib/navigation";
+
 import { hasSession } from "@/lib/session";
 
-export const Route = createFileRoute("/$locale/_home/")({
+export const Route = createFileRoute("/{-$locale}/_home/")({
   // The landing page is a sign-up page; signed-in users belong in the app
-  beforeLoad: async ({ params }) => {
-    if (await hasSession()) throw redirect({ to: "/$locale/dashboard", params });
+  beforeLoad: async () => {
+    if (await hasSession()) throw redirect({ to: "/{-$locale}/dashboard" });
   },
   head: () => ({
     meta: [
@@ -45,7 +45,7 @@ function LandingPage() {
           <p className="max-w-xl text-lg text-muted-foreground">{t("description")}</p>
           <PitchPoints />
           <Button asChild variant="outline">
-            <Link href="/browse">
+            <Link to="/{-$locale}/browse">
               Browse teachers <ArrowRight />
             </Link>
           </Button>

@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "@/lib/navigation";
+
 import { useMutation } from "@apollo/client/react";
 import { toast } from "sonner";
 import { ExternalLink, Loader2 } from "lucide-react";
@@ -144,7 +144,7 @@ function ProfilePage() {
         actions={
           me.teacherProfile?.skills?.length > 0 && (
             <Button asChild variant="outline" size="sm">
-              <Link href={`/dashboard/teachers/${me.id}`}>
+              <Link to="/{-$locale}/dashboard/teachers/$id" params={{ id: me.id }}>
                 View public profile <ExternalLink className="h-3.5 w-3.5" />
               </Link>
             </Button>
@@ -249,4 +249,4 @@ function ProfilePage() {
   );
 }
 
-export const Route = createFileRoute("/$locale/dashboard/profile")({ component: ProfilePage });
+export const Route = createFileRoute("/{-$locale}/dashboard/profile")({ component: ProfilePage });
