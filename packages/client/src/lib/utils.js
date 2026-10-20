@@ -6,46 +6,23 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
+const LEVELS = [
+  "Newbie",
+  "Beginner",
+  "Elementary",
+  "Intermediate",
+  "Upper Intermediate",
+  "Advanced",
+  "Proficient",
+];
+const CEFR = [null, "A1", "A2", "B1", "B2", "C1", "C2"];
+
+// "Advanced", or "Advanced (C1)" for languages (CEFR). Level 7 is the top.
 export const renderProficiency = ({ proficiency, framework }) => {
-  if (proficiency === null || proficiency === undefined) {
-    return "";
-  }
-
-  const proficiencyLevel = parseInt(proficiency);
-
-  // Base labels without CEFR annotations
-  const baseLabels = {
-    0: "Newbie",
-    1: "Beginner",
-    2: "Elementary",
-    3: "Intermediate",
-    4: "Upper Intermediate",
-    5: "Advanced",
-    6: "Proficient",
-    7: framework === SkillFramework.CEFR ? "Native" : "Master",
-  };
-
-  // CEFR annotations
-  const cefrAnnotations = {
-    1: "A1",
-    2: "A2",
-    3: "B1",
-    4: "B2",
-    5: "C1",
-    6: "C2",
-  };
-
-  // Get the base label
-  const baseLabel = baseLabels[proficiencyLevel] || "";
-
-  // If no base label or not a valid level, return empty string
-  if (!baseLabel) return "";
-
-  // If framework is CEFR and we have a corresponding annotation, add it
-  if (framework === SkillFramework.CEFR && cefrAnnotations[proficiencyLevel]) {
-    return `${baseLabel} (${cefrAnnotations[proficiencyLevel]})`;
-  }
-
-  // Otherwise just return the base label
-  return baseLabel;
+  const level = parseInt(proficiency);
+  const cefr = framework === SkillFramework.CEFR;
+  if (level === 7) return cefr ? "Native" : "Master";
+  const label = LEVELS[level];
+  if (!label) return "";
+  return cefr && CEFR[level] ? `${label} (${CEFR[level]})` : label;
 };

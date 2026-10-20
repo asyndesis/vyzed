@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { useTranslations } from "use-intl";
 import { ArrowRight } from "lucide-react";
@@ -39,7 +38,7 @@ function LandingPage() {
             {t("findSomeone")}
             <br />
             <ScrollingVerb
-              verbs={[1, 2, 3, 4, 5, 6, 7].map((n) => t(`scrollingVerb${n}`))}
+              verbs={t.raw("scrollingVerbs")}
             />
           </h1>
           <p className="max-w-xl text-lg text-muted-foreground">{t("description")}</p>
@@ -52,9 +51,7 @@ function LandingPage() {
         </>
       }
     >
-      <Suspense>
-        <AuthForm mode="sign-up" />
-      </Suspense>
+      <AuthForm mode="sign-up" />
     </SplitLayout>
   );
 }

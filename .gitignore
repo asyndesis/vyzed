@@ -19,7 +19,6 @@ coverage
 .vercel
 
 # Build Outputs
-.next/
 .output/
 .nitro/
 .tanstack/
@@ -43,7 +42,6 @@ yarn-error.log*
 
 # Typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # Playwright MCP
 .playwright-mcp/

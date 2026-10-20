@@ -20,64 +20,72 @@ const sendEmail = async ({ to, subject, html }) => {
 
 const createAuth = () =>
   betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL,
-  secret: process.env.BETTER_AUTH_SECRET,
-  trustedOrigins: [
-    "http://localhost:3000",
-    "https://vyzed.fly.dev",
-    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
-  ],
-  database: prismaAdapter(prisma, { provider: "mongodb" }),
-  // Prisma generates the ObjectIds
-  advanced: { database: { generateId: false } },
-  user: {
-    fields: { image: "imageUrl" },
-    additionalFields: {
-      firstName: { type: "string", required: false },
-      lastName: { type: "string", required: false },
-      roles: { type: "string[]", required: false, input: false },
-    },
-  },
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true,
-    sendResetPassword: async ({ user, url }) => {
-      await sendEmail({
-        to: user.email,
-        subject: "Reset your Vyzed password",
-        html: `<p>Click <a href="${url}">here</a> to reset your password.</p>`,
-      });
-    },
-  },
-  emailVerification: {
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      await sendEmail({
-        to: user.email,
-        subject: "Verify your Vyzed email",
-        html: `<p>Welcome to Vyzed! <a href="${url}">Verify your email</a> to get started.</p>`,
-      });
-    },
-  },
-  databaseHooks: {
+    baseURL: process.env.BETTER_AUTH_URL,
+    secret: process.env.BETTER_AUTH_SECRET,
+    trustedOrigins: [
+      "http://localhost:3000",
+      "https://vyzed.fly.dev",
+      ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    ],
+    database: prismaAdapter(prisma, { provider: "mongodb" }),
+    // Prisma generates the ObjectIds
+    advanced: { database: { generateId: false } },
     user: {
-      create: {
-        // Create the app profiles alongside every new auth user
-        after: async (user) => {
-          const audit = { createdBy: user.id, updatedBy: user.id };
-          await prisma.$transaction([
-            prisma.userProfile.create({ data: { userId: user.id, ...audit } }),
-            prisma.studentProfile.create({ data: { userId: user.id, ...audit } }),
-            prisma.teacherProfile.create({ data: { userId: user.id, ...audit } }),
-            prisma.userSchedule.create({ data: { userId: user.id, ...audit } }),
-            prisma.user.update({ where: { id: user.id }, data: audit }),
-          ]);
+      fields: { image: "imageUrl" },
+      additionalFields: {
+        firstName: { type: "string", required: false },
+        lastName: { type: "string", required: false },
+        roles: { type: "string[]", required: false, input: false },
+      },
+    },
+    emailAndPassword: {
+      enabled: true,
+      requireEmailVerification: true,
+      sendResetPassword: async ({ user, url }) => {
+        await sendEmail({
+          to: user.email,
+          subject: "Reset your Vyzed password",
+          html: `<p>Click <a href="${url}">here</a> to reset your password.</p>`,
+        });
+      },
+    },
+    emailVerification: {
+      sendOnSignUp: true,
+      autoSignInAfterVerification: true,
+      sendVerificationEmail: async ({ user, url }) => {
+        await sendEmail({
+          to: user.email,
+          subject: "Verify your Vyzed email",
+          html: `<p>Welcome to Vyzed! <a href="${url}">Verify your email</a> to get started.</p>`,
+        });
+      },
+    },
+    databaseHooks: {
+      user: {
+        create: {
+          // Create the app profiles alongside every new auth user
+          after: async (user) => {
+            const audit = { createdBy: user.id, updatedBy: user.id };
+            await prisma.$transaction([
+              prisma.userProfile.create({
+                data: { userId: user.id, ...audit },
+              }),
+              prisma.studentProfile.create({
+                data: { userId: user.id, ...audit },
+              }),
+              prisma.teacherProfile.create({
+                data: { userId: user.id, ...audit },
+              }),
+              prisma.userSchedule.create({
+                data: { userId: user.id, ...audit },
+              }),
+              prisma.user.update({ where: { id: user.id }, data: audit }),
+            ]);
+          },
         },
       },
     },
-  },
-});
+  });
 
 // Created on first use, not at import: Better Auth validates its secret on
 // construction, and builds import this module without runtime secrets.

@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 // DATABASE_URL is read from schema.prisma's env() when the first query runs,
-// so importing this module (e.g. during `next build`) needs no secrets.
+// so importing this module (e.g. during the client build) needs no secrets.
 const createPrismaClient = () =>
   new PrismaClient({
     log:

@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery } from "@apollo/client/react";
 import { ArrowLeftRight, Languages, Loader2, Search, SearchX, X } from "lucide-react";
@@ -33,7 +33,12 @@ function useDebounced(value, ms = 300) {
   return v;
 }
 
-function Teachers({ profileTo, title, description }) {
+// Shared by the public /browse page and the signed-in /dashboard/teachers page
+export function TeacherBrowser({
+  profileTo,
+  title = "Find a teacher",
+  description = "Learn from people near you, or trade lessons skill for skill.",
+}) {
   const navigate = useNavigate();
   const params = useSearch({ strict: false });
 
@@ -56,7 +61,7 @@ function Teachers({ profileTo, title, description }) {
 
   useEffect(() => {
     if (search !== (params.q ?? "")) setParams({ q: search });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps -- only react to the debounced value
   }, [search]);
 
   // Reset paging whenever the filters change
@@ -174,18 +179,5 @@ function Teachers({ profileTo, title, description }) {
         </div>
       )}
     </>
-  );
-}
-
-// Shared by the public /browse page and the signed-in /dashboard/teachers page
-export function TeacherBrowser({
-  profileTo,
-  title = "Find a teacher",
-  description = "Learn from people near you, or trade lessons skill for skill.",
-}) {
-  return (
-    <Suspense>
-      <Teachers profileTo={profileTo} title={title} description={description} />
-    </Suspense>
   );
 }

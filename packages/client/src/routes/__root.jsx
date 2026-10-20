@@ -1,9 +1,9 @@
-import { HeadContent, Outlet, Scripts, createRootRoute, useParams } from "@tanstack/react-router";
-import { ThemeProvider } from "@/components/theme-provider";
+import { HeadContent, Scripts, createRootRoute, useParams } from "@tanstack/react-router";
+import { ThemeProvider } from "next-themes";
+import { CircleAlert, FileQuestion } from "lucide-react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorPage } from "@/components/error-page";
-import { RootError } from "@/components/root-error";
 import { defaultLocale } from "@/lib/locale";
 import appCss from "@/styles/globals.css?url";
 
@@ -23,31 +23,37 @@ export const Route = createRootRoute({
       { rel: "stylesheet", href: appCss },
     ],
   }),
-  component: RootComponent,
-  errorComponent: RootError,
+  // The document wraps every page, including the error and 404 pages below
+  shellComponent: RootDocument,
+  errorComponent: ({ error }) => {
+    console.error(error);
+    return (
+      <ErrorPage
+        icon={CircleAlert}
+        title="Something went wrong"
+        description="We're sorry, something broke on our end. Try again in a moment."
+      />
+    );
+  },
   notFoundComponent: () => (
     <ErrorPage
-      statusCode={404}
-      title="Page Not Found"
+      icon={FileQuestion}
+      title="Page not found"
       description="The page you're looking for doesn't exist or has been moved."
-      iconName="FileQuestion"
-      actionText="Back to Home"
     />
   ),
 });
 
-function RootComponent() {
+function RootDocument({ children }) {
   const { locale = defaultLocale } = useParams({ strict: false });
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased">
+      <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <TooltipProvider delayDuration={0}>
-            <Outlet />
-          </TooltipProvider>
+          <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
           <Toaster position="top-right" />
         </ThemeProvider>
         <Scripts />

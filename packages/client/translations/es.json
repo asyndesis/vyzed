@@ -1,17 +1,15 @@
 {
   "LandingPage": {
-    "learningTagline": "Aprender no debería ser costoso ni solitario",
     "findSomeone": "Encuentra a alguien para",
     "description": "Vyzed es una forma para que estudiantes y profesores, terapeutas y clientes, aficionados y expertos se encuentren.",
-    "earlyAccess": "Acceso Anticipado",
-    "joinWaitingList": "Únete a la Lista de Espera",
-    "beFirstToKnow": "Sé el primero en saber cuando lancemos.",
-    "scrollingVerb1": "aprender",
-    "scrollingVerb2": "apoyar",
-    "scrollingVerb3": "crecer",
-    "scrollingVerb4": "conectar",
-    "scrollingVerb5": "guiar",
-    "scrollingVerb6": "enseñar",
-    "scrollingVerb7": "ayudar"
+    "scrollingVerbs": [
+      "aprender",
+      "apoyar",
+      "crecer",
+      "conectar",
+      "guiar",
+      "enseñar",
+      "ayudar"
+    ]
   }
 }

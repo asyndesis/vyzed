@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAuth } from "@/lib/auth";
+import { getAuth } from "@vyzed/auth";
 
 // Better Auth owns everything under /api/auth. Resolved per request so the
 // build never constructs it.

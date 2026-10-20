@@ -20,7 +20,9 @@
 **/.vercel
 
 # Build Outputs
-**/.next
+**/.output
+**/.nitro
+**/.tanstack
 **/out
 **/build
 **/dist
@@ -41,7 +43,6 @@
 
 # Typescript
 **/*.tsbuildinfo
-**/next-env.d.ts
 
 # flyctl launch added from packages/prisma/.gitignore
 packages/prisma/**/node_modules

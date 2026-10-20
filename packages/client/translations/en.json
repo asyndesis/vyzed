@@ -1,11 +1,7 @@
 {
   "LandingPage": {
-    "learningTagline": "Learning shouldn't be costly and lonely",
     "findSomeone": "Find someone to",
     "description": "Vyzed is a way for students and teachers, therapists and clients, amateurs and experts to find each other.",
-    "earlyAccess": "Early Access",
-    "joinWaitingList": "Join the Waiting List",
-    "beFirstToKnow": "Be the first to know when we launch.",
     "scrollingVerbs": [
       "learn with",
       "support",
@@ -14,13 +10,6 @@
       "mentor",
       "teach",
       "help"
-    ],
-    "scrollingVerb1": "learn with",
-    "scrollingVerb2": "support",
-    "scrollingVerb3": "grow with",
-    "scrollingVerb4": "connect with",
-    "scrollingVerb5": "mentor",
-    "scrollingVerb6": "teach",
-    "scrollingVerb7": "help"
+    ]
   }
 }
