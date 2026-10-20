@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "react"],
+  "plugins": ["typescript", "import", "react"],
   "env": {
     "browser": true,
     "node": true,
@@ -25,7 +25,8 @@
     "**/.output",
     "**/.nitro",
     "**/routeTree.gen.ts",
-    "packages/prisma/enums.js",
-    "packages/prisma/enumTypeDefs.js"
+    "src/graphql/graphql-env.d.ts",
+    "src/paraglide/**",
+    "drizzle/**"
   ]
 }
