@@ -36,12 +36,17 @@ function Field({
   aside?: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
+    <div className="relative space-y-2">
+      <div className={aside ? "flex h-5 items-center" : undefined}>
         <Label htmlFor={name}>{label}</Label>
-        {aside}
       </div>
       <Input id={name} name={name} required {...input} />
+      {/* After the input in the DOM so Tab visits it next, but shown beside the label */}
+      {aside && (
+        <div className="absolute right-0 top-0 flex h-5 items-center">
+          {aside}
+        </div>
+      )}
     </div>
   );
 }

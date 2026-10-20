@@ -8,7 +8,7 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(32),
     BETTER_AUTH_URL: z.url(),
     RESEND_API_KEY: z.string().optional(),
-    EMAIL_FROM: z.string().default("Vyzed <onboarding@resend.dev>"),
+    EMAIL_FROM: z.string().default("Vyzed <noreply@vyzed.com>"),
     // Comma-separated origins allowed to call /graphql from a browser
     CORS_ORIGINS: z
       .string()
