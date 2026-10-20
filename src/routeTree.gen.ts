@@ -17,7 +17,7 @@ import { Route as PublicAuthRouteImport } from './routes/_public/_auth'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardLessonsRouteImport } from './routes/dashboard/lessons'
-import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
+import { Route as DashboardProfileRouteRouteImport } from './routes/dashboard/profile/route'
 import { Route as PublicAuthForgotPasswordRouteImport } from './routes/_public/_auth/forgot-password'
 import { Route as PublicAuthResetPasswordRouteImport } from './routes/_public/_auth/reset-password'
 import { Route as PublicAuthSignInRouteImport } from './routes/_public/_auth/sign-in'
@@ -25,6 +25,10 @@ import { Route as PublicAuthSignUpRouteImport } from './routes/_public/_auth/sig
 import { Route as PublicBrowseIndexRouteImport } from './routes/_public/browse/index'
 import { Route as PublicBrowseIdRouteImport } from './routes/_public/browse/$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DashboardProfileIndexRouteImport } from './routes/dashboard/profile/index'
+import { Route as DashboardProfileLearningRouteImport } from './routes/dashboard/profile/learning'
+import { Route as DashboardProfilePreferencesRouteImport } from './routes/dashboard/profile/preferences'
+import { Route as DashboardProfileTeachingRouteImport } from './routes/dashboard/profile/teaching'
 import { Route as DashboardTeachersIndexRouteImport } from './routes/dashboard/teachers/index'
 import { Route as DashboardTeachersIdRouteImport } from './routes/dashboard/teachers/$id'
 
@@ -66,7 +70,7 @@ const DashboardLessonsRoute = DashboardLessonsRouteImport.update({
   path: '/lessons',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardProfileRoute = DashboardProfileRouteImport.update({
+const DashboardProfileRouteRoute = DashboardProfileRouteRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => DashboardRouteRoute,
@@ -107,6 +111,29 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardProfileIndexRoute = DashboardProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardProfileRouteRoute,
+} as any)
+const DashboardProfileLearningRoute =
+  DashboardProfileLearningRouteImport.update({
+    id: '/learning',
+    path: '/learning',
+    getParentRoute: () => DashboardProfileRouteRoute,
+  } as any)
+const DashboardProfilePreferencesRoute =
+  DashboardProfilePreferencesRouteImport.update({
+    id: '/preferences',
+    path: '/preferences',
+    getParentRoute: () => DashboardProfileRouteRoute,
+  } as any)
+const DashboardProfileTeachingRoute =
+  DashboardProfileTeachingRouteImport.update({
+    id: '/teaching',
+    path: '/teaching',
+    getParentRoute: () => DashboardProfileRouteRoute,
+  } as any)
 const DashboardTeachersIndexRoute = DashboardTeachersIndexRouteImport.update({
   id: '/teachers/',
   path: '/teachers/',
@@ -122,9 +149,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/': typeof PublicIndexRoute
   '/graphql': typeof GraphqlRoute
+  '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/dashboard/lessons': typeof DashboardLessonsRoute
-  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/forgot-password': typeof PublicAuthForgotPasswordRoute
   '/reset-password': typeof PublicAuthResetPasswordRoute
@@ -132,8 +159,12 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof PublicAuthSignUpRoute
   '/browse/$id': typeof PublicBrowseIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/profile/learning': typeof DashboardProfileLearningRoute
+  '/dashboard/profile/preferences': typeof DashboardProfilePreferencesRoute
+  '/dashboard/profile/teaching': typeof DashboardProfileTeachingRoute
   '/dashboard/teachers/$id': typeof DashboardTeachersIdRoute
   '/browse/': typeof PublicBrowseIndexRoute
+  '/dashboard/profile/': typeof DashboardProfileIndexRoute
   '/dashboard/teachers/': typeof DashboardTeachersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -141,7 +172,6 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/api/health': typeof ApiHealthRoute
   '/dashboard/lessons': typeof DashboardLessonsRoute
-  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard': typeof DashboardIndexRoute
   '/forgot-password': typeof PublicAuthForgotPasswordRoute
   '/reset-password': typeof PublicAuthResetPasswordRoute
@@ -149,8 +179,12 @@ export interface FileRoutesByTo {
   '/sign-up': typeof PublicAuthSignUpRoute
   '/browse/$id': typeof PublicBrowseIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/profile/learning': typeof DashboardProfileLearningRoute
+  '/dashboard/profile/preferences': typeof DashboardProfilePreferencesRoute
+  '/dashboard/profile/teaching': typeof DashboardProfileTeachingRoute
   '/dashboard/teachers/$id': typeof DashboardTeachersIdRoute
   '/browse': typeof PublicBrowseIndexRoute
+  '/dashboard/profile': typeof DashboardProfileIndexRoute
   '/dashboard/teachers': typeof DashboardTeachersIndexRoute
 }
 export interface FileRoutesById {
@@ -158,10 +192,10 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/graphql': typeof GraphqlRoute
+  '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
   '/_public/_auth': typeof PublicAuthRouteWithChildren
   '/api/health': typeof ApiHealthRoute
   '/dashboard/lessons': typeof DashboardLessonsRoute
-  '/dashboard/profile': typeof DashboardProfileRoute
   '/_public/': typeof PublicIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/_public/_auth/forgot-password': typeof PublicAuthForgotPasswordRoute
@@ -170,8 +204,12 @@ export interface FileRoutesById {
   '/_public/_auth/sign-up': typeof PublicAuthSignUpRoute
   '/_public/browse/$id': typeof PublicBrowseIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/profile/learning': typeof DashboardProfileLearningRoute
+  '/dashboard/profile/preferences': typeof DashboardProfilePreferencesRoute
+  '/dashboard/profile/teaching': typeof DashboardProfileTeachingRoute
   '/dashboard/teachers/$id': typeof DashboardTeachersIdRoute
   '/_public/browse/': typeof PublicBrowseIndexRoute
+  '/dashboard/profile/': typeof DashboardProfileIndexRoute
   '/dashboard/teachers/': typeof DashboardTeachersIndexRoute
 }
 export interface FileRouteTypes {
@@ -180,9 +218,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/'
     | '/graphql'
+    | '/dashboard/profile'
     | '/api/health'
     | '/dashboard/lessons'
-    | '/dashboard/profile'
     | '/dashboard/'
     | '/forgot-password'
     | '/reset-password'
@@ -190,8 +228,12 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/browse/$id'
     | '/api/auth/$'
+    | '/dashboard/profile/learning'
+    | '/dashboard/profile/preferences'
+    | '/dashboard/profile/teaching'
     | '/dashboard/teachers/$id'
     | '/browse/'
+    | '/dashboard/profile/'
     | '/dashboard/teachers/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -199,7 +241,6 @@ export interface FileRouteTypes {
     | '/'
     | '/api/health'
     | '/dashboard/lessons'
-    | '/dashboard/profile'
     | '/dashboard'
     | '/forgot-password'
     | '/reset-password'
@@ -207,18 +248,22 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/browse/$id'
     | '/api/auth/$'
+    | '/dashboard/profile/learning'
+    | '/dashboard/profile/preferences'
+    | '/dashboard/profile/teaching'
     | '/dashboard/teachers/$id'
     | '/browse'
+    | '/dashboard/profile'
     | '/dashboard/teachers'
   id:
     | '__root__'
     | '/dashboard'
     | '/_public'
     | '/graphql'
+    | '/dashboard/profile'
     | '/_public/_auth'
     | '/api/health'
     | '/dashboard/lessons'
-    | '/dashboard/profile'
     | '/_public/'
     | '/dashboard/'
     | '/_public/_auth/forgot-password'
@@ -227,8 +272,12 @@ export interface FileRouteTypes {
     | '/_public/_auth/sign-up'
     | '/_public/browse/$id'
     | '/api/auth/$'
+    | '/dashboard/profile/learning'
+    | '/dashboard/profile/preferences'
+    | '/dashboard/profile/teaching'
     | '/dashboard/teachers/$id'
     | '/_public/browse/'
+    | '/dashboard/profile/'
     | '/dashboard/teachers/'
   fileRoutesById: FileRoutesById
 }
@@ -302,7 +351,7 @@ declare module '@tanstack/react-router' {
       id: '/dashboard/profile'
       path: '/profile'
       fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof DashboardProfileRouteImport
+      preLoaderRoute: typeof DashboardProfileRouteRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_public/_auth/forgot-password': {
@@ -354,6 +403,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/profile/': {
+      id: '/dashboard/profile/'
+      path: '/'
+      fullPath: '/dashboard/profile/'
+      preLoaderRoute: typeof DashboardProfileIndexRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/learning': {
+      id: '/dashboard/profile/learning'
+      path: '/learning'
+      fullPath: '/dashboard/profile/learning'
+      preLoaderRoute: typeof DashboardProfileLearningRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/preferences': {
+      id: '/dashboard/profile/preferences'
+      path: '/preferences'
+      fullPath: '/dashboard/profile/preferences'
+      preLoaderRoute: typeof DashboardProfilePreferencesRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/teaching': {
+      id: '/dashboard/profile/teaching'
+      path: '/teaching'
+      fullPath: '/dashboard/profile/teaching'
+      preLoaderRoute: typeof DashboardProfileTeachingRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
     '/dashboard/teachers/': {
       id: '/dashboard/teachers/'
       path: '/teachers'
@@ -371,17 +448,36 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardProfileRouteRouteChildren {
+  DashboardProfileLearningRoute: typeof DashboardProfileLearningRoute
+  DashboardProfilePreferencesRoute: typeof DashboardProfilePreferencesRoute
+  DashboardProfileTeachingRoute: typeof DashboardProfileTeachingRoute
+  DashboardProfileIndexRoute: typeof DashboardProfileIndexRoute
+}
+
+const DashboardProfileRouteRouteChildren: DashboardProfileRouteRouteChildren = {
+  DashboardProfileLearningRoute: DashboardProfileLearningRoute,
+  DashboardProfilePreferencesRoute: DashboardProfilePreferencesRoute,
+  DashboardProfileTeachingRoute: DashboardProfileTeachingRoute,
+  DashboardProfileIndexRoute: DashboardProfileIndexRoute,
+}
+
+const DashboardProfileRouteRouteWithChildren =
+  DashboardProfileRouteRoute._addFileChildren(
+    DashboardProfileRouteRouteChildren,
+  )
+
 interface DashboardRouteRouteChildren {
+  DashboardProfileRouteRoute: typeof DashboardProfileRouteRouteWithChildren
   DashboardLessonsRoute: typeof DashboardLessonsRoute
-  DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardTeachersIdRoute: typeof DashboardTeachersIdRoute
   DashboardTeachersIndexRoute: typeof DashboardTeachersIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardProfileRouteRoute: DashboardProfileRouteRouteWithChildren,
   DashboardLessonsRoute: DashboardLessonsRoute,
-  DashboardProfileRoute: DashboardProfileRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardTeachersIdRoute: DashboardTeachersIdRoute,
   DashboardTeachersIndexRoute: DashboardTeachersIndexRoute,
@@ -436,3 +532,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

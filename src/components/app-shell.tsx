@@ -2,6 +2,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import {
   CalendarDays,
+  ChevronRight,
   ChevronsUpDown,
   GraduationCap,
   Home,
@@ -29,10 +30,19 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth-client";
 import { fullName } from "@/lib/format";
@@ -40,11 +50,24 @@ import { useMyLessons } from "@/lib/lessons";
 import { meQuery } from "@/lib/queries";
 import { viewerQuery } from "@/lib/session";
 
+export const PROFILE_PAGES = [
+  { title: "Profile", to: "/dashboard/profile", exact: true },
+  { title: "Teaching", to: "/dashboard/profile/teaching" },
+  { title: "Learning", to: "/dashboard/profile/learning" },
+  { title: "Preferences", to: "/dashboard/profile/preferences" },
+] as const;
+
 const NAV = [
   { title: "Home", to: "/dashboard", icon: Home, exact: true },
   { title: "Lessons", to: "/dashboard/lessons", icon: CalendarDays },
   { title: "Find teachers", to: "/dashboard/teachers", icon: GraduationCap },
-  { title: "Profile", to: "/dashboard/profile", icon: UserRound },
+  {
+    title: "Profile",
+    to: "/dashboard/profile",
+    icon: UserRound,
+    // Shown under Profile while you're in it
+    children: PROFILE_PAGES,
+  },
 ] as const;
 
 // What a complete profile has; shared by the sidebar card
@@ -60,7 +83,10 @@ function ProfileProgress() {
   const { data } = useSuspenseQuery(meQuery);
   const steps = profileSteps(data.me);
   const done = steps.filter(Boolean).length;
-  if (matchRoute({ to: "/dashboard/profile" }) || done === steps.length)
+  if (
+    matchRoute({ to: "/dashboard/profile", fuzzy: true }) ||
+    done === steps.length
+  )
     return null;
 
   return (
@@ -144,6 +170,74 @@ function UserMenu() {
   );
 }
 
+// After shadcn's sidebar-07 block: items with pages expand in place under a chevron
+function NavMain({ pending }: { pending: number }) {
+  const matchRoute = useMatchRoute();
+  const { state, isMobile } = useSidebar();
+  const isActive = (item: { to: string; exact?: boolean }) =>
+    !!matchRoute({ to: item.to, fuzzy: !item.exact });
+
+  return (
+    <SidebarGroup>
+      <SidebarMenu>
+        {NAV.map((item) => {
+          const active = isActive(item);
+          // Icon-only rail can't show the pages, so the item just links to the first
+          if ("children" in item && (isMobile || state === "expanded"))
+            return (
+              <Collapsible
+                // Remounts on entering or leaving, so it opens with the section
+                key={`${item.to}-${active}`}
+                defaultOpen={active}
+                asChild
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={item.title}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.children.map((sub) => (
+                        <SidebarMenuSubItem key={sub.to}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isActive(sub)}
+                          >
+                            <Link to={sub.to}>
+                              <span>{sub.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            );
+          return (
+            <SidebarMenuItem key={item.to}>
+              <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
+                <Link to={item.to}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+              {item.to === "/dashboard/lessons" && pending > 0 && (
+                <SidebarMenuBadge>{pending}</SidebarMenuBadge>
+              )}
+            </SidebarMenuItem>
+          );
+        })}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
+}
+
 export function AppShell({
   defaultOpen,
   children,
@@ -154,9 +248,9 @@ export function AppShell({
   const matchRoute = useMatchRoute();
   const { groups } = useMyLessons();
   const pending = groups.action.length;
-  const isActive = (item: (typeof NAV)[number]) =>
-    !!matchRoute({ to: item.to, fuzzy: !("exact" in item) });
-  const current = NAV.filter(isActive).at(-1);
+  const current = NAV.filter((item) =>
+    matchRoute({ to: item.to, fuzzy: !("exact" in item) }),
+  ).at(-1);
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
@@ -176,27 +270,7 @@ export function AppShell({
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarMenu>
-              {NAV.map((item) => (
-                <SidebarMenuItem key={item.to}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item)}
-                    tooltip={item.title}
-                  >
-                    <Link to={item.to}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {item.to === "/dashboard/lessons" && pending > 0 && (
-                    <SidebarMenuBadge>{pending}</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
+          <NavMain pending={pending} />
         </SidebarContent>
         <SidebarFooter>
           <ProfileProgress />
