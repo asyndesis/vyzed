@@ -4,7 +4,12 @@ import { SkillBadges } from "@/components/skill-badges";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { formatPrice, fullName } from "@/lib/format";
-import { graphql, readFragment, type FragmentOf } from "@/lib/gql";
+import {
+  graphql,
+  readFragment,
+  type FragmentOf,
+  type ResultOf,
+} from "@/lib/gql";
 
 export const TeacherCardFields = graphql(`
   fragment TeacherCardFields on User {
@@ -33,6 +38,8 @@ export const TeacherCardFields = graphql(`
   }
 `);
 
+export type TeacherCardUser = ResultOf<typeof TeacherCardFields>;
+
 export function TeacherCard({
   data,
   to,
@@ -41,14 +48,22 @@ export function TeacherCard({
   to: "/browse/$id" | "/dashboard/teachers/$id";
 }) {
   const user = readFragment(TeacherCardFields, data);
-  const price = formatPrice(user.priceAmount, user.priceCurrency);
-
   return (
     <Link
       to={to}
       params={{ id: user.id }}
       className="flex flex-col gap-4 rounded-xl border bg-card p-5 transition-colors hover:border-foreground/20"
     >
+      <TeacherCardBody user={user} />
+    </Link>
+  );
+}
+
+// The card's contents without the link, for previews of a profile being edited
+export function TeacherCardBody({ user }: { user: TeacherCardUser }) {
+  const price = formatPrice(user.priceAmount, user.priceCurrency);
+  return (
+    <>
       <div className="flex items-start gap-3">
         <UserAvatar user={user} className="size-12" />
         <div className="min-w-0 flex-1">
@@ -82,7 +97,7 @@ export function TeacherCard({
       {user.bio && (
         <p className="line-clamp-2 text-sm text-muted-foreground">{user.bio}</p>
       )}
-    </Link>
+    </>
   );
 }
 

@@ -172,7 +172,7 @@ export function TeacherBrowser({
         <Toggle
           variant="outline"
           // Dashed until active, like the facet filters
-          className="h-9 data-[state=off]:border-dashed data-[state=off]:shadow-none"
+          className="h-9 not-data-pressed:border-dashed not-data-pressed:shadow-none"
           pressed={!!search.swap}
           onPressedChange={(swap) => setSearch({ swap })}
         >

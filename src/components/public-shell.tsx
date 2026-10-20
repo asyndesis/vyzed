@@ -15,20 +15,27 @@ function AuthActions({ className }: { className?: string }) {
   if (viewer)
     return (
       <div className={className}>
-        <Button asChild size="sm">
-          <Link to="/dashboard">
-            Dashboard <ArrowRight />
-          </Link>
+        <Button
+          size="sm"
+          render={<Link to="/dashboard" />}
+          nativeButton={false}
+        >
+          Dashboard <ArrowRight />
         </Button>
       </div>
     );
   return (
     <div className={className}>
-      <Button asChild size="sm" variant="ghost">
-        <Link to="/sign-in">Log in</Link>
+      <Button
+        size="sm"
+        variant="ghost"
+        render={<Link to="/sign-in" />}
+        nativeButton={false}
+      >
+        Log in
       </Button>
-      <Button asChild size="sm">
-        <Link to="/sign-up">Sign up</Link>
+      <Button size="sm" render={<Link to="/sign-up" />} nativeButton={false}>
+        Sign up
       </Button>
     </div>
   );

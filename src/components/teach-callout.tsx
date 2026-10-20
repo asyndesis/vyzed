@@ -14,11 +14,15 @@ export function TeachCallout() {
         </p>
       </div>
       <div className="flex gap-2">
-        <Button asChild variant="outline">
-          <Link to="/sign-in">Log in</Link>
+        <Button
+          variant="outline"
+          render={<Link to="/sign-in" />}
+          nativeButton={false}
+        >
+          Log in
         </Button>
-        <Button asChild>
-          <Link to="/sign-up">Become a teacher</Link>
+        <Button render={<Link to="/sign-up" />} nativeButton={false}>
+          Become a teacher
         </Button>
       </div>
     </section>

@@ -66,7 +66,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider delayDuration={0}>
+          <TooltipProvider delay={0}>
             <LocaleBoundary>{children}</LocaleBoundary>
           </TooltipProvider>
           <Toaster position="top-right" />

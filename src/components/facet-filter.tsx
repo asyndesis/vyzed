@@ -45,25 +45,27 @@ export function FacetFilter({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn("h-9", !picked.length && "border-dashed shadow-none")}
-        >
-          <Icon className="text-muted-foreground" />
-          {title}
-          {picked.length > 0 && (
-            <>
-              <span className="mx-0.5 h-4 w-px bg-border" />
-              <span className="max-w-32 truncate rounded bg-secondary px-1.5 py-0.5 text-xs font-medium">
-                {picked.length > 1
-                  ? `${picked.length} selected`
-                  : picked[0].label}
-              </span>
-            </>
-          )}
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            className={cn("h-9", !picked.length && "border-dashed shadow-none")}
+          />
+        }
+      >
+        <Icon className="text-muted-foreground" />
+        {title}
+        {picked.length > 0 && (
+          <>
+            <span className="mx-0.5 h-4 w-px bg-border" />
+            <span className="max-w-32 truncate rounded bg-secondary px-1.5 py-0.5 text-xs font-medium">
+              {picked.length > 1
+                ? `${picked.length} selected`
+                : picked[0].label}
+            </span>
+          </>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0" align="start">
         <Command>

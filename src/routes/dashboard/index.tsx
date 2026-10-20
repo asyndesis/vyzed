@@ -123,13 +123,19 @@ function NextLesson({ item, now }: { item: LessonItem; now: number }) {
           </div>
         </div>
         {role === "student" && (
-          <Button asChild variant="outline" size="sm" className="shrink-0">
-            <Link
-              to="/dashboard/teachers/$id"
-              params={{ id: lesson.teacher.id }}
-            >
-              View teacher
-            </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0"
+            render={
+              <Link
+                to="/dashboard/teachers/$id"
+                params={{ id: lesson.teacher.id }}
+              />
+            }
+            nativeButton={false}
+          >
+            View teacher
           </Button>
         )}
       </div>
@@ -175,8 +181,13 @@ function TeachersForYou() {
           }
           description="New teachers join all the time. Know something? Be one of the first."
           action={
-            <Button asChild variant="outline" size="sm">
-              <Link to="/dashboard/profile">Start teaching</Link>
+            <Button
+              variant="outline"
+              size="sm"
+              render={<Link to="/dashboard/profile" />}
+              nativeButton={false}
+            >
+              Start teaching
             </Button>
           }
         />
@@ -208,15 +219,20 @@ function DashboardPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button asChild variant="outline" size="sm">
-            <Link to="/dashboard/profile">
-              <UserPen /> Profile
-            </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            render={<Link to="/dashboard/profile" />}
+            nativeButton={false}
+          >
+            <UserPen /> Profile
           </Button>
-          <Button asChild size="sm">
-            <Link to="/dashboard/teachers">
-              <Search /> Find a teacher
-            </Link>
+          <Button
+            size="sm"
+            render={<Link to="/dashboard/teachers" />}
+            nativeButton={false}
+          >
+            <Search /> Find a teacher
           </Button>
         </div>
       </div>
@@ -262,10 +278,11 @@ function DashboardPage() {
           title="Nothing scheduled"
           description="Find someone to learn from, or wait for students to book you."
           action={
-            <Button asChild>
-              <Link to="/dashboard/teachers">
-                <Search /> Find a teacher
-              </Link>
+            <Button
+              render={<Link to="/dashboard/teachers" />}
+              nativeButton={false}
+            >
+              <Search /> Find a teacher
             </Button>
           }
         />

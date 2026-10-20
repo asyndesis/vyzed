@@ -29,6 +29,9 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
@@ -40,11 +43,23 @@ import { useMyLessons } from "@/lib/lessons";
 import { meQuery } from "@/lib/queries";
 import { viewerQuery } from "@/lib/session";
 
+export const PROFILE_PAGES = [
+  { title: "General", to: "/dashboard/profile", exact: true },
+  { title: "Teaching", to: "/dashboard/profile/teaching" },
+  { title: "Learning", to: "/dashboard/profile/learning" },
+  { title: "Preferences", to: "/dashboard/profile/preferences" },
+] as const;
+
 const NAV = [
   { title: "Home", to: "/dashboard", icon: Home, exact: true },
   { title: "Lessons", to: "/dashboard/lessons", icon: CalendarDays },
   { title: "Find teachers", to: "/dashboard/teachers", icon: GraduationCap },
-  { title: "Profile", to: "/dashboard/profile", icon: UserRound },
+  {
+    title: "Profile",
+    to: "/dashboard/profile",
+    icon: UserRound,
+    children: PROFILE_PAGES,
+  },
 ] as const;
 
 // What a complete profile has; shared by the sidebar card
@@ -60,7 +75,10 @@ function ProfileProgress() {
   const { data } = useSuspenseQuery(meQuery);
   const steps = profileSteps(data.me);
   const done = steps.filter(Boolean).length;
-  if (matchRoute({ to: "/dashboard/profile" }) || done === steps.length)
+  if (
+    matchRoute({ to: "/dashboard/profile", fuzzy: true }) ||
+    done === steps.length
+  )
     return null;
 
   return (
@@ -104,20 +122,22 @@ function UserMenu() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <UserAvatar user={me} className="size-8 rounded-lg" />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{fullName(me)}</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {me.email}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
+                size="lg"
+                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
+              />
+            }
+          >
+            <UserAvatar user={me} className="size-8 rounded-lg" />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{fullName(me)}</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {me.email}
+              </span>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="right"
@@ -129,18 +149,63 @@ function UserMenu() {
               {me.email}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/dashboard/profile">
-                <UserRound /> Profile
-              </Link>
+            <DropdownMenuItem render={<Link to="/dashboard/profile" />}>
+              <UserRound /> Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={signOut}>
+            <DropdownMenuItem onClick={signOut}>
               <LogOut /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+  );
+}
+
+// Every item is a link; one with pages lists them underneath while you're in it
+function NavMain({ pending }: { pending: number }) {
+  const matchRoute = useMatchRoute();
+  const isActive = (item: { to: string; exact?: boolean }) =>
+    !!matchRoute({ to: item.to, fuzzy: !item.exact });
+
+  return (
+    <SidebarGroup>
+      <SidebarMenu>
+        {NAV.map((item) => {
+          const active = isActive(item);
+          return (
+            <SidebarMenuItem key={item.to}>
+              <SidebarMenuButton
+                // With its pages showing, the highlight goes on the current page instead
+                isActive={active && !("children" in item)}
+                tooltip={item.title}
+                render={<Link to={item.to} />}
+              >
+                <item.icon />
+                <span>{item.title}</span>
+              </SidebarMenuButton>
+              {item.to === "/dashboard/lessons" && pending > 0 && (
+                <SidebarMenuBadge>{pending}</SidebarMenuBadge>
+              )}
+              {"children" in item && active && (
+                <SidebarMenuSub>
+                  {item.children.map((sub) => (
+                    <SidebarMenuSubItem key={sub.to}>
+                      <SidebarMenuSubButton
+                        isActive={isActive(sub)}
+                        render={<Link to={sub.to} />}
+                      >
+                        <span>{sub.title}</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              )}
+            </SidebarMenuItem>
+          );
+        })}
+      </SidebarMenu>
+    </SidebarGroup>
   );
 }
 
@@ -154,9 +219,9 @@ export function AppShell({
   const matchRoute = useMatchRoute();
   const { groups } = useMyLessons();
   const pending = groups.action.length;
-  const isActive = (item: (typeof NAV)[number]) =>
-    !!matchRoute({ to: item.to, fuzzy: !("exact" in item) });
-  const current = NAV.filter(isActive).at(-1);
+  const current = NAV.filter((item) =>
+    matchRoute({ to: item.to, fuzzy: !("exact" in item) }),
+  ).at(-1);
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
@@ -164,39 +229,17 @@ export function AppShell({
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <Link to="/dashboard">
-                  <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
-                  <span className="font-display text-base font-semibold">
-                    vyzed
-                  </span>
-                </Link>
+              <SidebarMenuButton size="lg" render={<Link to="/dashboard" />}>
+                <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
+                <span className="font-display text-base font-semibold">
+                  vyzed
+                </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarMenu>
-              {NAV.map((item) => (
-                <SidebarMenuItem key={item.to}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item)}
-                    tooltip={item.title}
-                  >
-                    <Link to={item.to}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {item.to === "/dashboard/lessons" && pending > 0 && (
-                    <SidebarMenuBadge>{pending}</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
+          <NavMain pending={pending} />
         </SidebarContent>
         <SidebarFooter>
           <ProfileProgress />

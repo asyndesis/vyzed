@@ -35,10 +35,12 @@ function LandingPage() {
             {m.landing_description()}
           </p>
           <PitchPoints />
-          <Button asChild variant="outline">
-            <Link to="/browse">
-              Browse teachers <ArrowRight />
-            </Link>
+          <Button
+            variant="outline"
+            render={<Link to="/browse" />}
+            nativeButton={false}
+          >
+            Browse teachers <ArrowRight />
           </Button>
         </>
       }

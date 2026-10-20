@@ -60,11 +60,10 @@ function LessonsPage() {
         description="Everything you're teaching and learning."
         actions={
           <ToggleGroup
-            type="single"
             variant="outline"
             size="sm"
-            value={role}
-            onValueChange={(v) => v && setRole(v as Role)}
+            value={[role]}
+            onValueChange={([v]) => v && setRole(v as Role)}
           >
             <ToggleGroupItem value="all">All</ToggleGroupItem>
             <ToggleGroupItem value="teacher">Teaching</ToggleGroupItem>
@@ -101,8 +100,12 @@ function LessonsPage() {
                   {...t.empty}
                   action={
                     t.key === "upcoming" && (
-                      <Button asChild variant="outline">
-                        <Link to="/dashboard/teachers">Find a teacher</Link>
+                      <Button
+                        variant="outline"
+                        render={<Link to="/dashboard/teachers" />}
+                        nativeButton={false}
+                      >
+                        Find a teacher
                       </Button>
                     )
                   }
