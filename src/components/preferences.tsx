@@ -1,6 +1,6 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useHydrated } from "@tanstack/react-router";
+import { useHydrated, useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   getLocale,
   isLocale,
-  setLocale,
+  localizeUrl,
   type Locale,
 } from "@/paraglide/runtime";
 
@@ -29,15 +29,27 @@ const THEMES = [
   { value: "system", label: "System", icon: Monitor },
 ];
 
-// Paraglide moves you to the same page under the new locale's URL
-const changeLocale = (v: string) => isLocale(v) && setLocale(v);
+// The locale lives in the URL, so switching is a client-side move to the same page under
+// the new locale's prefix (paraglide's setLocale would do a full document reload instead)
+function useChangeLocale() {
+  const router = useRouter();
+  return (v: string) => {
+    if (!isLocale(v) || v === getLocale()) return;
+    const { pathname, search, hash } = localizeUrl(window.location.href, {
+      locale: v,
+    });
+    router.history.push(pathname + search + hash);
+    void router.invalidate();
+  };
+}
 
-// The theme only exists in the browser; undefined until mounted keeps SSR in sync
+// The theme only exists in the browser; empty until mounted keeps SSR in sync
+// (and keeps radix groups controlled rather than flipping from undefined)
 function useThemeValue() {
   const { theme, setTheme } = useTheme();
   const hydrated = useHydrated();
   return [
-    hydrated ? theme : undefined,
+    (hydrated && theme) || "",
     (t: string) => t && setTheme(t),
   ] as const;
 }
@@ -45,6 +57,7 @@ function useThemeValue() {
 // Header controls ------------------------------------------------------------
 
 export function LanguageMenu() {
+  const changeLocale = useChangeLocale();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -99,6 +112,7 @@ export function ThemeMenu() {
 // Profile page fields ----------------------------------------------------------
 
 export function PreferenceFields() {
+  const changeLocale = useChangeLocale();
   const [theme, setTheme] = useThemeValue();
   return (
     <>

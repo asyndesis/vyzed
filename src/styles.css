@@ -154,3 +154,9 @@
     @apply font-display tracking-tight;
   }
 }
+
+/* Dev only: shrink the TanStack devtools trigger to half size */
+[aria-label="Open TanStack Devtools"] {
+  scale: 0.5;
+  transform-origin: bottom right;
+}

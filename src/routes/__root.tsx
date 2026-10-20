@@ -5,8 +5,10 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Fragment, useEffect } from "react";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -40,6 +42,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   },
 );
 
+// The locale comes from the URL, not React state, so nothing re-renders when it changes.
+// Subscribing to the pathname and keying on the locale remounts the tree with the new messages.
+function LocaleBoundary({ children }: { children: React.ReactNode }) {
+  useLocation({ select: (l) => l.pathname });
+  const locale = getLocale();
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+  return <Fragment key={locale}>{children}</Fragment>;
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang={getLocale()} suppressHydrationWarning>
@@ -53,7 +66,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+          <TooltipProvider delayDuration={0}>
+            <LocaleBoundary>{children}</LocaleBoundary>
+          </TooltipProvider>
           <Toaster position="top-right" />
         </ThemeProvider>
         {import.meta.env.DEV && (
