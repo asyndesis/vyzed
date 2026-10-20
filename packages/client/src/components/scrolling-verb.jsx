@@ -15,10 +15,10 @@ export function ScrollingVerb({ verbs = [] }) {
   }, []);
 
   return (
-    <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] relative z-[0]">
+    <span className="inline-flex align-baseline overflow-hidden h-[1.3em] min-w-[120px] relative z-0">
       {/* The verb container */}
       <span
-        className="inline-flex flex-col h-[calc(1.3em*7)] transition-transform duration-500 ease-in-out"
+        className="inline-flex flex-col h-[9.1em] transition-transform duration-500 ease-in-out"
         style={{ transform: `translateY(calc(-${currentVerb} * 1.3em))` }}
       >
         {verbs.map((verb) => (

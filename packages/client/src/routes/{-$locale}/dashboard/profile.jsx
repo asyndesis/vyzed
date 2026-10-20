@@ -234,7 +234,7 @@ function ProfilePage() {
           dirty ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
         }`}
       >
-        <div className="flex items-center gap-3 rounded-full border bg-background/95 py-2 pl-5 pr-2 shadow-lg backdrop-blur">
+        <div className="flex items-center gap-3 rounded-full border bg-background/95 py-2 pl-5 pr-2 shadow-lg backdrop-blur-sm">
           <span className="text-sm">Unsaved changes</span>
           <Button variant="ghost" size="sm" onClick={() => setForm(initial)} disabled={saving}>
             Discard

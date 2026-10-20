@@ -168,7 +168,7 @@ export function LessonCard({ lesson, role }) {
           {showPayment && (
             <ActionButton
               icon={CircleDollarSign}
-              variant={myPaid ? "secondary" : "outline"}
+              variant={myPaid ? "secondary" : "outline-solid"}
               loading={paidBusy}
               onClick={() => setPaid({ enrollmentId: enrollment.id, isPaid: !myPaid })}
             >

@@ -145,8 +145,8 @@ function Teachers({ profileTo, title, description }) {
           action={hasFilters && <Button variant="outline" onClick={clearAll}>Clear filters</Button>}
         />
       ) : (
-        <>
-          <p className="-mb-4 text-sm tabular-nums text-muted-foreground">
+        <div className="space-y-4">
+          <p className="text-sm tabular-nums text-muted-foreground">
             {result.pagination.total} teacher{result.pagination.total === 1 ? "" : "s"}
           </p>
           <div
@@ -171,7 +171,7 @@ function Teachers({ profileTo, title, description }) {
               </Button>
             </div>
           )}
-        </>
+        </div>
       )}
     </>
   );

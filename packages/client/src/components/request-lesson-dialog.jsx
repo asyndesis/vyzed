@@ -152,7 +152,7 @@ export function RequestLessonDialog({ teacher, trigger }) {
                   <Button
                     key={o.v}
                     type="button"
-                    variant={payment === o.v ? "default" : "outline"}
+                    variant={payment === o.v ? "default" : "outline-solid"}
                     onClick={() => setPayment(o.v)}
                   >
                     {o.label}

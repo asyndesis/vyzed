@@ -203,7 +203,7 @@ export function AppShell({ children }) {
       </Sidebar>
       <SidebarInset>
         {/* Mobile only: desktop navigation lives entirely in the sidebar */}
-        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background/80 px-4 backdrop-blur md:hidden">
+        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background/80 px-4 backdrop-blur-sm md:hidden">
           <SidebarTrigger className="-ml-1 text-muted-foreground" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <span className="text-sm font-medium">{current?.title ?? "Vyzed"}</span>

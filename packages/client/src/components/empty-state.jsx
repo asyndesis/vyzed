@@ -28,7 +28,7 @@ export function EmptyState({ icon: Icon, title, description, action, className }
         // Icon tile with a faint halo ring behind it
         <div className="relative mb-5">
           <div className="absolute -inset-2.5 rounded-[1.25rem] border border-dashed border-border/70" />
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border bg-card shadow-sm">
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border bg-card shadow-xs">
             <Icon className="h-5 w-5 text-primary" strokeWidth={1.75} />
           </div>
         </div>
