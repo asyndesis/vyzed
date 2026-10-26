@@ -16,7 +16,8 @@ src/
                        rules.ts       business rules + constants (no React, no db),
                                       shared by the GraphQL resolvers and the UI
                        rules.test.ts  unit tests for rules.ts
-                       queries.ts     GraphQL documents + query options
+                       queries.ts     GraphQL queries/mutations used by more than one
+                                      component in the feature (+ query options)
                        *.ts           anything else non-React (clients, server fns)
   graphql/           generated schema.graphql + gql.tada types (npm run gql)
   i18n/              messages/ (edit), project.inlang/ (settings), paraglide/ (generated)
@@ -36,6 +37,16 @@ Features: `auth`, `skills`, `lessons`, `teachers`, `profile`.
 `<kind>` is decided by the file alone: `.tsx` component → `components/`, React hook →
 `hooks/`, everything else → `lib/`. Use no other folder names inside a feature. Only
 create a kind folder once it has a file.
+
+## GraphQL (gql.tada)
+
+- A component declares the data it needs as a fragment **in its own file** and reads it
+  with `readFragment`. Keep fragment masking on.
+- The query that loads a screen composes those fragments and lives with the top-level
+  component or route that runs it. Only queries shared within a feature go in
+  `lib/queries.ts`. Queries shared across features go in the lower feature's
+  `lib/queries.ts` (`Me` → profile, `SkillTree` → skills).
+- Import `graphql`, `readFragment` and related helpers from `@/lib/gql`, never directly from `gql.tada`.
 
 ## Dependency rules
 
