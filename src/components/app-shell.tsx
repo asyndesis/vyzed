@@ -12,6 +12,7 @@ import { LogoMark } from "@/components/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -145,9 +146,11 @@ function UserMenu() {
             sideOffset={4}
             className="w-56 rounded-lg"
           >
-            <DropdownMenuLabel className="font-normal text-muted-foreground">
-              {me.email}
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="font-normal text-muted-foreground">
+                {me.email}
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem render={<Link to="/dashboard/profile" />}>
               <UserRound /> Profile

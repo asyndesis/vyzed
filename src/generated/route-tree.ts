@@ -8,29 +8,29 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as PublicRouteImport } from './routes/_public'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
-import { Route as GraphqlRouteImport } from './routes/graphql'
-import { Route as PublicIndexRouteImport } from './routes/_public/index'
-import { Route as PublicAuthRouteImport } from './routes/_public/_auth'
-import { Route as ApiHealthRouteImport } from './routes/api/health'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardLessonsRouteImport } from './routes/dashboard/lessons'
-import { Route as DashboardProfileRouteRouteImport } from './routes/dashboard/profile/route'
-import { Route as PublicAuthForgotPasswordRouteImport } from './routes/_public/_auth/forgot-password'
-import { Route as PublicAuthResetPasswordRouteImport } from './routes/_public/_auth/reset-password'
-import { Route as PublicAuthSignInRouteImport } from './routes/_public/_auth/sign-in'
-import { Route as PublicAuthSignUpRouteImport } from './routes/_public/_auth/sign-up'
-import { Route as PublicBrowseIndexRouteImport } from './routes/_public/browse/index'
-import { Route as PublicBrowseIdRouteImport } from './routes/_public/browse/$id'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as DashboardProfileIndexRouteImport } from './routes/dashboard/profile/index'
-import { Route as DashboardProfileLearningRouteImport } from './routes/dashboard/profile/learning'
-import { Route as DashboardProfilePreferencesRouteImport } from './routes/dashboard/profile/preferences'
-import { Route as DashboardProfileTeachingRouteImport } from './routes/dashboard/profile/teaching'
-import { Route as DashboardTeachersIndexRouteImport } from './routes/dashboard/teachers/index'
-import { Route as DashboardTeachersIdRouteImport } from './routes/dashboard/teachers/$id'
+import { Route as rootRouteImport } from './../routes/__root'
+import { Route as PublicRouteImport } from './../routes/_public'
+import { Route as DashboardRouteRouteImport } from './../routes/dashboard/route'
+import { Route as GraphqlRouteImport } from './../routes/graphql'
+import { Route as PublicIndexRouteImport } from './../routes/_public/index'
+import { Route as PublicAuthRouteImport } from './../routes/_public/_auth'
+import { Route as ApiHealthRouteImport } from './../routes/api/health'
+import { Route as DashboardIndexRouteImport } from './../routes/dashboard/index'
+import { Route as DashboardLessonsRouteImport } from './../routes/dashboard/lessons'
+import { Route as DashboardProfileRouteRouteImport } from './../routes/dashboard/profile/route'
+import { Route as PublicAuthForgotPasswordRouteImport } from './../routes/_public/_auth/forgot-password'
+import { Route as PublicAuthResetPasswordRouteImport } from './../routes/_public/_auth/reset-password'
+import { Route as PublicAuthSignInRouteImport } from './../routes/_public/_auth/sign-in'
+import { Route as PublicAuthSignUpRouteImport } from './../routes/_public/_auth/sign-up'
+import { Route as PublicBrowseIndexRouteImport } from './../routes/_public/browse/index'
+import { Route as PublicBrowseIdRouteImport } from './../routes/_public/browse/$id'
+import { Route as ApiAuthSplatRouteImport } from './../routes/api/auth/$'
+import { Route as DashboardProfileIndexRouteImport } from './../routes/dashboard/profile/index'
+import { Route as DashboardProfileLearningRouteImport } from './../routes/dashboard/profile/learning'
+import { Route as DashboardProfilePreferencesRouteImport } from './../routes/dashboard/profile/preferences'
+import { Route as DashboardProfileTeachingRouteImport } from './../routes/dashboard/profile/teaching'
+import { Route as DashboardTeachersIndexRouteImport } from './../routes/dashboard/teachers/index'
+import { Route as DashboardTeachersIdRouteImport } from './../routes/dashboard/teachers/$id'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -533,7 +533,7 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from './router.tsx'
+import type { getRouter } from '../router.tsx'
 import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
