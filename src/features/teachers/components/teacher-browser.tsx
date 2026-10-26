@@ -11,9 +11,12 @@ import {
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { LANGUAGE_SLUG } from "@/lib/skills";
-import { FacetFilter } from "../components/facet-filter";
+import { FacetFilter } from "@/features/teachers/components/facet-filter";
 import { EmptyState, PageTitle } from "@/components/page";
-import { TeacherCard, TeacherCardFields } from "../components/teacher-card";
+import {
+  TeacherCard,
+  TeacherCardFields,
+} from "@/features/teachers/components/teacher-card";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,

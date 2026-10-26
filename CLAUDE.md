@@ -20,7 +20,7 @@ Kind: component → `components/`, hook → `hooks/`, anything else → `lib/`.
 ## Rules
 
 - Features never import other features: shared code moves to `src/<kind>/`,
-  and routes compose features. Inside a feature, import its own files relatively.
+  and routes compose features.
 - GraphQL: each component defines its fragment in its own file (keep masking on).
   `lib/queries.ts` is only for queries that several components share.
 - Naming, import paths and server/client boundaries are enforced by oxlint

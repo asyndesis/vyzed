@@ -12,7 +12,7 @@ import {
 import {
   BookableTeacherFields,
   RequestLessonDialog,
-} from "../components/request-lesson-dialog";
+} from "@/features/teachers/components/request-lesson-dialog";
 import { SkillBadges } from "@/components/skill-badges";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";

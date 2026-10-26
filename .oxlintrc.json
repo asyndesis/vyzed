@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "import", "react"],
+  "jsPlugins": ["./scripts/oxlint-plugin.js"],
   "env": {
     "browser": true,
     "node": true,
@@ -30,40 +31,15 @@
         "patterns": [
           {
             "group": ["./*", "../*"],
-            "message": "Import with @/ paths (only features import their own files relatively)."
+            "message": "Import with @/ paths."
           }
         ]
       }
-    ]
+    ],
+    "vyzed/feature-boundaries": "error"
   },
   "ignorePatterns": ["src/generated/**", "src/server/db/migrations/**"],
   "overrides": [
-    {
-      "files": ["src/features/**"],
-      "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "paths": [
-              {
-                "name": "gql.tada",
-                "message": "Import GraphQL helpers from @/lib/gql."
-              }
-            ],
-            "patterns": [
-              {
-                "group": ["@/features/**"],
-                "message": "Features never import features via @/. Your own feature's files: use a relative path. Shared code: move to src/<kind>/."
-              },
-              {
-                "group": ["../../**"],
-                "message": "Don't leave your feature with a relative path. Move shared code to src/<kind>/ and import it with @/."
-              }
-            ]
-          }
-        ]
-      }
-    },
     {
       "files": ["src/lib/gql.ts"],
       "rules": {

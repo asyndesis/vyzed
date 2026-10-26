@@ -6,7 +6,7 @@ import {
   priceToCents,
   toProfileForm,
   toProfileInput,
-} from "./rules";
+} from "@/features/profile/lib/rules";
 
 const spanish = { id: "es", name: "Spanish", framework: "CEFR" as const };
 const guitar = { id: "gtr", name: "Guitar", framework: "DEFAULT" as const };

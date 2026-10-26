@@ -3,7 +3,11 @@ import { ClientOnly } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Check, CircleDollarSign, Loader2, Repeat, X } from "lucide-react";
 import { toast } from "sonner";
-import { canTransition, isSettled, type LessonStatus } from "../lib/rules";
+import {
+  canTransition,
+  isSettled,
+  type LessonStatus,
+} from "@/features/lessons/lib/rules";
 import { levelLabel } from "@/lib/skills";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +15,10 @@ import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { friendlyDay, fullName, timeRange } from "@/lib/format";
 import { gqlRequest, graphql } from "@/lib/gql";
-import { type LessonItem, MY_LESSONS_KEY } from "../lib/queries";
+import {
+  type LessonItem,
+  MY_LESSONS_KEY,
+} from "@/features/lessons/lib/queries";
 
 const STATUS: Record<
   LessonStatus,

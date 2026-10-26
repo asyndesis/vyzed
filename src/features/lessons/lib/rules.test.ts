@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LESSON_STATUSES, canTransition } from "./rules";
+import { LESSON_STATUSES, canTransition } from "@/features/lessons/lib/rules";
 
 describe("canTransition", () => {
   it("only lets a teacher complete a confirmed lesson", () => {
