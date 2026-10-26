@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3100 --strictPort",
-    "generate-routes": "tsr generate",
     "build": "vite build",
     "preview": "vite preview",
     "db:generate": "drizzle-kit generate",
@@ -66,7 +65,6 @@
     "@inlang/paraglide-js": "^2.29.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/devtools-vite": "0.8.5",
-    "@tanstack/router-cli": "^1.167.45",
     "@types/node": "^26.6.5",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
