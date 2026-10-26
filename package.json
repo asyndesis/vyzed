@@ -20,7 +20,8 @@
     "test:watch": "vitest",
     "check": "npm run check:format && npm run lint && npm run typecheck && npm run test && npm run check:generated",
     "check:generated": "npm run gql && npm run db:generate && git diff --exit-code -- src/generated src/server/db/migrations",
-    "check:format": "oxfmt --check"
+    "check:format": "oxfmt --check",
+    "prepare": "husky"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -75,6 +76,7 @@
     "auth": "^1.7.12",
     "dotenv": "^18.0.8",
     "drizzle-kit": "^1.0.0-rc.4",
+    "husky": "^9.1.7",
     "oxfmt": "^0.74.0",
     "oxlint": "^1.89.0",
     "tsx": "^4.23.15",
