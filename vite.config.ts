@@ -16,7 +16,11 @@ export default defineConfig({
       // English at /, other languages under /de, /es
       strategy: ["url", "baseLocale"],
     }),
-    nitro(),
+    nitro({
+      // Libraries mark files "use client" for React Server Components, which we
+      // don't use; bundling the server drops it, so the warning is just noise
+      rolldownConfig: { checks: { moduleLevelDirective: false } },
+    }),
     tailwindcss(),
     // Explicit, since src/server/ (a folder) would otherwise shadow src/server.ts
     tanstackStart({
