@@ -11,13 +11,7 @@
     "correctness": "error"
   },
   "rules": {
-    "no-unused-vars": "warn",
     "import/named": "error",
-    "react/exhaustive-deps": "warn",
-    "react/purity": "warn",
-    "react/incompatible-library": "warn",
-    "react/set-state-in-effect": "warn",
-    "react/refs": "warn",
     "import/no-cycle": "error",
     "no-restricted-imports": [
       "error",
