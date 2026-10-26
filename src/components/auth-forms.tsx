@@ -4,6 +4,14 @@ import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
 import { useState } from "react";
 import { LogoMark } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import {
   InputGroup,
@@ -11,7 +19,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Label } from "@/components/ui/label";
+import { Field as FieldRoot, FieldLabel } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { viewerQuery } from "@/lib/session";
 
@@ -68,22 +76,17 @@ function Field({
   aside?: React.ReactNode;
 }) {
   return (
-    <div className="relative space-y-2">
-      <div className={aside ? "flex h-5 items-center" : undefined}>
-        <Label htmlFor={name}>{label}</Label>
+    <FieldRoot>
+      <div className="flex items-center">
+        <FieldLabel htmlFor={name}>{label}</FieldLabel>
+        {aside && <div className="ml-auto">{aside}</div>}
       </div>
       {input.type === "password" ? (
         <PasswordInput id={name} name={name} required {...input} />
       ) : (
         <Input id={name} name={name} required {...input} />
       )}
-      {/* After the input in the DOM so Tab visits it next, but shown beside the label */}
-      {aside && (
-        <div className="absolute right-0 top-0 flex h-5 items-center">
-          {aside}
-        </div>
-      )}
-    </div>
+    </FieldRoot>
   );
 }
 
@@ -139,23 +142,24 @@ const footerLink = "font-medium text-primary hover:underline";
 // Replaces a form once an email has been sent
 function CheckEmail({ message }: { message: string }) {
   return (
-    <div className="space-y-4">
-      <div className="flex size-10 items-center justify-center rounded-lg border">
-        <MailCheck className="size-5" />
-      </div>
-      <div className="space-y-1.5">
-        <h1 className="text-xl font-semibold">Check your email</h1>
-        <p className="text-sm text-muted-foreground">{message}</p>
-      </div>
-      <Button
-        variant="outline"
-        className="w-full"
-        render={<Link to="/sign-in" />}
-        nativeButton={false}
-      >
-        Back to sign in
-      </Button>
-    </div>
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <MailCheck />
+        </EmptyMedia>
+        <EmptyTitle>Check your email</EmptyTitle>
+        <EmptyDescription>{message}</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button
+          variant="outline"
+          render={<Link to="/sign-in" />}
+          nativeButton={false}
+        >
+          Back to sign in
+        </Button>
+      </EmptyContent>
+    </Empty>
   );
 }
 

@@ -20,6 +20,14 @@
           {
             "name": "gql.tada",
             "message": "Import GraphQL helpers from @/lib/gql."
+          },
+          {
+            "name": "clsx",
+            "message": "Use cn from \"cn\"."
+          },
+          {
+            "name": "tailwind-merge",
+            "message": "Use cn from \"cn\"."
           }
         ],
         "patterns": [

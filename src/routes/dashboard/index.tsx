@@ -12,11 +12,25 @@ import {
   LessonCard,
   StatusBadge,
 } from "@/features/lessons/components/lesson-card";
-import { EmptyState } from "@/components/page";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { TeacherCard } from "@/features/teachers/components/teacher-card";
 import { teacherListQuery } from "@/features/teachers/components/teacher-browser";
 import { Button } from "@/components/ui/button";
-import { SkeletonText } from "@/components/ui/skeleton";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { friendlyDay, fullName, timeRange } from "@/lib/format";
 import {
@@ -86,20 +100,20 @@ function NextLesson({ item, now }: { item: LessonItem; now: number }) {
   const started = new Date(lesson.startTime).getTime() <= now;
 
   return (
-    <section className="rounded-xl border bg-card">
-      <div className="flex items-center justify-between border-b px-5 py-3">
-        <h2 className="text-sm font-medium">
-          {started ? "Happening now" : "Next lesson"}
-        </h2>
-        {!started && (
-          <ClientOnly fallback={<SkeletonText className="w-16 text-sm" />}>
-            <span className="text-sm text-muted-foreground tabular-nums">
-              in {formatDistanceToNowStrict(new Date(lesson.startTime))}
-            </span>
-          </ClientOnly>
-        )}
-      </div>
-      <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+    <Card>
+      <CardHeader className="border-b">
+        <CardTitle>{started ? "Happening now" : "Next lesson"}</CardTitle>
+        <CardAction>
+          {!started && (
+            <ClientOnly fallback={<Skeleton className="h-4 w-16" />}>
+              <span className="text-sm text-muted-foreground tabular-nums">
+                in {formatDistanceToNowStrict(new Date(lesson.startTime))}
+              </span>
+            </ClientOnly>
+          )}
+        </CardAction>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <DateTile date={lesson.startTime} className="size-16" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -108,9 +122,7 @@ function NextLesson({ item, now }: { item: LessonItem; now: number }) {
             </h3>
             <StatusBadge status={status} />
           </div>
-          <ClientOnly
-            fallback={<SkeletonText className="mt-0.5 w-48 text-sm" />}
-          >
+          <ClientOnly fallback={<Skeleton className="h-4 mt-0.5 w-48" />}>
             <p className="mt-0.5 text-sm text-muted-foreground">
               {friendlyDay(lesson.startTime)} ·{" "}
               {timeRange(lesson.startTime, lesson.endTime)}
@@ -142,8 +154,8 @@ function NextLesson({ item, now }: { item: LessonItem; now: number }) {
             View teacher
           </Button>
         )}
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -176,15 +188,22 @@ function TeachersForYou() {
           ))}
         </div>
       ) : (
-        <EmptyState
-          icon={Users}
-          title={
-            learns.length
-              ? "No teachers for your skills yet"
-              : "No teachers yet"
-          }
-          description="New teachers join all the time. Know something? Be one of the first."
-          action={
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Users />
+            </EmptyMedia>
+            <EmptyTitle>
+              {learns.length
+                ? "No teachers for your skills yet"
+                : "No teachers yet"}
+            </EmptyTitle>
+            <EmptyDescription>
+              New teachers join all the time. Know something? Be one of the
+              first.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
             <Button
               variant="outline"
               size="sm"
@@ -193,8 +212,8 @@ function TeachersForYou() {
             >
               Start teaching
             </Button>
-          }
-        />
+          </EmptyContent>
+        </Empty>
       )}
     </Section>
   );
@@ -216,7 +235,7 @@ function DashboardPage() {
               {data.me?.firstName && `, ${data.me.firstName}`}
             </h1>
           ) : (
-            <SkeletonText className="w-64 text-2xl" />
+            <Skeleton className="h-7 w-64" />
           )}
           <p className="mt-1 text-sm text-muted-foreground">
             {summary(groups)}
@@ -277,19 +296,25 @@ function DashboardPage() {
           )}
         </>
       ) : (
-        <EmptyState
-          icon={GraduationCap}
-          title="Nothing scheduled"
-          description="Find someone to learn from, or wait for students to book you."
-          action={
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <GraduationCap />
+            </EmptyMedia>
+            <EmptyTitle>Nothing scheduled</EmptyTitle>
+            <EmptyDescription>
+              Find someone to learn from, or wait for students to book you.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
             <Button
               render={<Link to="/dashboard/teachers" />}
               nativeButton={false}
             >
               <Search /> Find a teacher
             </Button>
-          }
-        />
+          </EmptyContent>
+        </Empty>
       )}
 
       <TeachersForYou />

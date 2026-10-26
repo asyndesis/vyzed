@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { fullName, initials, type Person } from "@/lib/format";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 // Stable pastel per person, so fallback avatars aren't all grey
 const HUES = [210, 260, 330, 20, 150, 190, 45];

@@ -11,7 +11,13 @@ import {
 import { levelLabel } from "@/lib/skills";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+} from "@/components/ui/item";
+import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { friendlyDay, fullName, timeRange } from "@/lib/format";
 import { gqlRequest, graphql } from "@/lib/gql";
@@ -24,13 +30,13 @@ const STATUS: Record<
   LessonStatus,
   {
     label: string;
-    variant: "warning" | "default" | "secondary" | "success" | "destructive";
+    variant: "default" | "secondary" | "outline" | "destructive";
   }
 > = {
-  REQUESTED: { label: "Requested", variant: "warning" },
+  REQUESTED: { label: "Requested", variant: "outline" },
   CONFIRMED: { label: "Confirmed", variant: "default" },
   REVISED: { label: "Revised", variant: "secondary" },
-  COMPLETED: { label: "Completed", variant: "success" },
+  COMPLETED: { label: "Completed", variant: "secondary" },
   CANCELLED: { label: "Cancelled", variant: "destructive" },
 };
 
@@ -75,7 +81,7 @@ type Action = {
 function LessonWhen({ item }: { item: LessonItem }) {
   const { lesson } = item;
   return (
-    <ClientOnly fallback={<SkeletonText className="mt-0.5 w-40 text-sm" />}>
+    <ClientOnly fallback={<Skeleton className="h-4 mt-0.5 w-40" />}>
       <p className="mt-0.5 text-sm text-muted-foreground">
         {friendlyDay(lesson.startTime)} ·{" "}
         {timeRange(lesson.startTime, lesson.endTime)} ·{" "}
@@ -236,10 +242,12 @@ export function LessonCard({ item }: { item: LessonItem }) {
     !item.theirPaid;
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
-      <DateTile date={lesson.startTime} />
+    <Item variant="outline">
+      <ItemMedia>
+        <DateTile date={lesson.startTime} />
+      </ItemMedia>
 
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+      <ItemContent className="flex-row items-center gap-3">
         {other && <UserAvatar user={other} className="size-9" />}
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -259,10 +267,10 @@ export function LessonCard({ item }: { item: LessonItem }) {
             </p>
           )}
         </div>
-      </div>
+      </ItemContent>
 
       {actions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+        <ItemActions className="flex-wrap">
           {actions.map((a) => (
             <Button
               key={a.key}
@@ -279,24 +287,8 @@ export function LessonCard({ item }: { item: LessonItem }) {
               {a.label}
             </Button>
           ))}
-        </div>
+        </ItemActions>
       )}
-    </div>
-  );
-}
-
-// Mirrors LessonCard's boxes and line heights so the swap doesn't shift anything
-export function LessonCardSkeleton() {
-  return (
-    <div className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
-      <Skeleton className="h-16 w-14 shrink-0 rounded-lg" />
-      <div className="flex min-w-0 flex-1 items-center gap-3">
-        <Skeleton className="size-9 shrink-0 rounded-full" />
-        <div className="min-w-0 flex-1">
-          <SkeletonText className="w-56 max-w-full" />
-          <SkeletonText className="mt-0.5 w-40 max-w-full text-sm" />
-        </div>
-      </div>
-    </div>
+    </Item>
   );
 }

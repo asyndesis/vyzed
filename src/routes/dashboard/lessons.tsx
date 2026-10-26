@@ -2,7 +2,16 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, History, Inbox } from "lucide-react";
 import { useState } from "react";
 import { LessonCard } from "@/features/lessons/components/lesson-card";
-import { EmptyState, PageTitle } from "@/components/page";
+import { PageTitle } from "@/components/page";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -81,11 +90,9 @@ function LessonsPage() {
       >
         <TabsList>
           {TABS.map((t) => (
-            <TabsTrigger key={t.key} value={t.key} className="gap-1.5">
+            <TabsTrigger key={t.key} value={t.key}>
               {t.label}
-              <span className="rounded-full bg-muted px-1.5 text-xs tabular-nums">
-                {filter(t.key).length}
-              </span>
+              <Badge variant="secondary">{filter(t.key).length}</Badge>
             </TabsTrigger>
           ))}
         </TabsList>
@@ -99,10 +106,16 @@ function LessonsPage() {
                   <LessonCard key={item.lesson.id} item={item} />
                 ))
               ) : (
-                <EmptyState
-                  {...t.empty}
-                  action={
-                    t.key === "upcoming" && (
+                <Empty className="border">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <t.empty.icon />
+                    </EmptyMedia>
+                    <EmptyTitle>{t.empty.title}</EmptyTitle>
+                    <EmptyDescription>{t.empty.description}</EmptyDescription>
+                  </EmptyHeader>
+                  <EmptyContent>
+                    {t.key === "upcoming" && (
                       <Button
                         variant="outline"
                         render={<Link to="/dashboard/teachers" />}
@@ -110,9 +123,9 @@ function LessonsPage() {
                       >
                         Find a teacher
                       </Button>
-                    )
-                  }
-                />
+                    )}
+                  </EmptyContent>
+                </Empty>
               )}
             </TabsContent>
           );

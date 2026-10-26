@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -148,16 +149,25 @@ export function RequestLessonDialog({
 
           <div className="space-y-2">
             <Label>What do you want to learn?</Label>
-            <Select value={skillId} onValueChange={(v) => setSkillId(v ?? "")}>
+            <Select
+              items={teacher.teaches.map(({ skill }) => ({
+                value: skill.id,
+                label: skill.name,
+              }))}
+              value={skillId}
+              onValueChange={(v) => setSkillId(v ?? "")}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose a skill" />
               </SelectTrigger>
               <SelectContent>
-                {teacher.teaches.map(({ skill }) => (
-                  <SelectItem key={skill.id} value={skill.id}>
-                    {skill.name}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {teacher.teaches.map(({ skill }) => (
+                    <SelectItem key={skill.id} value={skill.id}>
+                      {skill.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
@@ -203,7 +213,6 @@ export function RequestLessonDialog({
               variant="outline"
               value={[payment]}
               onValueChange={([v]) => v && setPayment(v as PaymentType)}
-              className="grid w-full grid-cols-2"
             >
               {options.map((o) => (
                 <ToggleGroupItem key={o.value} value={o.value}>

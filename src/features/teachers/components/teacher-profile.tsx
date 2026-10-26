@@ -15,6 +15,15 @@ import {
 } from "@/features/teachers/components/request-lesson-dialog";
 import { SkillBadges } from "@/components/skill-badges";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { UserAvatar } from "@/components/user-avatar";
 import { formatPrice, fullName } from "@/lib/format";
 import { gqlQuery, graphql } from "@/lib/gql";
@@ -150,56 +159,66 @@ export function TeacherProfile({
           )}
         </div>
 
-        <aside className="h-fit space-y-4 rounded-xl border bg-card p-5 md:sticky md:top-20">
-          <div>
-            <p className="text-3xl font-bold">{price ?? "Free"}</p>
-            {price && <p className="text-sm text-muted-foreground">per hour</p>}
-          </div>
+        <Card className="h-fit md:sticky md:top-20">
+          <CardHeader>
+            <CardTitle>{price ?? "Free"}</CardTitle>
+            {price && <CardDescription>per hour</CardDescription>}
+          </CardHeader>
           {user.allowBarter && (
-            <p className="flex items-center gap-2 rounded-lg border border-success/25 bg-success/10 p-2.5 text-sm text-success">
-              <ArrowLeftRight className="size-4 shrink-0" />
-              Open to swapping lessons instead of payment
-            </p>
+            <CardContent>
+              <Item variant="outline" size="sm">
+                <ItemMedia variant="icon">
+                  <ArrowLeftRight />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>
+                    Open to swapping lessons instead of payment
+                  </ItemTitle>
+                </ItemContent>
+              </Item>
+            </CardContent>
           )}
-          {isMe ? (
-            <Button
-              variant="outline"
-              className="w-full"
-              render={<Link to="/dashboard/profile" />}
-              nativeButton={false}
-            >
-              Edit your profile
-            </Button>
-          ) : teaches.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Not taking lessons right now.
-            </p>
-          ) : viewer ? (
-            <RequestLessonDialog
-              data={user}
-              trigger={
-                <Button size="lg" className="w-full">
-                  Request a lesson
-                </Button>
-              }
-            />
-          ) : (
-            <Button
-              size="lg"
-              className="w-full"
-              nativeButton={false}
-              // Come back to this teacher inside the app after signing in
-              render={
-                <Link
-                  to="/sign-in"
-                  search={{ redirect: `/dashboard/teachers/${user.id}` }}
-                />
-              }
-            >
-              Sign in to book
-            </Button>
-          )}
-        </aside>
+          <CardFooter>
+            {isMe ? (
+              <Button
+                variant="outline"
+                className="w-full"
+                render={<Link to="/dashboard/profile" />}
+                nativeButton={false}
+              >
+                Edit your profile
+              </Button>
+            ) : teaches.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Not taking lessons right now.
+              </p>
+            ) : viewer ? (
+              <RequestLessonDialog
+                data={user}
+                trigger={
+                  <Button size="lg" className="w-full">
+                    Request a lesson
+                  </Button>
+                }
+              />
+            ) : (
+              <Button
+                size="lg"
+                className="w-full"
+                nativeButton={false}
+                // Come back to this teacher inside the app after signing in
+                render={
+                  <Link
+                    to="/sign-in"
+                    search={{ redirect: `/dashboard/teachers/${user.id}` }}
+                  />
+                }
+              >
+                Sign in to book
+              </Button>
+            )}
+          </CardFooter>
+        </Card>
       </div>
     </>
   );

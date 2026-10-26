@@ -7,7 +7,7 @@ import {
   ThemeMenu,
 } from "@/features/profile/components/preferences";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 // Public site navigation. Add About, Pricing, etc. here.
 const NAV = [{ title: "Browse teachers", to: "/browse" }] as const;
@@ -131,7 +131,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="flex-1 bg-grid">{children}</div>
+      <div className="flex-1">{children}</div>
       <Footer />
     </div>
   );
