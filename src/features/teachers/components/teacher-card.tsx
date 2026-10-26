@@ -1,7 +1,7 @@
+import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftRight, Languages } from "lucide-react";
 import { SkillBadges } from "@/components/skill-badges";
-import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { formatPrice, fullName } from "@/lib/format";
 import {
@@ -47,23 +47,32 @@ export function TeacherCard({
   data: FragmentOf<typeof TeacherCardFields>;
   to: "/browse/$id" | "/dashboard/teachers/$id";
 }) {
-  const user = readFragment(TeacherCardFields, data);
   return (
-    <Link
-      to={to}
-      params={{ id: user.id }}
-      className="flex flex-col gap-4 rounded-xl border bg-card p-5 transition-colors hover:border-foreground/20"
-    >
-      <TeacherCardBody user={user} />
+    <TeacherCardView user={readFragment(TeacherCardFields, data)} to={to} />
+  );
+}
+
+// The card for an already-read user, e.g. a live preview of a profile being edited
+export function TeacherCardView({
+  user,
+  to,
+}: {
+  user: TeacherCardUser;
+  to: "/browse/$id" | "/dashboard/teachers/$id";
+}) {
+  return (
+    <Link to={to} params={{ id: user.id }}>
+      <Card>
+        <TeacherCardBody user={user} />
+      </Card>
     </Link>
   );
 }
 
-// The card's contents without the link, for previews of a profile being edited
-export function TeacherCardBody({ user }: { user: TeacherCardUser }) {
+function TeacherCardBody({ user }: { user: TeacherCardUser }) {
   const price = formatPrice(user.priceAmount, user.priceCurrency);
   return (
-    <>
+    <CardContent className="flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <UserAvatar user={user} className="size-12" />
         <div className="min-w-0 flex-1">
@@ -85,7 +94,7 @@ export function TeacherCardBody({ user }: { user: TeacherCardUser }) {
             )}
           </p>
           {user.allowBarter && (
-            <p className="flex items-center justify-end gap-1 text-xs text-success">
+            <p className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
               <ArrowLeftRight className="size-3" /> Swaps
             </p>
           )}
@@ -97,30 +106,6 @@ export function TeacherCardBody({ user }: { user: TeacherCardUser }) {
       {user.bio && (
         <p className="line-clamp-2 text-sm text-muted-foreground">{user.bio}</p>
       )}
-    </>
-  );
-}
-
-// Same boxes and line heights as TeacherCard, so the swap doesn't shift anything
-export function TeacherCardSkeleton() {
-  return (
-    <div className="flex flex-col gap-4 rounded-xl border bg-card p-5">
-      <div className="flex items-start gap-3">
-        <Skeleton className="size-12 shrink-0 rounded-full" />
-        <div className="min-w-0 flex-1">
-          <SkeletonText className="w-32" />
-          <SkeletonText className="w-24 text-xs" />
-        </div>
-        <SkeletonText className="w-14" />
-      </div>
-      <div className="flex gap-1.5">
-        <Skeleton className="h-[22px] w-28 rounded-full" />
-        <Skeleton className="h-[22px] w-20 rounded-full" />
-      </div>
-      <div>
-        <SkeletonText className="w-full text-sm" />
-        <SkeletonText className="w-2/3 text-sm" />
-      </div>
-    </div>
+    </CardContent>
   );
 }

@@ -1,27 +1,27 @@
-import { Check, PlusCircle, type LucideIcon } from "lucide-react";
+import { PlusCircle, type LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
+
+type FacetOption = { value: string; label: string };
 
 export type FacetGroup = {
   label?: string;
-  options: Array<{ value: string; label: string }>;
+  options: FacetOption[];
 };
 
-// Multi-select filter (shadcn data-table pattern): dashed when empty, shows picks when active
+// Multi-select filter: a button that opens a searchable, grouped checklist
 export function FacetFilter({
   title,
   icon: Icon = PlusCircle,
@@ -35,86 +35,53 @@ export function FacetFilter({
   selected: string[];
   onChange: (values: string[]) => void;
 }) {
+  const items = groups.map((g, i) => ({
+    value: g.label ?? String(i),
+    label: g.label,
+    items: g.options,
+  }));
   const picked = groups
     .flatMap((g) => g.options)
     .filter((o) => selected.includes(o.value));
-  const toggle = (v: string) =>
-    onChange(
-      selected.includes(v) ? selected.filter((s) => s !== v) : [...selected, v],
-    );
 
   return (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn("h-9", !picked.length && "border-dashed shadow-none")}
-          />
-        }
-      >
-        <Icon className="text-muted-foreground" />
+    <Combobox
+      multiple
+      items={items}
+      value={picked}
+      onValueChange={(v: FacetOption[]) => onChange(v.map((o) => o.value))}
+      itemToStringLabel={(o: FacetOption) => o.label}
+      isItemEqualToValue={(a: FacetOption, b: FacetOption) =>
+        a.value === b.value
+      }
+    >
+      <ComboboxTrigger render={<Button variant="outline" />}>
+        <Icon />
         {title}
         {picked.length > 0 && (
-          <>
-            <span className="mx-0.5 h-4 w-px bg-border" />
-            <span className="max-w-32 truncate rounded bg-secondary px-1.5 py-0.5 text-xs font-medium">
-              {picked.length > 1
-                ? `${picked.length} selected`
-                : picked[0].label}
-            </span>
-          </>
+          <Badge variant="secondary">
+            {picked.length > 1 ? `${picked.length} selected` : picked[0].label}
+          </Badge>
         )}
-      </PopoverTrigger>
-      <PopoverContent className="w-72 p-0" align="start">
-        <Command>
-          <CommandInput placeholder={title} />
-          <CommandList>
-            <CommandEmpty>No results.</CommandEmpty>
-            {groups.map((g, i) => (
-              <CommandGroup key={g.label ?? i} heading={g.label}>
-                {g.options.map((o) => {
-                  const on = selected.includes(o.value);
-                  return (
-                    <CommandItem
-                      key={o.value}
-                      value={`${g.label ?? ""} ${o.label}`}
-                      onSelect={() => toggle(o.value)}
-                    >
-                      <span
-                        className={cn(
-                          "flex size-4 items-center justify-center rounded-[4px] border border-input",
-                          on &&
-                            "border-primary bg-primary text-primary-foreground",
-                        )}
-                      >
-                        {on && (
-                          <Check className="size-3 text-primary-foreground" />
-                        )}
-                      </span>
-                      {o.label}
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
-            ))}
-            {picked.length > 0 && (
-              <>
-                <CommandSeparator />
-                <CommandGroup>
-                  <CommandItem
-                    onSelect={() => onChange([])}
-                    className="justify-center"
-                  >
-                    Clear
-                  </CommandItem>
-                </CommandGroup>
-              </>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+      </ComboboxTrigger>
+      <ComboboxContent className="w-72">
+        <ComboboxInput placeholder={title} showTrigger={false} />
+        <ComboboxEmpty>No results.</ComboboxEmpty>
+        <ComboboxList>
+          {(group: (typeof items)[number]) => (
+            <ComboboxGroup key={group.value} items={group.items}>
+              {group.label && <ComboboxLabel>{group.label}</ComboboxLabel>}
+              <ComboboxCollection>
+                {(o: FacetOption) => (
+                  <ComboboxItem key={o.value} value={o}>
+                    {o.label}
+                  </ComboboxItem>
+                )}
+              </ComboboxCollection>
+            </ComboboxGroup>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }

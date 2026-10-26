@@ -1,6 +1,14 @@
 import { Link, type ErrorComponentProps } from "@tanstack/react-router";
 import { CircleAlert, FileQuestion, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 function Message({
   icon: Icon,
@@ -13,14 +21,20 @@ function Message({
 }) {
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-xl border bg-card p-8 text-center">
-        <Icon className="mx-auto size-8 text-muted-foreground" />
-        <h1 className="mt-4 text-xl font-semibold">{title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-        <Button className="mt-6" render={<Link to="/" />} nativeButton={false}>
-          Back to home
-        </Button>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Icon />
+          </EmptyMedia>
+          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyDescription>{description}</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button render={<Link to="/" />} nativeButton={false}>
+            Back to home
+          </Button>
+        </EmptyContent>
+      </Empty>
     </main>
   );
 }

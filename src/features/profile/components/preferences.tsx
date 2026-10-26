@@ -58,14 +58,7 @@ export function LanguageMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-10 px-0 text-xs font-semibold uppercase"
-            aria-label="Language"
-          />
-        }
+        render={<Button variant="ghost" size="sm" aria-label="Language" />}
       >
         {getLocale()}
       </DropdownMenuTrigger>
@@ -124,7 +117,7 @@ export function PreferenceFields() {
           onValueChange={([v]) => v && changeLocale(v)}
         >
           {LANGUAGES.map((l) => (
-            <ToggleGroupItem key={l.value} value={l.value} className="px-3">
+            <ToggleGroupItem key={l.value} value={l.value}>
               {l.label}
             </ToggleGroupItem>
           ))}
@@ -139,11 +132,7 @@ export function PreferenceFields() {
           onValueChange={([t]) => t && setTheme(t)}
         >
           {THEMES.map((t) => (
-            <ToggleGroupItem
-              key={t.value}
-              value={t.value}
-              className="gap-1.5 px-3"
-            >
+            <ToggleGroupItem key={t.value} value={t.value}>
               <t.icon /> {t.label}
             </ToggleGroupItem>
           ))}

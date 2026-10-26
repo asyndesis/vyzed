@@ -12,7 +12,15 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { LANGUAGE_SLUG } from "@/lib/skills";
 import { FacetFilter } from "@/features/teachers/components/facet-filter";
-import { EmptyState, PageTitle } from "@/components/page";
+import { PageTitle } from "@/components/page";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import {
   TeacherCard,
   TeacherCardFields,
@@ -174,8 +182,7 @@ export function TeacherBrowser({
         />
         <Toggle
           variant="outline"
-          // Dashed until active, like the facet filters
-          className="h-9 not-data-pressed:border-dashed not-data-pressed:shadow-none"
+
           pressed={!!search.swap}
           onPressedChange={(swap) => setSearch({ swap })}
         >
@@ -189,18 +196,24 @@ export function TeacherBrowser({
       </div>
 
       {data.teachers.length === 0 ? (
-        <EmptyState
-          icon={SearchX}
-          title="No teachers match"
-          description="Try removing a filter or searching for someone else."
-          action={
-            filtered && (
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <SearchX />
+            </EmptyMedia>
+            <EmptyTitle>No teachers match</EmptyTitle>
+            <EmptyDescription>
+              Try removing a filter or searching for someone else.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            {filtered && (
               <Button variant="outline" onClick={clearAll}>
                 Clear filters
               </Button>
-            )
-          }
-        />
+            )}
+          </EmptyContent>
+        </Empty>
       ) : (
         <div className="space-y-4">
           <p className="text-sm tabular-nums text-muted-foreground">

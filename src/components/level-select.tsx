@@ -7,6 +7,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -21,24 +22,34 @@ export function LevelSelect({
   value,
   onChange,
   framework,
-  className = "h-8 w-44",
+  className = "w-56",
 }: {
   value: number;
   onChange: (level: number) => void;
   framework?: SkillFramework;
   className?: string;
 }) {
+  const items = LEVELS.map((l) => ({
+    value: String(l),
+    label: levelLabel(l, framework),
+  }));
   return (
-    <Select value={String(value)} onValueChange={(v) => onChange(Number(v))}>
-      <SelectTrigger className={className}>
+    <Select
+      items={items}
+      value={String(value)}
+      onValueChange={(v) => onChange(Number(v))}
+    >
+      <SelectTrigger size="sm" className={className}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {LEVELS.map((l) => (
-          <SelectItem key={l} value={String(l)}>
-            {levelLabel(l, framework)}
-          </SelectItem>
-        ))}
+        <SelectGroup>
+          {items.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   );
