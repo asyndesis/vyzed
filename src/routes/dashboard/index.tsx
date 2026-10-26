@@ -11,10 +11,10 @@ import {
   DateTile,
   LessonCard,
   StatusBadge,
-} from "@/features/lessons/lesson-card";
+} from "@/features/lessons/components/lesson-card";
 import { EmptyState } from "@/components/page";
-import { TeacherCard } from "@/features/teachers/teacher-card";
-import { teacherListQuery } from "@/features/teachers/teacher-browser";
+import { TeacherCard } from "@/features/teachers/components/teacher-card";
+import { teacherListQuery } from "@/features/teachers/components/teacher-browser";
 import { Button } from "@/components/ui/button";
 import { SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
@@ -23,8 +23,8 @@ import {
   type LessonGroups,
   type LessonItem,
   useMyLessons,
-} from "@/features/lessons/queries";
-import { meQuery } from "@/features/profile/queries";
+} from "@/features/lessons/lib/queries";
+import { meQuery } from "@/features/profile/lib/queries";
 
 // Teachers for what I want to learn (one extra, in case I'm in the list)
 const forYouQuery = (learns: string[]) =>

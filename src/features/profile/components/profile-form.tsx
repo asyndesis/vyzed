@@ -11,11 +11,11 @@ import {
   isProfileDirty,
   toProfileForm,
   toProfileInput,
-} from "@/features/profile/rules";
-import { SaveFooter } from "@/features/profile/settings";
+} from "@/features/profile/lib/rules";
+import { SaveFooter } from "@/features/profile/components/settings";
 import { gqlRequest, graphql } from "@/lib/gql";
-import { MY_LESSONS_KEY } from "@/features/lessons/queries";
-import { meQuery } from "@/features/profile/queries";
+import { MY_LESSONS_KEY } from "@/features/lessons/lib/queries";
+import { meQuery } from "@/features/profile/lib/queries";
 
 const UpdateProfile = graphql(`
   mutation UpdateProfile($input: UpdateProfileInput!) {

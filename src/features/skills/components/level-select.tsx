@@ -3,7 +3,7 @@ import {
   MIN_LEVEL,
   levelLabel,
   type SkillFramework,
-} from "@/features/skills/rules";
+} from "@/features/skills/lib/rules";
 import {
   Select,
   SelectContent,

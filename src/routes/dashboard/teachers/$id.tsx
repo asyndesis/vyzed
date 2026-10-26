@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   TeacherProfile,
   loadTeacherProfile,
-} from "@/features/teachers/teacher-profile";
+} from "@/features/teachers/components/teacher-profile";
 import { fullName } from "@/lib/format";
 
 export const Route = createFileRoute("/dashboard/teachers/$id")({

@@ -2,7 +2,10 @@ import { Link, useLocation, useRouteContext } from "@tanstack/react-router";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/logo";
-import { LanguageMenu, ThemeMenu } from "@/features/profile/preferences";
+import {
+  LanguageMenu,
+  ThemeMenu,
+} from "@/features/profile/components/preferences";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

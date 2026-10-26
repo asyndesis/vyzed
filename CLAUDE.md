@@ -1,37 +1,55 @@
 # Project structure
 
+Root `src/` folders are sorted by **kind**. Each feature under `src/features/<name>/` uses
+the same kind folders, so every file has exactly one correct place.
+
 ```
 src/
-  features/<name>/  one folder per feature: its rules, queries and components
-  components/       app-wide UI: ui/ (shadcn), shells, layout, logo, avatar
-  lib/              generic helpers with no feature knowledge (gql, format, utils)
-  hooks/            generic React hooks
-  i18n/             messages/, project.inlang/, generated paraglide/
-  routes/           TanStack file routes
-  server/           server-only: db (+ migrations), graphql, auth, test helpers
+  components/        app-wide React components (ui/ = shadcn, shells, layout, logo, avatar)
+  hooks/             app-wide React hooks
+  lib/               app-wide non-React code (gql client, format, utils)
+  features/
+    <name>/
+      components/    the feature's React components (*.tsx)
+      hooks/         the feature's React hooks (use-*.ts)
+      lib/           the feature's non-React code:
+                       rules.ts       business rules + constants (no React, no db),
+                                      shared by the GraphQL resolvers and the UI
+                       rules.test.ts  unit tests for rules.ts
+                       queries.ts     GraphQL documents + query options
+                       *.ts           anything else non-React (clients, server fns)
+  graphql/           generated schema.graphql + gql.tada types (npm run gql)
+  i18n/              messages/ (edit), project.inlang/ (settings), paraglide/ (generated)
+  routes/            TanStack file routes (path = URL)
+  server/            server-only: db/ (+ migrations/), graphql/, auth, test/
 ```
 
-## Inside a feature
+Features: `auth`, `skills`, `lessons`, `teachers`, `profile`.
 
-- `rules.ts`: plain business logic and constants (no React, no db), shared by the GraphQL
-  resolvers and the UI. Unit tests sit next to it as `rules.test.ts`.
-- `queries.ts`: GraphQL documents and query options for the feature.
-- `*.tsx`: the feature's components.
-- Keep feature folders flat. Once one passes ~8–10 files, give that feature the
-  subfolders it needs, mirroring root (`components/`, `lib/`, `hooks/`). Other
-  features don't have to follow.
+## Where does a new file go?
+
+1. Is it server-only (db, resolvers, auth server)? → `src/server/`
+2. Is it a page? → `src/routes/`
+3. Does only one feature use it? → `src/features/<feature>/<kind>/`
+4. Otherwise (used by several features, or by none in particular) → `src/<kind>/`
+
+`<kind>` is decided by the file alone: `.tsx` component → `components/`, React hook →
+`hooks/`, everything else → `lib/`. Use no other folder names inside a feature. Only
+create a kind folder once it has a file.
 
 ## Dependency rules
 
-- Root `components/`, `lib/` and `hooks/` hold only code used across features. Code
-  used by one feature lives in that feature.
-- Features import other features only downward, never in a cycle:
-  `skills` ← `lessons` ← `teachers`, `profile`. `auth` is usable by any feature.
-  If two features need the same code and neither sits below the other, move it to root.
+- Features import each other downward only, never in a cycle:
+  `skills` ← `lessons` ← `teachers`, `profile`. `auth` may be imported by any feature.
+  If code is needed sideways, move it to root `src/<kind>/`.
+- Root `components/`, `hooks/` and `lib/` may import from features only for app-wide
+  wiring (shells, providers).
 - Routes stay thin: they load data and put feature pieces together, without holding
   logic of their own.
-- `server/` is never imported from client code, except via `createServerFn` with a
-  dynamic import (see `features/auth/session.ts`).
+- Client code never imports `server/`, except via `createServerFn` with a dynamic import
+  (see `features/auth/lib/session.ts`).
+- Always import with `@/` paths. The one exception is a test importing the file it
+  tests (`./rules`).
 
 ## Commands
 

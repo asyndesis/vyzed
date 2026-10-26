@@ -1,8 +1,8 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/app-shell";
-import { myLessonsQuery } from "@/features/lessons/queries";
-import { meQuery } from "@/features/profile/queries";
+import { myLessonsQuery } from "@/features/lessons/lib/queries";
+import { meQuery } from "@/features/profile/lib/queries";
 
 // The sidebar remembers collapsed/expanded in a cookie; read it so SSR matches
 const getSidebarOpen = createServerFn().handler(async () => {

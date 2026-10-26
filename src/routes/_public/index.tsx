@@ -1,6 +1,6 @@
 import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { SignUpForm } from "@/features/auth/auth-forms";
+import { SignUpForm } from "@/features/auth/components/auth-forms";
 import { ScrollingVerb } from "@/components/scrolling-verb";
 import { PitchPoints, SplitLayout } from "@/components/split-layout";
 import { Button } from "@/components/ui/button";

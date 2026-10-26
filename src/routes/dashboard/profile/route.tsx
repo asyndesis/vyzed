@@ -1,8 +1,8 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { PROFILE_PAGES } from "@/components/app-shell";
-import { SettingsNav } from "@/features/profile/settings";
+import { SettingsNav } from "@/features/profile/components/settings";
 import { useSidebar } from "@/components/ui/sidebar";
-import { skillTreeQuery } from "@/features/skills/queries";
+import { skillTreeQuery } from "@/features/skills/lib/queries";
 
 export const Route = createFileRoute("/dashboard/profile")({
   loader: ({ context }) => context.queryClient.ensureQueryData(skillTreeQuery),

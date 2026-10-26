@@ -1,5 +1,5 @@
-import { LESSON_STATUSES, PAYMENT_TYPES } from "@/features/lessons/rules";
-import { SKILL_FRAMEWORKS, SKILL_KINDS } from "@/features/skills/rules";
+import { LESSON_STATUSES, PAYMENT_TYPES } from "@/features/lessons/lib/rules";
+import { SKILL_FRAMEWORKS, SKILL_KINDS } from "@/features/skills/lib/rules";
 import { builder } from "../builder";
 
 export const LessonStatusEnum = builder.enumType("LessonStatus", {

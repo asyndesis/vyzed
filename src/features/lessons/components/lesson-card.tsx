@@ -7,15 +7,18 @@ import {
   canTransition,
   isSettled,
   type LessonStatus,
-} from "@/features/lessons/rules";
-import { levelLabel } from "@/features/skills/rules";
+} from "@/features/lessons/lib/rules";
+import { levelLabel } from "@/features/skills/lib/rules";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { friendlyDay, fullName, timeRange } from "@/lib/format";
 import { gqlRequest, graphql } from "@/lib/gql";
-import { type LessonItem, MY_LESSONS_KEY } from "@/features/lessons/queries";
+import {
+  type LessonItem,
+  MY_LESSONS_KEY,
+} from "@/features/lessons/lib/queries";
 
 const STATUS: Record<
   LessonStatus,

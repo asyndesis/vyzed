@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftRight, Languages } from "lucide-react";
-import { SkillBadges } from "@/features/skills/skill-badges";
+import { SkillBadges } from "@/features/skills/components/skill-badges";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { formatPrice, fullName } from "@/lib/format";

@@ -3,7 +3,7 @@ import DrizzlePlugin from "@pothos/plugin-drizzle";
 import ScopeAuthPlugin from "@pothos/plugin-scope-auth";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { GraphQLError } from "graphql";
-import type { Viewer } from "@/features/auth/policies";
+import type { Viewer } from "@/features/auth/lib/policies";
 import { db } from "../db";
 import { relations } from "../db/relations";
 

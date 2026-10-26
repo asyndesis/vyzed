@@ -3,8 +3,8 @@ import {
   LESSON_MINUTES,
   canTransition,
   isSettled,
-} from "@/features/lessons/rules";
-import { can } from "@/features/auth/policies";
+} from "@/features/lessons/lib/rules";
+import { can } from "@/features/auth/lib/policies";
 import { db } from "../../db";
 import { enrollment, lesson } from "../../db/schema";
 import { builder, forbid, notFound, viewerOf } from "../builder";
