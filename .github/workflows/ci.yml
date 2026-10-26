@@ -6,8 +6,23 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  # One job per gate, run in parallel, so a single run reports every failure.
+  # Job names are required checks in branch protection; rename both together.
+  gate:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: static
+            run: npm run check:format && npm run lint && npm run typecheck
+          - name: test
+            run: npm run test
+          - name: generated
+            run: npm run check:generated
+          - name: build
+            run: npm run build
     env:
       # No secrets in CI; the same switch the Docker build uses
       SKIP_ENV_VALIDATION: "1"
@@ -18,5 +33,4 @@ jobs:
           node-version: 22 # matches the Dockerfile
           cache: npm
       - run: npm ci
-      - run: npm run check
-      - run: npm run build
+      - run: ${{ matrix.run }}

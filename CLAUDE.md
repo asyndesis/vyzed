@@ -35,4 +35,5 @@ folder names inside a feature.
 - Never edit files in `src/server/db/migrations` by hand; use `npm run db:generate`.
 - `npm run check` must pass before a change is done. CI runs it plus `npm run build` on
   every PR, and `git push` runs the fast part (format, lint, typecheck, test).
+- Work on a branch and open a PR; `main` is protected and only merges green PRs.
 - Never bypass hooks (`--no-verify`). If a gate fails, fix the cause.
