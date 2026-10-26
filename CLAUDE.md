@@ -1,84 +1,35 @@
-# Project structure
+# Structure
 
-Root `src/` folders are sorted by **kind**. Each feature under `src/features/<name>/` uses
-the same kind folders, so every file has exactly one correct place.
+Root `src/` folders are sorted by kind. `src/features/<name>/` uses the same kind folders.
 
 ```
 src/
-  components/        app-wide React components (ui/ = shadcn, shells, layout, logo, avatar)
-  hooks/             app-wide React hooks
-  lib/               app-wide non-React code (gql client, format, utils)
-  features/
-    <name>/
-      components/    the feature's React components (*.tsx)
-      hooks/         the feature's React hooks (use-*.ts)
-      lib/           the feature's non-React code:
-                       rules.ts       business rules + constants (no React, no db),
-                                      shared by the GraphQL resolvers and the UI
-                       rules.test.ts  unit tests for rules.ts
-                       queries.ts     GraphQL queries/mutations used by more than one
-                                      component in the feature (+ query options)
-                       *.ts           anything else non-React (clients, server fns)
-  generated/         tool output only, never edit by hand (lint/format skip it):
-                       route-tree.ts  TanStack route tree (written by dev/build)
-                       graphql/       schema.graphql + gql.tada types (npm run gql)
-                       paraglide/     i18n runtime + messages (postinstall, dev/build;
-                                      not committed)
-  i18n/              messages/ (edit these), project.inlang/ (settings)
-  routes/            TanStack file routes (path = URL)
-  server/            server-only: db/ (+ migrations/), graphql/, auth, test/
+  components/  hooks/  lib/   app-wide (components/ui = shadcn)
+  features/<name>/
+    components/  hooks/  lib/   lib/rules.ts = business rules shared with server; lib/queries.ts
+  generated/   tool output, never edit (route tree, gql.tada, paraglide)
+  i18n/        messages/ + project.inlang/
+  routes/      TanStack file routes, kept thin
+  server/      server-only: db (+ migrations), graphql, auth
 ```
 
-Features: `auth`, `skills`, `lessons`, `teachers`, `profile`.
+Where a file goes, first match wins: tool output → `generated/`; server-only → `server/`;
+page → `routes/`; used by one feature → `features/<name>/<kind>/`; otherwise → `src/<kind>/`.
+Kind: component → `components/`, hook → `hooks/`, anything else → `lib/`. No other
+folder names inside a feature.
 
-## Naming
+## Rules
 
-- All files and folders are kebab-case: `teacher-card.tsx` exports `TeacherCard`, and
-  hooks are `use-thing.ts` exporting `useThing`. This matches shadcn and the route files.
-
-## Where does a new file go?
-
-0. Is it written by a tool? → `src/generated/` (configure the tool's output path)
-1. Is it server-only (db, resolvers, auth server)? → `src/server/`
-2. Is it a page? → `src/routes/`
-3. Does only one feature use it? → `src/features/<feature>/<kind>/`
-4. Otherwise (used by several features, or by none in particular) → `src/<kind>/`
-
-`<kind>` is decided by the file alone: `.tsx` component → `components/`, React hook →
-`hooks/`, everything else → `lib/`. Use no other folder names inside a feature. Only
-create a kind folder once it has a file.
-
-## GraphQL (gql.tada)
-
-- A component declares the data it needs as a fragment **in its own file** and reads it
-  with `readFragment`. Keep fragment masking on.
-- The query that loads a screen composes those fragments and lives with the top-level
-  component or route that runs it. Only queries shared within a feature go in
-  `lib/queries.ts`. Queries shared across features go in the lower feature's
-  `lib/queries.ts` (`Me` → profile, `SkillTree` → skills).
-- Import `graphql`, `readFragment` and related helpers from `@/lib/gql`, never directly from `gql.tada`.
-
-## Dependency rules
-
-- Features import each other downward only, never in a cycle:
-  `skills` ← `lessons` ← `teachers`, `profile`. `auth` may be imported by any feature.
-  If code is needed sideways, move it to root `src/<kind>/`.
-- Root `components/`, `hooks/` and `lib/` may import from features only for app-wide
-  wiring (shells, providers).
-- Routes stay thin: they load data and put feature pieces together, without holding
-  logic of their own.
-- Client code never imports `server/`, except via `createServerFn` with a dynamic import
-  (see `features/auth/lib/session.ts`).
-- Always import with `@/` paths. The one exception is a test importing the file it
-  tests (`./rules`).
+- Files are kebab-case (`teacher-card.tsx` exports `TeacherCard`).
+- Import with `@/` paths. Helpers come from `@/lib/gql`, never `gql.tada` directly.
+- Features import downward only: `skills` ← `lessons` ← `teachers`, `profile`; `auth`
+  can be imported by any feature. Code needed sideways moves to `src/<kind>/`.
+- Client code imports `server/` only through `createServerFn` with a dynamic import.
+- GraphQL: each component defines its fragment in its own file (keep masking on).
+  `lib/queries.ts` is only for queries that several components share.
 
 ## Commands
 
-- `npm run dev` (port 3100). Don't run `npm run build` while the dev server is running.
-- `npx vitest run` runs unit tests (`features/**/*.test.ts`) and API tests
-  (`server/**/*.test.ts`, against in-memory PGlite).
-- `npm run typecheck`, `npm run lint`, `npm run format`
-- `npm run db:generate` / `db:migrate` work with migrations in `src/server/db/migrations`.
-  Don't hand-edit or reformat files in there.
-- `npm run gql` regenerates `src/generated/graphql/schema.graphql` and the gql.tada types after
-  changing the GraphQL schema.
+- Don't run `npm run build` while `npm run dev` is running.
+- Run `npm run gql` after changing the GraphQL schema.
+- Never edit files in `src/server/db/migrations` by hand; use `npm run db:generate`.
