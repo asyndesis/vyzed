@@ -1,7 +1,7 @@
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 
 // Kept apart from vite.config.ts: the Start, Nitro and devtools plugins don't belong in tests.
-//   unit  pure feature rules (features/*/rules.ts)
+//   unit  pure logic anywhere outside src/server
 //   api   the GraphQL schema against a real Postgres (in-memory PGlite)
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -9,7 +9,11 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { name: "unit", include: ["src/features/**/*.test.ts"] },
+        test: {
+          name: "unit",
+          include: ["src/**/*.test.ts"],
+          exclude: [...configDefaults.exclude, "src/server/**"],
+        },
       },
       {
         extends: true,
