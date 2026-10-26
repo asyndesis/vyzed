@@ -33,6 +33,9 @@ folder names inside a feature.
 - Don't run `npm run build` while `npm run dev` is running.
 - Run `npm run gql` after changing the GraphQL schema.
 - Never edit files in `src/server/db/migrations` by hand; use `npm run db:generate`.
+- These rules are enforced: imports by oxlint (`.oxlintrc.json`), names by ls-lint
+  (`.ls-lint.yml`), and server code in the browser by the build (`importProtection` in
+  `vite.config.ts`). Fix the code, not the rule.
 - `npm run check` must pass before a change is done. CI runs it plus `npm run build` on
   every PR, and `git push` runs the fast part (format, lint, typecheck, test).
 - Work on a branch and open a PR; `main` is protected and only merges green PRs.

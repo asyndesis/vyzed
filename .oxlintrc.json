@@ -18,7 +18,19 @@
     "react/purity": "warn",
     "react/incompatible-library": "warn",
     "react/set-state-in-effect": "warn",
-    "react/refs": "warn"
+    "react/refs": "warn",
+    "import/no-cycle": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "gql.tada",
+            "message": "Import GraphQL helpers from @/lib/gql."
+          }
+        ]
+      }
+    ]
   },
   "ignorePatterns": [
     "**/node_modules",
@@ -26,5 +38,166 @@
     "**/.nitro",
     "src/generated/**",
     "src/server/db/migrations/**"
+  ],
+  "overrides": [
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "gql.tada",
+                "message": "Import GraphQL helpers from @/lib/gql."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/features/**"],
+                "message": "New feature? Add it to the feature layers in .oxlintrc.json."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/auth/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "gql.tada",
+                "message": "Import GraphQL helpers from @/lib/gql."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@/features/**", "!@/features/auth/**"],
+                "message": "auth may import only: auth. Features import downward (CLAUDE.md); move shared code to src/<kind>/."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/skills/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "gql.tada",
+                "message": "Import GraphQL helpers from @/lib/gql."
+              }
+            ],
+            "patterns": [
+              {
+                "group": [
+                  "@/features/**",
+                  "!@/features/auth/**",
+                  "!@/features/skills/**"
+                ],
+                "message": "skills may import only: auth, skills. Features import downward (CLAUDE.md); move shared code to src/<kind>/."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/lessons/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "gql.tada",
+                "message": "Import GraphQL helpers from @/lib/gql."
+              }
+            ],
+            "patterns": [
+              {
+                "group": [
+                  "@/features/**",
+                  "!@/features/auth/**",
+                  "!@/features/lessons/**",
+                  "!@/features/skills/**"
+                ],
+                "message": "lessons may import only: auth, lessons, skills. Features import downward (CLAUDE.md); move shared code to src/<kind>/."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/teachers/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "gql.tada",
+                "message": "Import GraphQL helpers from @/lib/gql."
+              }
+            ],
+            "patterns": [
+              {
+                "group": [
+                  "@/features/**",
+                  "!@/features/auth/**",
+                  "!@/features/lessons/**",
+                  "!@/features/skills/**",
+                  "!@/features/teachers/**"
+                ],
+                "message": "teachers may import only: auth, lessons, skills, teachers. Features import downward (CLAUDE.md); move shared code to src/<kind>/."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/profile/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "gql.tada",
+                "message": "Import GraphQL helpers from @/lib/gql."
+              }
+            ],
+            "patterns": [
+              {
+                "group": [
+                  "@/features/**",
+                  "!@/features/auth/**",
+                  "!@/features/lessons/**",
+                  "!@/features/profile/**",
+                  "!@/features/skills/**"
+                ],
+                "message": "profile may import only: auth, lessons, profile, skills. Features import downward (CLAUDE.md); move shared code to src/<kind>/."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/lib/gql.ts"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
   ]
 }

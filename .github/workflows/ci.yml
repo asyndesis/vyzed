@@ -17,6 +17,8 @@ jobs:
         include:
           - name: Format, lint, types
             run: npm run check:format && npm run lint && npm run typecheck
+          - name: File names
+            run: npm run check:names
           - name: Tests
             run: npm run test
           - name: Generated files
