@@ -6,6 +6,13 @@ import { configDefaults, defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
+    // A lean floor for logic, set just under today's numbers. Raise it as tests land.
+    coverage: {
+      provider: "v8",
+      include: ["src/lib/**", "src/features/*/lib/**", "src/server/**"],
+      exclude: ["**/*.test.ts", "src/server/test/**", "src/server/db/**"],
+      thresholds: { statements: 50, branches: 40, functions: 50, lines: 50 },
+    },
     projects: [
       {
         extends: true,
