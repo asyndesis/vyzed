@@ -12,7 +12,7 @@ import { Fragment, useEffect } from "react";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { viewerQuery } from "@/features/auth/lib/session";
+import { viewerQuery } from "@/lib/session";
 import { getLocale } from "@/generated/paraglide/runtime";
 import appCss from "@/styles.css?url";
 

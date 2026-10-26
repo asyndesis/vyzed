@@ -4,7 +4,7 @@ import {
   canTransition,
   isSettled,
 } from "@/features/lessons/lib/rules";
-import { can } from "@/features/auth/lib/policies";
+import { can } from "@/lib/policies";
 import { db } from "@/server/db";
 import { enrollment, lesson } from "@/server/db/schema";
 import { builder, forbid, notFound, viewerOf } from "@/server/graphql/builder";

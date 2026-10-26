@@ -60,34 +60,8 @@
             ],
             "patterns": [
               {
-                "group": ["@/features/**", "!@/features/auth/**"],
-                "message": "Features import only auth via @/. Your own feature's files: use a relative path. Shared code: move to src/<kind>/."
-              },
-              {
-                "group": ["../../**"],
-                "message": "Don't leave your feature with a relative path. Move shared code to src/<kind>/ and import it with @/."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["src/features/auth/**"],
-      "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "paths": [
-              {
-                "name": "gql.tada",
-                "message": "Import GraphQL helpers from @/lib/gql."
-              }
-            ],
-            "patterns": [
-              {
                 "group": ["@/features/**"],
-                "message": "Inside auth, import auth's own files with a relative path."
+                "message": "Features never import features via @/. Your own feature's files: use a relative path. Shared code: move to src/<kind>/."
               },
               {
                 "group": ["../../**"],
