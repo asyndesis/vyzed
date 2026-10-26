@@ -35,4 +35,5 @@ folder names inside a feature.
 - Never edit files in `src/server/db/migrations` by hand; use `npm run db:generate`.
 - Run `npm run check` before calling a change done; it also runs on `git push`. Stage
   generated files first, since `check:generated` compares against what's staged.
+- Never bypass hooks (`--no-verify`). If a gate fails, fix the cause.
 - `npm run build` isn't part of `check`; run it when dev is stopped.
