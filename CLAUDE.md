@@ -33,7 +33,6 @@ folder names inside a feature.
 - Don't run `npm run build` while `npm run dev` is running.
 - Run `npm run gql` after changing the GraphQL schema.
 - Never edit files in `src/server/db/migrations` by hand; use `npm run db:generate`.
-- Run `npm run check` before calling a change done; it also runs on `git push`. Stage
-  generated files first, since `check:generated` compares against what's staged.
+- `npm run check` must pass before a change is done. CI runs it plus `npm run build` on
+  every PR, and `git push` runs the fast part (format, lint, typecheck, test).
 - Never bypass hooks (`--no-verify`). If a gate fails, fix the cause.
-- `npm run build` isn't part of `check`; run it when dev is stopped.
