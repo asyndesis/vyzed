@@ -12,7 +12,7 @@ process.env.BETTER_AUTH_SECRET = "test-secret-test-secret-test-secret";
 process.env.BETTER_AUTH_URL = "http://localhost:3100";
 
 const db = drizzle({ client: new PGlite(), relations });
-await migrate(db, { migrationsFolder: "./drizzle" });
+await migrate(db, { migrationsFolder: "./src/server/db/migrations" });
 
 vi.mock("@/server/db", () => ({ db }));
 

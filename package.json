@@ -17,7 +17,7 @@
     "db:seed": "tsx src/server/db/seed.ts",
     "gql": "tsx scripts/print-schema.ts && gql.tada generate-output",
     "format:check": "oxfmt --check",
-    "postinstall": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
+    "postinstall": "paraglide-js compile --project ./src/i18n/project.inlang --outdir ./src/i18n/paraglide",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
-import { deLocalizeUrl, localizeUrl } from "@/paraglide/runtime";
+import { deLocalizeUrl, localizeUrl } from "@/i18n/paraglide/runtime";
 import { ErrorPage, NotFoundPage } from "@/components/error-page";
 import { routeTree } from "./routeTree.gen";
 

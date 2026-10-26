@@ -16,7 +16,7 @@ export default defineConfig({
         test: {
           name: "api",
           include: ["src/server/**/*.test.ts"],
-          setupFiles: ["test/setup-api.ts"],
+          setupFiles: ["src/server/test/setup.ts"],
           // Pothos would otherwise load graphql's CommonJS build while tests load the ESM
           // one, and graphql refuses to run with two copies
           server: { deps: { inline: [/@pothos/, /graphql/] } },

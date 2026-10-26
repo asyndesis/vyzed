@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { db } from "@/server/db";
 import { enrollment, lesson, skill, user, userSkill } from "@/server/db/schema";
-import { asUser, gql } from "../../../test/graphql";
+import { asUser, gql } from "@/server/test/graphql";
 
 async function setup() {
   const [guitar] = await db

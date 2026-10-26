@@ -1,5 +1,5 @@
 import handler from "@tanstack/react-start/server-entry";
-import { paraglideMiddleware } from "@/paraglide/server";
+import { paraglideMiddleware } from "@/i18n/paraglide/server";
 
 // Sets the request's locale (from the URL) before Start renders anything
 export default {

@@ -76,9 +76,9 @@ npx -y @better-auth/cli migrate
 
 This add-on wires up ParaglideJS for localized routing and message formatting.
 
-- Messages live in `project.inlang/messages`.
+- Messages live in `src/i18n/messages`; inlang settings in `src/i18n/project.inlang`.
 - URLs are localized through the Paraglide Vite plugin and router `rewrite` hooks.
-- Run the dev server or build to regenerate the `src/paraglide` outputs.
+- Run the dev server or build to regenerate the `src/i18n/paraglide` outputs.
 
 ## T3Env
 

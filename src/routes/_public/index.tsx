@@ -4,7 +4,7 @@ import { SignUpForm } from "@/components/auth-forms";
 import { ScrollingVerb } from "@/components/scrolling-verb";
 import { PitchPoints, SplitLayout } from "@/components/split-layout";
 import { Button } from "@/components/ui/button";
-import { m } from "@/paraglide/messages";
+import { m } from "@/i18n/paraglide/messages";
 
 export const Route = createFileRoute("/_public/")({
   // The landing page is a sign-up page; signed-in users belong in the app

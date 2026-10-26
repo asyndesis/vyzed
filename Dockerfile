@@ -7,8 +7,7 @@ FROM node:${NODE_VERSION}-alpine AS build
 WORKDIR /app
 # Paraglide's postinstall needs the inlang project and messages at install time
 COPY package.json package-lock.json ./
-COPY project.inlang ./project.inlang
-COPY messages ./messages
+COPY src/i18n ./src/i18n
 RUN npm ci
 COPY . .
 # SKIP_ENV_VALIDATION: src/env.ts must not require secrets while building
@@ -27,7 +26,7 @@ FROM node:${NODE_VERSION}-alpine AS runtime
 ENV NODE_ENV=production PORT=3000
 WORKDIR /app
 COPY --from=build --chown=node:node /app/.output ./.output
-COPY --from=build --chown=node:node /app/drizzle ./drizzle
+COPY --from=build --chown=node:node /app/src/server/db/migrations ./src/server/db/migrations
 COPY --from=build --chown=node:node /app/scripts/migrate.mjs ./scripts/migrate.mjs
 COPY --from=migrate-deps --chown=node:node /migrate/node_modules ./node_modules
 USER node

@@ -6,7 +6,7 @@
     "**/routeTree.gen.ts",
     "src/graphql/graphql-env.d.ts",
     "src/graphql/schema.graphql",
-    "src/paraglide/**",
+    "src/i18n/paraglide/**",
     "drizzle/**"
   ]
 }

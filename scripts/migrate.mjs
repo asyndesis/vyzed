@@ -14,7 +14,7 @@ const db = drizzle({ connection: url });
 
 try {
   await migrate(db, {
-    migrationsFolder: new URL("../drizzle", import.meta.url).pathname,
+    migrationsFolder: new URL("../src/server/db/migrations", import.meta.url).pathname,
   });
   console.log("Migrations up to date");
 } catch (error) {
