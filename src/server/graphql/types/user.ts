@@ -1,10 +1,10 @@
 import { and, eq } from "drizzle-orm";
-import { can } from "@/features/auth/lib/policies";
-import { MAX_LEVEL, MIN_LEVEL } from "@/features/skills/lib/rules";
-import { db } from "../../db";
-import { user, userSkill } from "../../db/schema";
-import { builder, forbid, viewerOf } from "../builder";
-import { SkillKindEnum } from "./enums";
+import { can } from "@/lib/policies";
+import { MAX_LEVEL, MIN_LEVEL } from "@/lib/skills";
+import { db } from "@/server/db";
+import { user, userSkill } from "@/server/db/schema";
+import { builder, forbid, viewerOf } from "@/server/graphql/builder";
+import { SkillKindEnum } from "@/server/graphql/types/enums";
 
 export const User = builder.drizzleObject("user", {
   name: "User",

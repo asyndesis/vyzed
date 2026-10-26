@@ -5,8 +5,8 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { apiKey } from "@better-auth/api-key";
 import { Resend } from "resend";
 import { env } from "@/env";
-import { db } from "./db";
-import * as schema from "./db/schema";
+import { db } from "@/server/db";
+import * as schema from "@/server/db/schema";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 

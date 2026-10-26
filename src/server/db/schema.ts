@@ -11,7 +11,9 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-export * from "./auth-schema";
+import { user } from "@/server/db/auth-schema";
+
+export * from "@/server/db/auth-schema";
 
 const timestamps = {
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -42,30 +44,6 @@ export const paymentType = pgEnum("payment_type", [
   "FREE",
   "CREDIT",
 ]);
-
-// Users -----------------------------------------------------------------------
-
-// Better Auth's user (first block, from `npm run auth:generate`) plus the app's profile fields
-export const user = pgTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
-  image: text("image"),
-  role: text("role"),
-  banned: boolean("banned").default(false),
-  banReason: text("ban_reason"),
-  banExpires: timestamp("ban_expires"),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-
-  bio: text("bio"),
-  // Teaching: price in cents, 0 = free
-  priceAmount: integer("price_amount").default(0).notNull(),
-  priceCurrency: text("price_currency").default("EUR").notNull(),
-  allowBarter: boolean("allow_barter").default(false).notNull(),
-  ...timestamps,
-});
 
 // Skills ----------------------------------------------------------------------
 

@@ -8,7 +8,7 @@ import {
   isSettled,
   type LessonStatus,
 } from "@/features/lessons/lib/rules";
-import { levelLabel } from "@/features/skills/lib/rules";
+import { levelLabel } from "@/lib/skills";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton, SkeletonText } from "@/components/ui/skeleton";

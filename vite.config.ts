@@ -22,6 +22,12 @@ export default defineConfig({
     tanstackStart({
       server: { entry: "server.ts" },
       router: { generatedRouteTree: "generated/route-tree.ts" },
+      // Fail the build if src/server/ ends up in the browser bundle. Client code
+      // reaches it only through createServerFn, whose handlers the client build drops.
+      importProtection: {
+        behavior: "error",
+        client: { files: ["**/src/server/**"] },
+      },
     }),
     viteReact(),
   ],

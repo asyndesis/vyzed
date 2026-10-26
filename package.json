@@ -18,10 +18,11 @@
     "postinstall": "paraglide-js compile --project ./src/i18n/project.inlang --outdir ./src/generated/paraglide",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run check:format && npm run lint && npm run typecheck && npm run test && npm run check:generated",
+    "check": "npm run check:format && npm run lint && npm run check:names && npm run typecheck && npm run test && npm run check:generated",
     "check:generated": "npm run gql && npm run db:generate && git diff --exit-code -- src/generated src/server/db/migrations",
     "check:format": "oxfmt --check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:names": "ls-lint"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -66,6 +67,7 @@
     "@0no-co/graphqlsp": "^1.17.5",
     "@electric-sql/pglite": "^0.5.10",
     "@inlang/paraglide-js": "^2.29.1",
+    "@ls-lint/ls-lint": "^2.3.2",
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/devtools-vite": "0.8.5",
     "@types/node": "^26.6.5",

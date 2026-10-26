@@ -4,11 +4,14 @@ import {
   canTransition,
   isSettled,
 } from "@/features/lessons/lib/rules";
-import { can } from "@/features/auth/lib/policies";
-import { db } from "../../db";
-import { enrollment, lesson } from "../../db/schema";
-import { builder, forbid, notFound, viewerOf } from "../builder";
-import { LessonStatusEnum, PaymentTypeEnum } from "./enums";
+import { can } from "@/lib/policies";
+import { db } from "@/server/db";
+import { enrollment, lesson } from "@/server/db/schema";
+import { builder, forbid, notFound, viewerOf } from "@/server/graphql/builder";
+import {
+  LessonStatusEnum,
+  PaymentTypeEnum,
+} from "@/server/graphql/types/enums";
 
 const NONE = "00000000-0000-0000-0000-000000000000";
 

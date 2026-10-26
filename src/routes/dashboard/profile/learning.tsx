@@ -5,7 +5,7 @@ import {
   SettingsCard,
   SettingsHeader,
 } from "@/features/profile/components/settings";
-import { SkillListEditor } from "@/features/skills/components/skill-picker";
+import { SkillListEditor } from "@/components/skill-picker";
 
 export const Route = createFileRoute("/dashboard/profile/learning")({
   head: () => ({ meta: [{ title: "Learning · Vyzed" }] }),

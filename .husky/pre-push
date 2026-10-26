@@ -1,1 +1,1 @@
-npm run check:format && npm run lint && npm run typecheck && npm run test
+npm run check:format && npm run lint && npm run check:names && npm run typecheck && npm run test

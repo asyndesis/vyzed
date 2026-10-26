@@ -1,0 +1,20 @@
+# File and folder naming (CLAUDE.md "Structure"). Docs: https://ls-lint.org
+ls:
+  src:
+    .dir: kebab-case
+    .*: kebab-case
+
+  # Inside a feature, the only folders are kinds.
+  src/features/*/*:
+    .dir: regex:(components|hooks|lib)
+    .*: kebab-case
+
+  # TanStack Router names: __root, _layout, $param, $ (splat).
+  src/routes:
+    .dir: regex:(_?[a-z0-9]+(-[a-z0-9]+)*|\$[a-z0-9]*)
+    .*: regex:(__root|_?[a-z0-9]+(-[a-z0-9]+)*|\$[a-z0-9]*)
+
+ignore:
+  - src/generated
+  - src/server/db/migrations
+  - src/i18n/project.inlang

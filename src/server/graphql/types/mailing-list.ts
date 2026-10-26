@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { db } from "../../db";
-import { mailingList } from "../../db/schema";
-import { builder } from "../builder";
+import { db } from "@/server/db";
+import { mailingList } from "@/server/db/schema";
+import { builder } from "@/server/graphql/builder";
 
 builder.mutationFields((t) => ({
   // Public. Always true for valid emails, so it can't be used to probe who signed up.

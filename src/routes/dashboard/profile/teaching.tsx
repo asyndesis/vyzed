@@ -7,7 +7,7 @@ import {
   SettingsCard,
   SettingsHeader,
 } from "@/features/profile/components/settings";
-import { SkillListEditor } from "@/features/skills/components/skill-picker";
+import { SkillListEditor } from "@/components/skill-picker";
 import { TeacherCardBody } from "@/features/teachers/components/teacher-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

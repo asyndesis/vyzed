@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "import", "react"],
+  "jsPlugins": ["./scripts/oxlint-plugin.js"],
   "env": {
     "browser": true,
     "node": true,
@@ -10,21 +11,34 @@
     "correctness": "error"
   },
   "rules": {
-    "no-unused-vars": "warn",
     "import/named": "error",
-    "import/default": "error",
-    "import/namespace": "error",
-    "react/exhaustive-deps": "warn",
-    "react/purity": "warn",
-    "react/incompatible-library": "warn",
-    "react/set-state-in-effect": "warn",
-    "react/refs": "warn"
+    "import/no-cycle": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "gql.tada",
+            "message": "Import GraphQL helpers from @/lib/gql."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["./*", "../*"],
+            "message": "Import with @/ paths."
+          }
+        ]
+      }
+    ],
+    "vyzed/feature-boundaries": "error"
   },
-  "ignorePatterns": [
-    "**/node_modules",
-    "**/.output",
-    "**/.nitro",
-    "src/generated/**",
-    "src/server/db/migrations/**"
+  "ignorePatterns": ["src/generated/**", "src/server/db/migrations/**"],
+  "overrides": [
+    {
+      "files": ["src/lib/gql.ts"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
   ]
 }

@@ -1,6 +1,9 @@
-import { db } from "../../db";
-import { builder } from "../builder";
-import { SkillFrameworkEnum, SkillKindEnum } from "./enums";
+import { db } from "@/server/db";
+import { builder } from "@/server/graphql/builder";
+import {
+  SkillFrameworkEnum,
+  SkillKindEnum,
+} from "@/server/graphql/types/enums";
 
 export const Skill = builder.drizzleObject("skill", {
   name: "Skill",

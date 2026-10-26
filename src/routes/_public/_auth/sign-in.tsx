@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SignInForm } from "@/features/auth/components/auth-forms";
+import { SignInForm } from "@/components/auth-forms";
 
 export const Route = createFileRoute("/_public/_auth/sign-in")({
   head: () => ({ meta: [{ title: "Sign in · Vyzed" }] }),

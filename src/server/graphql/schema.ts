@@ -1,4 +1,4 @@
-import { builder } from "./builder";
+import { builder } from "@/server/graphql/builder";
 import "./types/enums";
 import "./types/skill";
 import "./types/user";

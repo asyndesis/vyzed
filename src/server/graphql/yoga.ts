@@ -1,8 +1,8 @@
 import { createYoga } from "graphql-yoga";
 import { env } from "@/env";
-import { getViewer } from "../viewer";
-import type { Context } from "./builder";
-import { schema } from "./schema";
+import { getViewer } from "@/server/viewer";
+import type { Context } from "@/server/graphql/builder";
+import { schema } from "@/server/graphql/schema";
 
 const dev = process.env.NODE_ENV !== "production";
 
