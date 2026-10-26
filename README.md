@@ -1,5 +1,7 @@
 Welcome to your new TanStack Start app!
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the project structure and the checks every change must pass.
+
 # Getting Started
 
 To run this application:
