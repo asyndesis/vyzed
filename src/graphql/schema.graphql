@@ -1,0 +1,139 @@
+scalar DateTime
+
+type Enrollment {
+  id: ID!
+  lesson: Lesson!
+  paymentAmount: Int
+  paymentCurrency: String
+  paymentType: PaymentType!
+  status: LessonStatus!
+  student: User!
+  studentPaidAt: DateTime
+  teacherPaidAt: DateTime
+}
+
+type Lesson {
+  endTime: DateTime!
+  enrollments: [Enrollment!]!
+  id: ID!
+  proficiency: Int!
+  skill: Skill!
+  startTime: DateTime!
+  status: LessonStatus!
+  teacher: User!
+  teacherId: ID!
+}
+
+enum LessonStatus {
+  CANCELLED
+  COMPLETED
+  CONFIRMED
+  REQUESTED
+  REVISED
+}
+
+type Mutation {
+  joinMailingList(email: String!): Boolean!
+  requestLesson(input: RequestLessonInput!): Lesson!
+  setEnrollmentStatus(enrollmentId: ID!, status: LessonStatus!): Enrollment!
+  setLessonStatus(lessonId: ID!, status: LessonStatus!): Lesson!
+  setPaid(enrollmentId: ID!, paid: Boolean!): Enrollment!
+  updateProfile(input: UpdateProfileInput!): User!
+}
+
+enum PaymentType {
+  BARTER
+  CASH
+  CREDIT
+  FREE
+}
+
+type Query {
+  me: User
+  myLessons: [Lesson!]!
+  skills: [Skill!]!
+  teacherCount(filter: TeacherFilter): Int!
+  teachers(filter: TeacherFilter, limit: Int = 12, offset: Int = 0): [User!]!
+  user(id: ID!): User
+}
+
+input RequestLessonInput {
+  paymentType: PaymentType!
+  proficiency: Int!
+  skillId: ID!
+  startTime: DateTime!
+  teacherId: ID!
+}
+
+type Skill {
+  children: [Skill!]!
+  framework: SkillFramework!
+  id: ID!
+  name: String!
+  parent: Skill
+  slug: String!
+}
+
+enum SkillFramework {
+  CEFR
+  DEFAULT
+}
+
+enum SkillKind {
+  learns
+  speaks
+  teaches
+}
+
+input TeacherFilter {
+  """Speaks any of these"""
+  languageIds: [ID!]
+  search: String
+
+  """Teaches any of these"""
+  skillIds: [ID!]
+  swapOnly: Boolean
+}
+
+input UpdateProfileInput {
+  allowBarter: Boolean
+  bio: String
+  firstName: String
+  lastName: String
+
+  """Cents per hour, 0 = free"""
+  priceAmount: Int
+
+  """Replaces all of your skills"""
+  skills: [UserSkillInput!]
+}
+
+type User {
+  allowBarter: Boolean!
+  bio: String
+  createdAt: DateTime!
+  email: String
+  firstName: String
+  id: ID!
+  image: String
+  lastInitial: String!
+  lastName: String
+  priceAmount: Int!
+  priceCurrency: String!
+  skills(kind: SkillKind): [UserSkill!]!
+}
+
+type UserSkill {
+  kind: SkillKind!
+  proficiency: Int!
+  skill: Skill!
+  skillId: ID!
+}
+
+input UserSkillInput {
+  kind: SkillKind!
+
+  """0-7"""
+  proficiency: Int!
+  skillId: ID!
+}

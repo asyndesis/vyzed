@@ -1,0 +1,6 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "landing_find_someone": "Encuentra a alguien para",
+  "landing_description": "Vyzed es una forma para que estudiantes y profesores, terapeutas y clientes, aficionados y expertos se encuentren.",
+  "landing_verbs": "aprender|apoyar|crecer|conectar|guiar|enseñar|ayudar"
+}
