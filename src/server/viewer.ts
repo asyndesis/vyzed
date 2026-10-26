@@ -1,5 +1,5 @@
 import type { Viewer } from "@/features/auth/lib/policies";
-import { auth } from "./auth";
+import { auth } from "@/server/auth";
 
 // Who is calling: session cookie (this app), Authorization: Bearer <token>, or x-api-key.
 // Better Auth's bearer and api-key plugins turn the last two into a session too.

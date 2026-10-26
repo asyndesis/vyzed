@@ -11,11 +11,10 @@ import {
   isProfileDirty,
   toProfileForm,
   toProfileInput,
-} from "@/features/profile/lib/rules";
-import { SaveFooter } from "@/features/profile/components/settings";
+} from "../lib/rules";
+import { SaveFooter } from "../components/settings";
 import { gqlRequest, graphql } from "@/lib/gql";
-import { MY_LESSONS_KEY } from "@/features/lessons/lib/queries";
-import { meQuery } from "@/features/profile/lib/queries";
+import { meQuery } from "../lib/queries";
 
 const UpdateProfile = graphql(`
   mutation UpdateProfile($input: UpdateProfileInput!) {
@@ -43,7 +42,7 @@ export function useProfileForm() {
       // Teacher listings and lesson cards show my name too
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: meQuery.queryKey }),
-        queryClient.invalidateQueries({ queryKey: [MY_LESSONS_KEY] }),
+        queryClient.invalidateQueries({ queryKey: ["MyLessons"] }),
         queryClient.invalidateQueries({ queryKey: ["TeacherList"] }),
       ]);
       // Reset to what the server now has, so the form is clean again

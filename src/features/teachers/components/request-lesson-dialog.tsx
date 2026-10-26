@@ -4,8 +4,7 @@ import { addDays, format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { PaymentType } from "@/features/lessons/lib/rules";
-import { LevelSelect } from "@/features/skills/components/level-select";
+import { LevelSelect } from "@/components/level-select";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +26,13 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { formatPrice } from "@/lib/format";
-import { gqlRequest, graphql, readFragment, type FragmentOf } from "@/lib/gql";
+import {
+  gqlRequest,
+  graphql,
+  readFragment,
+  type FragmentOf,
+  type VariablesOf,
+} from "@/lib/gql";
 
 export const BookableTeacherFields = graphql(`
   fragment BookableTeacherFields on User {
@@ -53,6 +58,8 @@ const RequestLesson = graphql(`
     }
   }
 `);
+
+type PaymentType = VariablesOf<typeof RequestLesson>["input"]["paymentType"];
 
 const dayFromNow = (days: number) =>
   format(addDays(new Date(), days), "yyyy-MM-dd");

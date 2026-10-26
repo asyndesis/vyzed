@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import type { SkillFramework } from "@/features/skills/lib/rules";
-import { LevelSelect } from "@/features/skills/components/level-select";
+import type { SkillFramework } from "@/lib/skills";
+import { LevelSelect } from "@/components/level-select";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { skillTreeQuery } from "@/features/skills/lib/queries";
+import { skillTreeQuery } from "@/lib/skill-queries";
 
 export type PickedSkill = {
   id: string;

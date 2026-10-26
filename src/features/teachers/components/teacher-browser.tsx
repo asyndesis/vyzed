@@ -10,13 +10,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { LANGUAGE_SLUG } from "@/features/skills/lib/rules";
-import { FacetFilter } from "@/features/teachers/components/facet-filter";
+import { LANGUAGE_SLUG } from "@/lib/skills";
+import { FacetFilter } from "../components/facet-filter";
 import { EmptyState, PageTitle } from "@/components/page";
-import {
-  TeacherCard,
-  TeacherCardFields,
-} from "@/features/teachers/components/teacher-card";
+import { TeacherCard, TeacherCardFields } from "../components/teacher-card";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
@@ -25,7 +22,7 @@ import {
 } from "@/components/ui/input-group";
 import { Toggle } from "@/components/ui/toggle";
 import { gqlQuery, graphql } from "@/lib/gql";
-import { skillTreeQuery } from "@/features/skills/lib/queries";
+import { skillTreeQuery } from "@/lib/skill-queries";
 
 const PAGE = 12;
 

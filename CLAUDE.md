@@ -15,27 +15,22 @@ src/
 
 Where a file goes, first match wins: tool output → `generated/`; server-only → `server/`;
 page → `routes/`; used by one feature → `features/<name>/<kind>/`; otherwise → `src/<kind>/`.
-Kind: component → `components/`, hook → `hooks/`, anything else → `lib/`. No other
-folder names inside a feature.
+Kind: component → `components/`, hook → `hooks/`, anything else → `lib/`.
 
 ## Rules
 
-- Files are kebab-case (`teacher-card.tsx` exports `TeacherCard`).
-- Import with `@/` paths. Helpers come from `@/lib/gql`, never `gql.tada` directly.
-- Features import downward only: `skills` ← `lessons` ← `teachers`, `profile`; `auth`
-  can be imported by any feature. Code needed sideways moves to `src/<kind>/`.
-- Client code imports `server/` only through `createServerFn` with a dynamic import.
+- Features never import other features (only `auth`): shared code moves to `src/<kind>/`,
+  and routes compose features. Inside a feature, import its own files relatively.
 - GraphQL: each component defines its fragment in its own file (keep masking on).
   `lib/queries.ts` is only for queries that several components share.
+- Naming, import paths and server/client boundaries are enforced by oxlint
+  (`.oxlintrc.json`), ls-lint (`.ls-lint.yml`) and the build (`importProtection` in
+  `vite.config.ts`); their errors say what to do. Fix the code, not the rule.
 
 ## Commands
 
 - Don't run `npm run build` while `npm run dev` is running.
-- Run `npm run gql` after changing the GraphQL schema.
 - Never edit files in `src/server/db/migrations` by hand; use `npm run db:generate`.
-- These rules are enforced: imports by oxlint (`.oxlintrc.json`), names by ls-lint
-  (`.ls-lint.yml`), and server code in the browser by the build (`importProtection` in
-  `vite.config.ts`). Fix the code, not the rule.
 - `npm run check` must pass before a change is done. CI runs it plus `npm run build` on
   every PR, and `git push` runs the fast part (format, lint, typecheck, test).
 - Work on a branch and open a PR; `main` is protected and only merges green PRs.

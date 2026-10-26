@@ -1,6 +1,6 @@
 import { LESSON_STATUSES, PAYMENT_TYPES } from "@/features/lessons/lib/rules";
-import { SKILL_FRAMEWORKS, SKILL_KINDS } from "@/features/skills/lib/rules";
-import { builder } from "../builder";
+import { SKILL_FRAMEWORKS, SKILL_KINDS } from "@/lib/skills";
+import { builder } from "@/server/graphql/builder";
 
 export const LessonStatusEnum = builder.enumType("LessonStatus", {
   values: LESSON_STATUSES,

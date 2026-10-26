@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BIO_MAX } from "@/features/profile/lib/rules";
-import { LANGUAGE_SLUG } from "@/features/skills/lib/rules";
+import { LANGUAGE_SLUG } from "@/lib/skills";
 import { useProfileForm } from "@/features/profile/components/profile-form";
 import {
   Field,
   SettingsCard,
   SettingsHeader,
 } from "@/features/profile/components/settings";
-import { SkillListEditor } from "@/features/skills/components/skill-picker";
+import { SkillListEditor } from "@/components/skill-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "@/components/user-avatar";

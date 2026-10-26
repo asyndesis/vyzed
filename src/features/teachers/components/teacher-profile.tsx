@@ -12,8 +12,8 @@ import {
 import {
   BookableTeacherFields,
   RequestLessonDialog,
-} from "@/features/lessons/components/request-lesson-dialog";
-import { SkillBadges } from "@/features/skills/components/skill-badges";
+} from "../components/request-lesson-dialog";
+import { SkillBadges } from "@/components/skill-badges";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";
 import { formatPrice, fullName } from "@/lib/format";
