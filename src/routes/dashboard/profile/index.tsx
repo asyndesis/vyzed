@@ -66,12 +66,12 @@ function ProfilePage() {
             htmlFor="bio"
             label="About"
             hint={
-              <div className="flex justify-between gap-4">
+              <span className="flex justify-between gap-4">
                 <span>What you love teaching and what you're working on.</span>
                 <span className="tabular-nums">
                   {form.bio.length}/{BIO_MAX}
                 </span>
-              </div>
+              </span>
             }
           >
             <Textarea
