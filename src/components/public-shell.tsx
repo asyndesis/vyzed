@@ -7,7 +7,7 @@ import {
   ThemeMenu,
 } from "@/features/profile/components/preferences";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 // Public site navigation. Add About, Pricing, etc. here.
 const NAV = [{ title: "Browse teachers", to: "/browse" }] as const;

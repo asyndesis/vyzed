@@ -17,6 +17,7 @@
 | Shared                   | `src/{components,hooks,lib}/`                 |
 | Server-only              | `src/server/`                                 |
 | Tool output (never edit) | `src/generated/`                              |
+| shadcn (never edit)      | `src/components/ui/`                          |
 
 Features never import other features. Shared code moves up to `src/`.
 
