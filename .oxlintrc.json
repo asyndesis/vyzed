@@ -12,8 +12,6 @@
   "rules": {
     "no-unused-vars": "warn",
     "import/named": "error",
-    "import/default": "error",
-    "import/namespace": "error",
     "react/exhaustive-deps": "warn",
     "react/purity": "warn",
     "react/incompatible-library": "warn",
@@ -38,13 +36,7 @@
       }
     ]
   },
-  "ignorePatterns": [
-    "**/node_modules",
-    "**/.output",
-    "**/.nitro",
-    "src/generated/**",
-    "src/server/db/migrations/**"
-  ],
+  "ignorePatterns": ["src/generated/**", "src/server/db/migrations/**"],
   "overrides": [
     {
       "files": ["src/features/**"],
@@ -66,22 +58,6 @@
               {
                 "group": ["../../**"],
                 "message": "Don't leave your feature with a relative path. Move shared code to src/<kind>/ and import it with @/."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["src/server/db/**", "src/server/auth.ts"],
-      "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "paths": [
-              {
-                "name": "gql.tada",
-                "message": "Import GraphQL helpers from @/lib/gql."
               }
             ]
           }

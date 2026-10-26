@@ -11,9 +11,9 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { user } from "./auth-schema";
+import { user } from "@/server/db/auth-schema";
 
-export * from "./auth-schema";
+export * from "@/server/db/auth-schema";
 
 const timestamps = {
   createdAt: timestamp("created_at").defaultNow().notNull(),

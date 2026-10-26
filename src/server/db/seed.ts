@@ -1,8 +1,8 @@
 // npm run db:seed — skills plus dummy teachers. Safe to re-run.
 import "dotenv/config";
 import { inArray, like } from "drizzle-orm";
-import { db } from "./index";
-import { skill, user, userSkill } from "./schema";
+import { db } from "@/server/db/index";
+import { skill, user, userSkill } from "@/server/db/schema";
 
 type SkillSeed = { name: string; cefr?: boolean; children: string[] };
 
