@@ -15,13 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: static
+          - name: Format, lint, types
             run: npm run check:format && npm run lint && npm run typecheck
-          - name: test
+          - name: Tests
             run: npm run test
-          - name: generated
+          - name: Generated files
             run: npm run check:generated
-          - name: build
+          - name: Build
             run: npm run build
     env:
       # No secrets in CI; the same switch the Docker build uses
