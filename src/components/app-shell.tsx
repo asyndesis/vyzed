@@ -18,6 +18,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -85,23 +93,19 @@ function ProfileProgress() {
   return (
     <Link
       to="/dashboard/profile"
-      className="block rounded-lg border bg-background p-3 transition-colors group-data-[collapsible=icon]:hidden hover:border-foreground/20"
+      className="group-data-[collapsible=icon]:hidden"
     >
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-medium">Finish your profile</span>
-        <span className="text-xs text-muted-foreground tabular-nums">
-          {done}/{steps.length}
-        </span>
-      </div>
-      <div className="mt-2 h-1 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-primary"
-          style={{ width: `${(done / steps.length) * 100}%` }}
-        />
-      </div>
-      <p className="mt-2 text-xs text-muted-foreground">
-        Complete profiles get more requests.
-      </p>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>Finish your profile</CardTitle>
+          <CardDescription>
+            Complete profiles get more requests.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Progress value={(done / steps.length) * 100} />
+        </CardContent>
+      </Card>
     </Link>
   );
 }
@@ -144,7 +148,7 @@ function UserMenu() {
             side="right"
             align="end"
             sideOffset={4}
-            className="w-56 rounded-lg"
+            className="w-56"
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="font-normal text-muted-foreground">
@@ -234,9 +238,7 @@ export function AppShell({
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" render={<Link to="/dashboard" />}>
                 <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
-                <span className="font-display text-base font-semibold">
-                  vyzed
-                </span>
+                <span className="text-base font-semibold">vyzed</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

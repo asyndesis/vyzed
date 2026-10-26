@@ -1,22 +1,35 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Plus, X } from "lucide-react";
-import { useState } from "react";
+import { Plus, X, type LucideIcon } from "lucide-react";
 import type { SkillFramework } from "@/lib/skills";
 import { LevelSelect } from "@/components/level-select";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemGroup,
+  ItemTitle,
+} from "@/components/ui/item";
 import { skillTreeQuery } from "@/lib/skill-queries";
 
 export type PickedSkill = {
@@ -42,49 +55,47 @@ export function SkillCombobox({
   onSelect: (skill: PickedSkill) => void;
   label?: string;
 }) {
-  const [open, setOpen] = useState(false);
   const { data } = useSuspenseQuery(skillTreeQuery);
-  const categories = category
-    ? data.skills.filter((c) => c.slug === category)
-    : data.skills;
+  const groups = data.skills
+    .filter((c) => !category || c.slug === category)
+    .map((c) => ({
+      value: c.name,
+      items: c.children.filter((s) => !excludeIds.includes(s.id)),
+    }));
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
+    <Combobox
+      items={groups}
+      value={null}
+      onValueChange={(skill: PickedSkill | null) => skill && onSelect(skill)}
+      itemToStringLabel={(skill: PickedSkill) => skill.name}
+    >
+      <ComboboxTrigger
         render={<Button type="button" variant="outline" size="sm" />}
       >
         <Plus /> {label}
-      </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="start">
-        <Command>
-          <CommandInput placeholder="Search…" />
-          <CommandList>
-            <CommandEmpty>No matches.</CommandEmpty>
-            {categories.map((cat) => (
-              <CommandGroup
-                key={cat.id}
-                heading={categories.length > 1 ? cat.name : undefined}
-              >
-                {cat.children
-                  .filter((s) => !excludeIds.includes(s.id))
-                  .map((skill) => (
-                    <CommandItem
-                      key={skill.id}
-                      value={`${cat.name} ${skill.name}`}
-                      onSelect={() => {
-                        onSelect(skill);
-                        setOpen(false);
-                      }}
-                    >
-                      {skill.name}
-                    </CommandItem>
-                  ))}
-              </CommandGroup>
-            ))}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+      </ComboboxTrigger>
+      <ComboboxContent className="w-64">
+        <ComboboxInput placeholder="Search…" showTrigger={false} />
+        <ComboboxEmpty>No matches.</ComboboxEmpty>
+        <ComboboxList>
+          {(group: (typeof groups)[number]) => (
+            <ComboboxGroup key={group.value} items={group.items}>
+              {groups.length > 1 && (
+                <ComboboxLabel>{group.value}</ComboboxLabel>
+              )}
+              <ComboboxCollection>
+                {(skill: PickedSkill) => (
+                  <ComboboxItem key={skill.id} value={skill}>
+                    {skill.name}
+                  </ComboboxItem>
+                )}
+              </ComboboxCollection>
+            </ComboboxGroup>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }
 
@@ -93,60 +104,79 @@ export function SkillListEditor({
   value,
   onChange,
   category,
-  emptyText,
+  icon: Icon,
+  emptyTitle,
+  emptyDescription,
   addLabel,
 }: {
   value: SkillItem[];
   onChange: (value: SkillItem[]) => void;
   category?: string;
-  emptyText: string;
+  icon: LucideIcon;
+  emptyTitle: string;
+  emptyDescription: string;
   addLabel?: string;
 }) {
   const update = (skillId: string, proficiency: number) =>
     onChange(
       value.map((v) => (v.skillId === skillId ? { ...v, proficiency } : v)),
     );
+  const add = (
+    <SkillCombobox
+      category={category}
+      label={addLabel}
+      excludeIds={value.map((v) => v.skillId)}
+      onSelect={(skill) =>
+        onChange([...value, { skillId: skill.id, proficiency: 3, skill }])
+      }
+    />
+  );
+
+  if (value.length === 0) {
+    return (
+      <Empty className="border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Icon />
+          </EmptyMedia>
+          <EmptyTitle>{emptyTitle}</EmptyTitle>
+          <EmptyDescription>{emptyDescription}</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>{add}</EmptyContent>
+      </Empty>
+    );
+  }
 
   return (
-    <div className="space-y-2">
-      {value.length === 0 && (
-        <p className="text-sm text-muted-foreground">{emptyText}</p>
-      )}
-      {value.map((item) => (
-        <div
-          key={item.skillId}
-          className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2"
-        >
-          <span className="flex-1 truncate text-sm font-medium">
-            {item.skill.name}
-          </span>
-          <LevelSelect
-            value={item.proficiency}
-            framework={item.skill.framework}
-            onChange={(p) => update(item.skillId, p)}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8 text-muted-foreground"
-            onClick={() =>
-              onChange(value.filter((v) => v.skillId !== item.skillId))
-            }
-            aria-label={`Remove ${item.skill.name}`}
-          >
-            <X />
-          </Button>
-        </div>
-      ))}
-      <SkillCombobox
-        category={category}
-        label={addLabel}
-        excludeIds={value.map((v) => v.skillId)}
-        onSelect={(skill) =>
-          onChange([...value, { skillId: skill.id, proficiency: 3, skill }])
-        }
-      />
+    <div className="flex flex-col gap-2">
+      <ItemGroup className="gap-2">
+        {value.map((item) => (
+          <Item key={item.skillId} variant="outline" size="sm">
+            <ItemContent>
+              <ItemTitle>{item.skill.name}</ItemTitle>
+            </ItemContent>
+            <ItemActions>
+              <LevelSelect
+                value={item.proficiency}
+                framework={item.skill.framework}
+                onChange={(p) => update(item.skillId, p)}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                onClick={() =>
+                  onChange(value.filter((v) => v.skillId !== item.skillId))
+                }
+                aria-label={`Remove ${item.skill.name}`}
+              >
+                <X />
+              </Button>
+            </ItemActions>
+          </Item>
+        ))}
+      </ItemGroup>
+      <div>{add}</div>
     </div>
   );
 }

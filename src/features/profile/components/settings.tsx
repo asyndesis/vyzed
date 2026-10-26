@@ -1,8 +1,11 @@
-import { Link, type LinkProps } from "@tanstack/react-router";
+import { Link, useMatchRoute, type LinkProps } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import {
+  Field as FieldRoot,
+  FieldDescription,
+  FieldLabel,
+} from "@/components/ui/field";
 
 // Building blocks for settings pages, after Cal.com's: a plain header per page and one
 // card whose footer holds the save button
@@ -12,17 +15,23 @@ export function SettingsNav({
 }: {
   items: ReadonlyArray<{ title: string; to: LinkProps["to"]; exact?: boolean }>;
 }) {
+  const matchRoute = useMatchRoute();
   return (
     <nav className="flex gap-1 overflow-x-auto">
       {items.map((item) => (
-        <Link
+        <Button
           key={item.to}
-          to={item.to}
-          activeOptions={{ exact: item.exact }}
-          className="shrink-0 rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground data-[status=active]:bg-accent data-[status=active]:font-medium data-[status=active]:text-foreground"
+          variant={
+            matchRoute({ to: item.to, fuzzy: !item.exact })
+              ? "secondary"
+              : "ghost"
+          }
+          size="sm"
+          render={<Link to={item.to} />}
+          nativeButton={false}
         >
           {item.title}
-        </Link>
+        </Button>
       ))}
     </nav>
   );
@@ -44,28 +53,6 @@ export function SettingsHeader({
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
       {actions}
-    </div>
-  );
-}
-
-// Bordered card; pass `footer` for forms that save, leave it off for instant settings
-export function SettingsCard({
-  children,
-  footer,
-  className,
-}: {
-  children: React.ReactNode;
-  footer?: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("overflow-hidden rounded-xl border bg-card", className)}>
-      <div className="space-y-6 p-6">{children}</div>
-      {footer && (
-        <div className="flex items-center justify-between gap-4 border-t bg-muted/40 px-6 py-3">
-          {footer}
-        </div>
-      )}
     </div>
   );
 }
@@ -121,10 +108,10 @@ export function Field({
   className?: string;
 }) {
   return (
-    <div className={cn("space-y-2", className)}>
-      <Label htmlFor={htmlFor}>{label}</Label>
+    <FieldRoot className={className}>
+      <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel>
       {children}
-      {hint && <div className="text-xs text-muted-foreground">{hint}</div>}
-    </div>
+      {hint && <FieldDescription>{hint}</FieldDescription>}
+    </FieldRoot>
   );
 }

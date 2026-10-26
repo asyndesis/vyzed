@@ -1,3 +1,4 @@
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeftRight, CalendarCheck, Search } from "lucide-react";
 
 const POINTS = [
@@ -46,7 +47,9 @@ export function SplitLayout({
       >
         {aside}
       </div>
-      <div className="rounded-xl border bg-card p-6 sm:p-8">{children}</div>
+      <Card>
+        <CardContent>{children}</CardContent>
+      </Card>
     </section>
   );
 }
