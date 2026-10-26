@@ -1,9 +1,16 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { Loader2, MailCheck } from "lucide-react";
+import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
 import { useState } from "react";
+import { LogoMark } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { viewerQuery } from "@/lib/session";
@@ -15,13 +22,38 @@ function Header({
   description,
 }: {
   title: string;
-  description: string;
+  description?: string;
 }) {
   return (
-    <div className="mb-6 space-y-1">
+    <div className="mb-6 flex flex-col items-center gap-1 text-center">
+      <LogoMark className="mb-4 size-10" />
       <h1 className="text-xl font-semibold">{title}</h1>
-      <p className="text-sm text-muted-foreground">{description}</p>
+      {description && (
+        <p className="text-sm text-muted-foreground">{description}</p>
+      )}
     </div>
+  );
+}
+
+// Segmented switch between the two entry forms
+function AuthSwitch({ active }: { active: "sign-up" | "sign-in" }) {
+  const tab = (to: "/sign-up" | "/sign-in", label: string) => (
+    <Link
+      to={to}
+      className={
+        to === `/${active}`
+          ? "flex-1 rounded-md border bg-background py-1.5 text-center text-sm font-medium"
+          : "flex-1 rounded-md py-1.5 text-center text-sm font-medium text-muted-foreground hover:text-foreground"
+      }
+    >
+      {label}
+    </Link>
+  );
+  return (
+    <nav className="mb-6 flex rounded-lg bg-muted p-1">
+      {tab("/sign-up", "Sign up")}
+      {tab("/sign-in", "Sign in")}
+    </nav>
   );
 }
 
@@ -40,7 +72,11 @@ function Field({
       <div className={aside ? "flex h-5 items-center" : undefined}>
         <Label htmlFor={name}>{label}</Label>
       </div>
-      <Input id={name} name={name} required {...input} />
+      {input.type === "password" ? (
+        <PasswordInput id={name} name={name} required {...input} />
+      ) : (
+        <Input id={name} name={name} required {...input} />
+      )}
       {/* After the input in the DOM so Tab visits it next, but shown beside the label */}
       {aside && (
         <div className="absolute right-0 top-0 flex h-5 items-center">
@@ -48,6 +84,24 @@ function Field({
         </div>
       )}
     </div>
+  );
+}
+
+function PasswordInput(props: React.ComponentProps<typeof InputGroupInput>) {
+  const [shown, setShown] = useState(false);
+  return (
+    <InputGroup>
+      <InputGroupInput {...props} type={shown ? "text" : "password"} />
+      <InputGroupAddon align="inline-end">
+        <InputGroupButton
+          size="icon-xs"
+          aria-label={shown ? "Hide password" : "Show password"}
+          onClick={() => setShown(!shown)}
+        >
+          {shown ? <EyeOff /> : <Eye />}
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
   );
 }
 
@@ -76,13 +130,11 @@ function Submit({
 
 function Footer({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-6 border-t pt-6 text-center text-sm text-muted-foreground">
-      {children}
-    </p>
+    <p className="mt-6 text-center text-sm text-muted-foreground">{children}</p>
   );
 }
 
-const footerLink = "font-medium text-foreground hover:underline";
+const footerLink = "font-medium text-primary hover:underline";
 
 // Replaces a form once an email has been sent
 function CheckEmail({ message }: { message: string }) {
@@ -168,6 +220,7 @@ export function SignInForm({
         title="Welcome back"
         description="Sign in to your Vyzed account."
       />
+      <AuthSwitch active="sign-in" />
       {passwordReset && (
         <p className="mb-4 rounded-md border px-3 py-2 text-sm">
           Password updated. Sign in with your new password.
@@ -189,7 +242,7 @@ export function SignInForm({
           aside={
             <Link
               to="/forgot-password"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-sm font-medium text-primary hover:underline"
             >
               Forgot password?
             </Link>
@@ -249,10 +302,8 @@ export function SignUpForm() {
 
   return (
     <>
-      <Header
-        title="Create your account"
-        description="Learn, teach, or swap skills with people near you."
-      />
+      <Header title="Create your account" />
+      <AuthSwitch active="sign-up" />
       <form onSubmit={submit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <Field
