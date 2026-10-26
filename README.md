@@ -9,7 +9,7 @@ cp .env.example .env   # fill in DATABASE_URL, BETTER_AUTH_SECRET
 npm install
 npm run db:migrate
 npm run db:seed        # optional sample data
-npm run dev            # http://localhost:3100
+npm run dev            # http://localhost:3000
 ```
 
 ## 🧰 Stack
