@@ -15,10 +15,12 @@
     "typecheck": "tsc --noEmit",
     "db:seed": "tsx src/server/db/seed.ts",
     "gql": "tsx scripts/print-schema.ts && gql.tada generate-output",
-    "format:check": "oxfmt --check",
     "postinstall": "paraglide-js compile --project ./src/i18n/project.inlang --outdir ./src/generated/paraglide",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check": "npm run check:format && npm run lint && npm run typecheck && npm run test && npm run check:generated",
+    "check:generated": "npm run gql && npm run db:generate && git diff --exit-code -- src/generated src/server/db/migrations",
+    "check:format": "oxfmt --check"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
