@@ -9,7 +9,7 @@ import { relations } from "@/server/db/relations";
 // (env.ts validates on import; nothing connects to these.)
 process.env.DATABASE_URL = "postgres://test:test@localhost:5432/test";
 process.env.BETTER_AUTH_SECRET = "test-secret-test-secret-test-secret";
-process.env.BETTER_AUTH_URL = "http://localhost:3100";
+process.env.BETTER_AUTH_URL = "http://localhost:3000";
 
 const db = drizzle({ client: new PGlite(), relations });
 await migrate(db, { migrationsFolder: "./src/server/db/migrations" });
