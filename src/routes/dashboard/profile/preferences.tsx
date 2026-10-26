@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PreferenceFields } from "@/components/preferences";
-import { SettingsCard, SettingsHeader } from "@/components/settings";
+import { PreferenceFields } from "@/features/profile/preferences";
+import { SettingsCard, SettingsHeader } from "@/features/profile/settings";
 
 export const Route = createFileRoute("/dashboard/profile/preferences")({
   head: () => ({ meta: [{ title: "Preferences · Vyzed" }] }),

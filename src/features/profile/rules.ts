@@ -1,4 +1,4 @@
-import { SKILL_KINDS, type SkillKind } from "./skills";
+import { SKILL_KINDS, type SkillKind } from "@/features/skills/rules";
 
 // The profile editor's form state, and how it maps to and from the API
 

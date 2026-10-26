@@ -1,5 +1,5 @@
 import { graphql } from "graphql";
-import type { Viewer } from "@/domain/policies";
+import type { Viewer } from "@/features/auth/policies";
 import { schema } from "@/server/graphql/schema";
 
 // Runs an operation against the real schema as `viewer` (anonymous when omitted)

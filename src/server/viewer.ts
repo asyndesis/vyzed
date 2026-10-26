@@ -1,4 +1,4 @@
-import type { Viewer } from "@/domain/policies";
+import type { Viewer } from "@/features/auth/policies";
 import { auth } from "./auth";
 
 // Who is calling: session cookie (this app), Authorization: Bearer <token>, or x-api-key.

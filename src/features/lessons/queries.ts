@@ -1,7 +1,7 @@
 // My lessons, seen from my side: which role I play, which status counts, and how they group
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useLoaderData, useRouteContext } from "@tanstack/react-router";
-import type { LessonStatus } from "@/domain/lessons";
+import type { LessonStatus } from "@/features/lessons/rules";
 import { gqlQuery, graphql, type ResultOf } from "@/lib/gql";
 
 export const MY_LESSONS_KEY = "MyLessons";

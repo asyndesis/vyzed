@@ -1,5 +1,5 @@
-import type { SkillFramework } from "@/domain/skills";
-import { levelLabel } from "@/domain/skills";
+import type { SkillFramework } from "@/features/skills/rules";
+import { levelLabel } from "@/features/skills/rules";
 import { Badge } from "@/components/ui/badge";
 
 type Item = {

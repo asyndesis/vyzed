@@ -3,7 +3,7 @@ import {
   TeacherBrowser,
   loadTeacherBrowser,
   teacherSearchSchema,
-} from "@/components/teacher-browser";
+} from "@/features/teachers/teacher-browser";
 
 export const Route = createFileRoute("/dashboard/teachers/")({
   validateSearch: teacherSearchSchema,

@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import { can } from "@/domain/policies";
-import { MAX_LEVEL, MIN_LEVEL } from "@/domain/skills";
+import { can } from "@/features/auth/policies";
+import { MAX_LEVEL, MIN_LEVEL } from "@/features/skills/rules";
 import { db } from "../../db";
 import { user, userSkill } from "../../db/schema";
 import { builder, forbid, viewerOf } from "../builder";

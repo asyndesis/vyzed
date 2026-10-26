@@ -7,10 +7,14 @@ import {
 } from "@tanstack/react-router";
 import { formatDistanceToNowStrict } from "date-fns";
 import { GraduationCap, Search, UserPen, Users } from "lucide-react";
-import { DateTile, LessonCard, StatusBadge } from "@/components/lesson-card";
+import {
+  DateTile,
+  LessonCard,
+  StatusBadge,
+} from "@/features/lessons/lesson-card";
 import { EmptyState } from "@/components/page";
-import { TeacherCard } from "@/components/teacher-card";
-import { teacherListQuery } from "@/components/teacher-browser";
+import { TeacherCard } from "@/features/teachers/teacher-card";
+import { teacherListQuery } from "@/features/teachers/teacher-browser";
 import { Button } from "@/components/ui/button";
 import { SkeletonText } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
@@ -19,8 +23,8 @@ import {
   type LessonGroups,
   type LessonItem,
   useMyLessons,
-} from "@/lib/lessons";
-import { meQuery } from "@/lib/queries";
+} from "@/features/lessons/queries";
+import { meQuery } from "@/features/profile/queries";
 
 // Teachers for what I want to learn (one extra, in case I'm in the list)
 const forYouQuery = (learns: string[]) =>

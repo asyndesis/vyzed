@@ -1,6 +1,10 @@
 import { eq } from "drizzle-orm";
-import { LESSON_MINUTES, canTransition, isSettled } from "@/domain/lessons";
-import { can } from "@/domain/policies";
+import {
+  LESSON_MINUTES,
+  canTransition,
+  isSettled,
+} from "@/features/lessons/rules";
+import { can } from "@/features/auth/policies";
 import { db } from "../../db";
 import { enrollment, lesson } from "../../db/schema";
 import { builder, forbid, notFound, viewerOf } from "../builder";

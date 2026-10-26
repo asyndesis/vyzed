@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useProfileForm } from "@/components/profile-form";
-import { Field, SettingsCard, SettingsHeader } from "@/components/settings";
-import { SkillListEditor } from "@/components/skill-picker";
+import { useProfileForm } from "@/features/profile/profile-form";
+import {
+  Field,
+  SettingsCard,
+  SettingsHeader,
+} from "@/features/profile/settings";
+import { SkillListEditor } from "@/features/skills/skill-picker";
 
 export const Route = createFileRoute("/dashboard/profile/learning")({
   head: () => ({ meta: [{ title: "Learning · Vyzed" }] }),

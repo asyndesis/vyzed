@@ -4,8 +4,8 @@ import { addDays, format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { PaymentType } from "@/domain/lessons";
-import { LevelSelect } from "@/components/level-select";
+import type { PaymentType } from "@/features/lessons/rules";
+import { LevelSelect } from "@/features/skills/level-select";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

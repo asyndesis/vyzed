@@ -1,10 +1,14 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
-import { priceToCents } from "@/domain/profile";
-import { useProfileForm } from "@/components/profile-form";
-import { Field, SettingsCard, SettingsHeader } from "@/components/settings";
-import { SkillListEditor } from "@/components/skill-picker";
-import { TeacherCardBody } from "@/components/teacher-card";
+import { priceToCents } from "@/features/profile/rules";
+import { useProfileForm } from "@/features/profile/profile-form";
+import {
+  Field,
+  SettingsCard,
+  SettingsHeader,
+} from "@/features/profile/settings";
+import { SkillListEditor } from "@/features/skills/skill-picker";
+import { TeacherCardBody } from "@/features/teachers/teacher-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

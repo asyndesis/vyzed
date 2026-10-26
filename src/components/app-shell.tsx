@@ -37,11 +37,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { UserAvatar } from "@/components/user-avatar";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/features/auth/auth-client";
 import { fullName } from "@/lib/format";
-import { useMyLessons } from "@/lib/lessons";
-import { meQuery } from "@/lib/queries";
-import { viewerQuery } from "@/lib/session";
+import { useMyLessons } from "@/features/lessons/queries";
+import { meQuery } from "@/features/profile/queries";
+import { viewerQuery } from "@/features/auth/session";
 
 export const PROFILE_PAGES = [
   { title: "General", to: "/dashboard/profile", exact: true },

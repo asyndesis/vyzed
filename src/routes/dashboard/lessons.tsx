@@ -1,12 +1,12 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, History, Inbox } from "lucide-react";
 import { useState } from "react";
-import { LessonCard } from "@/components/lesson-card";
+import { LessonCard } from "@/features/lessons/lesson-card";
 import { EmptyState, PageTitle } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { type LessonGroups, useMyLessons } from "@/lib/lessons";
+import { type LessonGroups, useMyLessons } from "@/features/lessons/queries";
 
 const TABS = [
   {

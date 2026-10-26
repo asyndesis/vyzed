@@ -3,7 +3,7 @@ import { PublicPage } from "@/components/public-shell";
 import {
   TeacherProfile,
   loadTeacherProfile,
-} from "@/components/teacher-profile";
+} from "@/features/teachers/teacher-profile";
 import { fullName } from "@/lib/format";
 
 export const Route = createFileRoute("/_public/browse/$id")({

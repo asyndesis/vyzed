@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicPage } from "@/components/public-shell";
-import { TeachCallout } from "@/components/teach-callout";
+import { TeachCallout } from "@/features/teachers/teach-callout";
 import {
   TeacherBrowser,
   loadTeacherBrowser,
   teacherSearchSchema,
-} from "@/components/teacher-browser";
+} from "@/features/teachers/teacher-browser";
 
 export const Route = createFileRoute("/_public/browse/")({
   validateSearch: teacherSearchSchema,

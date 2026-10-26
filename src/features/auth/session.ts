@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import type { Viewer } from "@/domain/policies";
+import type { Viewer } from "@/features/auth/policies";
 
 // Who is signed in, read from the session cookie on the server
 const getViewerFn = createServerFn().handler(
