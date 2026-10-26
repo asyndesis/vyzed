@@ -27,6 +27,11 @@ src/
 
 Features: `auth`, `skills`, `lessons`, `teachers`, `profile`.
 
+## Naming
+
+- All files and folders are kebab-case: `teacher-card.tsx` exports `TeacherCard`, and
+  hooks are `use-thing.ts` exporting `useThing`. This matches shadcn and the route files.
+
 ## Where does a new file go?
 
 1. Is it server-only (db, resolvers, auth server)? → `src/server/`
