@@ -12,14 +12,17 @@ export default defineConfig({
     devtools(),
     paraglideVitePlugin({
       project: "./src/i18n/project.inlang",
-      outdir: "./src/i18n/paraglide",
+      outdir: "./src/generated/paraglide",
       // English at /, other languages under /de, /es
       strategy: ["url", "baseLocale"],
     }),
     nitro(),
     tailwindcss(),
     // Explicit, since src/server/ (a folder) would otherwise shadow src/server.ts
-    tanstackStart({ server: { entry: "server.ts" } }),
+    tanstackStart({
+      server: { entry: "server.ts" },
+      router: { generatedRouteTree: "generated/route-tree.ts" },
+    }),
     viteReact(),
   ],
 });

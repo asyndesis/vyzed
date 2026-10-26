@@ -16,7 +16,7 @@ import {
   type OperationDefinitionNode,
 } from "graphql";
 import { z } from "zod";
-import type { introspection } from "@/graphql/graphql-env.d";
+import type { introspection } from "@/generated/graphql/graphql-env.d";
 
 export const graphql = initGraphQLTada<{
   introspection: introspection;

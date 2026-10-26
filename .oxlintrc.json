@@ -24,9 +24,7 @@
     "**/node_modules",
     "**/.output",
     "**/.nitro",
-    "**/routeTree.gen.ts",
-    "src/graphql/graphql-env.d.ts",
-    "src/i18n/paraglide/**",
-    "drizzle/**"
+    "src/generated/**",
+    "src/server/db/migrations/**"
   ]
 }

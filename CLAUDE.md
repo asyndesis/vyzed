@@ -19,8 +19,12 @@ src/
                        queries.ts     GraphQL queries/mutations used by more than one
                                       component in the feature (+ query options)
                        *.ts           anything else non-React (clients, server fns)
-  graphql/           generated schema.graphql + gql.tada types (npm run gql)
-  i18n/              messages/ (edit), project.inlang/ (settings), paraglide/ (generated)
+  generated/         tool output only, never edit by hand (lint/format skip it):
+                       route-tree.ts  TanStack route tree (written by dev/build)
+                       graphql/       schema.graphql + gql.tada types (npm run gql)
+                       paraglide/     i18n runtime + messages (postinstall, dev/build;
+                                      not committed)
+  i18n/              messages/ (edit these), project.inlang/ (settings)
   routes/            TanStack file routes (path = URL)
   server/            server-only: db/ (+ migrations/), graphql/, auth, test/
 ```
@@ -34,6 +38,7 @@ Features: `auth`, `skills`, `lessons`, `teachers`, `profile`.
 
 ## Where does a new file go?
 
+0. Is it written by a tool? → `src/generated/` (configure the tool's output path)
 1. Is it server-only (db, resolvers, auth server)? → `src/server/`
 2. Is it a page? → `src/routes/`
 3. Does only one feature use it? → `src/features/<feature>/<kind>/`
@@ -75,5 +80,5 @@ create a kind folder once it has a file.
 - `npm run typecheck`, `npm run lint`, `npm run format`
 - `npm run db:generate` / `db:migrate` work with migrations in `src/server/db/migrations`.
   Don't hand-edit or reformat files in there.
-- `npm run gql` regenerates `src/graphql/schema.graphql` and the gql.tada types after
+- `npm run gql` regenerates `src/generated/graphql/schema.graphql` and the gql.tada types after
   changing the GraphQL schema.

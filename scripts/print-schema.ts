@@ -6,8 +6,8 @@ import { lexicographicSortSchema, printSchema } from "graphql";
 import { schema } from "../src/server/graphql/schema";
 
 writeFileSync(
-  "src/graphql/schema.graphql",
+  "src/generated/graphql/schema.graphql",
   printSchema(lexicographicSortSchema(schema)) + "\n",
 );
-console.log("✓ src/graphql/schema.graphql");
+console.log("✓ src/generated/graphql/schema.graphql");
 process.exit(0);

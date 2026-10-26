@@ -3,10 +3,7 @@
   "printWidth": 80,
   "ignorePatterns": [
     "package-lock.json",
-    "**/routeTree.gen.ts",
-    "src/graphql/graphql-env.d.ts",
-    "src/graphql/schema.graphql",
-    "src/i18n/paraglide/**",
-    "drizzle/**"
+    "src/generated/**",
+    "src/server/db/migrations/**"
   ]
 }

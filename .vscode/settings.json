@@ -3,13 +3,12 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "files.watcherExclude": {
-    "**/routeTree.gen.ts": true
+    "src/generated/**": true
   },
   "search.exclude": {
-    "**/routeTree.gen.ts": true
+    "src/generated/**": true
   },
   "files.readonlyInclude": {
-    "**/routeTree.gen.ts": true,
-    "**/graphql-env.d.ts": true
+    "src/generated/**": true
   }
 }

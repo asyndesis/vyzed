@@ -13,7 +13,7 @@ dist-ssr
 .vscode
 .playwright-mcp
 .wrangler
-src/i18n/paraglide
+src/generated/paraglide
 *.local
 .DS_Store
 Dockerfile

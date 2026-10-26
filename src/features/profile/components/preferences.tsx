@@ -15,7 +15,7 @@ import {
   isLocale,
   localizeUrl,
   type Locale,
-} from "@/i18n/paraglide/runtime";
+} from "@/generated/paraglide/runtime";
 
 const LANGUAGES: Array<{ value: Locale; label: string }> = [
   { value: "en", label: "English" },

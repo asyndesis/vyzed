@@ -13,7 +13,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { viewerQuery } from "@/features/auth/lib/session";
-import { getLocale } from "@/i18n/paraglide/runtime";
+import { getLocale } from "@/generated/paraglide/runtime";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(

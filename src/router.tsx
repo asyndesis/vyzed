@@ -1,9 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
-import { deLocalizeUrl, localizeUrl } from "@/i18n/paraglide/runtime";
+import { deLocalizeUrl, localizeUrl } from "@/generated/paraglide/runtime";
 import { ErrorPage, NotFoundPage } from "@/components/error-page";
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from "@/generated/route-tree";
 
 // Start calls this once per request on the server and once in the browser
 export function getRouter() {
